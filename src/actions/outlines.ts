@@ -2,10 +2,12 @@
 
 import { z } from "zod";
 import { outlineSchema } from "@/domain/outline";
+import { LOOKS } from "@/domain/story";
 import {
   answerQuestion,
   saveOutline,
   setIncludeTranscript,
+  setLook,
   undoGenerated,
 } from "@/services/outlines";
 import { run, type Result } from "./result";
@@ -51,6 +53,15 @@ export async function setIncludeTranscriptAction(
 ): Promise<Result> {
   return run(transcript, input, async (db, userId, d) => {
     await setIncludeTranscript(db, userId, d.workshopId, d.include);
+    return undefined;
+  });
+}
+
+const look = z.object({ workshopId: z.string().min(1), look: z.enum(LOOKS) });
+
+export async function setLookAction(input: z.infer<typeof look>): Promise<Result> {
+  return run(look, input, async (db, userId, d) => {
+    await setLook(db, userId, d.workshopId, d.look);
     return undefined;
   });
 }

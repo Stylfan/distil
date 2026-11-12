@@ -1,5 +1,6 @@
 import { currentUser } from "@/auth/session";
 import { DECK_WORDS } from "@/domain/deck-words";
+import { formatDay } from "@/lib/dates";
 import { loadDeck } from "@/lib/deck-page";
 import { buildPptx } from "@/lib/pptx/build";
 
@@ -20,6 +21,8 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
     slides: page.slides,
     words: DECK_WORDS[page.language],
     title: page.workshop.name,
+    footer: `${page.workshop.name} · ${formatDay(page.workshop.heldOn, page.language)}`,
+    look: page.look,
   });
   // A file name from the workshop's name, in letters a file system takes everywhere.
   const name =

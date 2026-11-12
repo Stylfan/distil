@@ -5,7 +5,9 @@ import { getTranslations } from "next-intl/server";
 import { requireUser } from "@/auth/session";
 import { DeckEditor } from "@/components/deck/deck-editor";
 import { DeckToolbar } from "@/components/deck/deck-toolbar";
+import { lookStyle } from "@/components/deck/look";
 import { SlideView } from "@/components/deck/slide";
+import { StoryPanel } from "@/components/deck/story-panel";
 import { WorkshopTabs } from "@/components/workshop/workshop-tabs";
 import { PageHeader } from "@/components/ui/layout";
 import { DECK_WORDS } from "@/domain/deck-words";
@@ -40,7 +42,7 @@ export default async function DeckPage({ params }: Props) {
   const user = await requireUser();
   const page = await loadDeck(user.id, id);
   if (!page) notFound();
-  const { workshop, slides, language, includeTranscript, outline } = page;
+  const { workshop, slides, language, includeTranscript, outline, look, told } = page;
   const t = await getTranslations("deck");
   const words = DECK_WORDS[language];
 
@@ -62,7 +64,12 @@ export default async function DeckPage({ params }: Props) {
         </div>
       ) : (
         <>
-          <DeckToolbar workshopId={workshop.id} includeTranscript={includeTranscript} />
+          <StoryPanel workshopId={workshop.id} told={told} look={look} />
+          <DeckToolbar
+            workshopId={workshop.id}
+            includeTranscript={includeTranscript}
+            primary={told}
+          />
           <p className="text-[13px] text-slate print:hidden">
             {t("summary", { count: slides.length, language: t(`language.${language}`) })}
           </p>
@@ -71,7 +78,10 @@ export default async function DeckPage({ params }: Props) {
             outline={outline!.content}
             version={outline!.version}
           >
-            <div className="flex max-w-5xl flex-col gap-6 print:block print:max-w-none">
+            <div
+              className="flex max-w-5xl flex-col gap-6 print:block print:max-w-none"
+              style={lookStyle(look)}
+            >
               {slides.map((slide, i) => (
                 <SlideView
                   key={i}
@@ -79,6 +89,8 @@ export default async function DeckPage({ params }: Props) {
                   number={i + 1}
                   total={slides.length}
                   words={words}
+                  look={look}
+                  footer={`${workshop.name} · ${formatDay(workshop.heldOn, language)}`}
                 />
               ))}
             </div>

@@ -1,14 +1,20 @@
 import type { NoteColour } from "@/db/schema";
 import type { Diagram } from "./diagram";
 import type { Outline } from "./outline";
+import { storyOf, themeTelling } from "./deck-story";
+import { DEFAULT_LOOK, type Icon, type Look } from "./story";
 
 /**
  * The presentation, as slides, built from the outline and nothing else: a
  * pure function, so the deck is exactly what the facilitator approved.
- * The overview comes first and can travel alone; the themes follow, laid
- * out like the wall; the drawings, redrawn; then what Distil saw across them, what is
- * recommended (only what the facilitator kept), what was agreed and what
- * is open; and, when asked for, every note word for word.
+ *
+ * It is told the way a consultancy tells it: a cover, one slide with the
+ * whole message (a headline that says something, three key messages, the
+ * "so what"), then three chapters with a breaker each — what we found
+ * (a map of the themes, a slide per theme with its notes from the wall, a
+ * quote, the drawings), what it means (patterns, the shifts, Distil's
+ * recommendations, marked), and what we do (agreed, open) — a closing
+ * slide, and the transcript when asked for.
  *
  * Long lists are split over several slides rather than shrunk, so every
  * slide stays readable from the back of a room.
@@ -23,15 +29,22 @@ export type DeckNote = {
   votes?: number;
 };
 
+export type Chapter = "found" | "means" | "do";
+
 export type Slide =
-  | { kind: "title"; title: string; date: string }
+  | { kind: "cover"; title: string; date: string; tagline: string }
   | {
-      kind: "overview";
+      kind: "summary";
+      headline: string;
       summary: string;
-      found: string[];
-      recommend: string[];
-      agreed: string[];
-      open: string[];
+      cards: { index: number; icon: Icon; title: string; text: string }[];
+      soWhat: string;
+    }
+  | { kind: "section"; number: number; chapter: Chapter; facts: Facts }
+  | {
+      kind: "themeMap";
+      notes: number;
+      themes: { id: string; title: string; icon: Icon; notes: number }[];
     }
   | {
       kind: "theme";
@@ -39,19 +52,25 @@ export type Slide =
       themeId: string;
       number: number;
       title: string;
+      /** The theme's sharp line from the story; empty when it has none yet. */
+      headline: string;
+      icon: Icon;
       summary: string;
       /** Each point with its place among the theme's points in the outline. */
       points: { index: number; text: string }[];
       notes: DeckNote[];
       moreNotes: number;
+      soWhat: string;
       continued: boolean;
     }
+  | { kind: "quote"; note: DeckNote }
   | {
       kind: "list";
       heading: "patterns" | "recommendations" | "open";
       items: { id: string; text: string }[];
       continued: boolean;
     }
+  | { kind: "shifts"; rows: { index: number; from: string; to: string }[] }
   | {
       kind: "actions";
       rows: { id: string; what: string; who: string; when: string }[];
@@ -66,15 +85,21 @@ export type Slide =
       diagram: Diagram;
       width: number;
       height: number;
-    };
+    }
+  | { kind: "closing"; title: string; date: string; line: string };
 
-export const POINTS_PER_SLIDE = 7;
-export const NOTES_ON_THEME = 12;
-export const ITEMS_PER_SLIDE = 7;
-export const ACTIONS_PER_SLIDE = 8;
+export type Facts = { notes: number; themes: number; photos: number; items: number };
+
+export type Deck = { look: Look; slides: Slide[] };
+
+export const POINTS_PER_SLIDE = 6;
+export const NOTES_ON_THEME = 6;
+export const ITEMS_PER_SLIDE = 6;
+export const ACTIONS_PER_SLIDE = 6;
 export const NOTES_PER_TRANSCRIPT = 36;
 export const VOTED_ON_SLIDE = 8;
-const OVERVIEW_ITEMS = 5;
+/** Up to this many themes are drawn as a map around the workshop; more as a grid. */
+export const MAP_THEMES = 8;
 
 function chunks<T>(items: T[], size: number): T[][] {
   const out: T[][] = [];
@@ -94,29 +119,39 @@ export function buildDeck(input: {
   /** The drawings chosen for the presentation, in photo order. */
   diagrams?: { photo: number; diagram: Diagram; width: number; height: number }[];
 }): Slide[] {
+  return makeDeck(input).slides;
+}
+
+export function makeDeck(input: Parameters<typeof buildDeck>[0]): Deck {
   const { outline } = input;
+  const story = storyOf(outline);
   const byId = new Map(input.notes.map((n) => [n.id, n]));
   const kept = filledItems(outline.recommendations.filter((r) => r.kept));
   const actions = outline.actions
     .map((a) => ({ id: a.id, what: a.what.trim(), who: a.who.trim(), when: a.when.trim() }))
     .filter((a) => a.what);
   const open = filledItems(outline.openPoints);
+  const patterns = filledItems(outline.patterns);
+  const shifts = story.shifts
+    .map((s, index) => ({ index, from: s.from.trim(), to: s.to.trim() }))
+    .filter((s) => s.from && s.to);
   const themes = outline.themes.filter((t) => t.title.trim());
+  const photos = new Set(input.notes.map((n) => n.photo)).size;
 
-  const slides: Slide[] = [{ kind: "title", title: input.title, date: input.date }];
+  const slides: Slide[] = [
+    { kind: "cover", title: input.title, date: input.date, tagline: story.tagline.trim() },
+    {
+      kind: "summary",
+      headline: story.headline.trim() || input.title,
+      summary: outline.summary.trim(),
+      cards: story.keyMessages
+        .map((m, index) => ({ index, icon: m.icon, title: m.title.trim(), text: m.text.trim() }))
+        .filter((m) => m.title),
+      soWhat: story.soWhat.trim(),
+    },
+  ];
 
-  slides.push({
-    kind: "overview",
-    summary: outline.summary.trim(),
-    found: themes.map((t) => t.title.trim()).slice(0, OVERVIEW_ITEMS),
-    recommend: kept.map((r) => r.text).slice(0, OVERVIEW_ITEMS),
-    agreed: actions.map((a) => a.what).slice(0, OVERVIEW_ITEMS),
-    open: open
-      .map((o) => o.text)
-      .slice(0, Math.max(0, OVERVIEW_ITEMS - Math.min(actions.length, OVERVIEW_ITEMS))),
-  });
-
-  // What the room voted for, most dots first, right after the overview: it is their priority.
+  // What the room voted for, most dots first, right after the message: it is their priority.
   const voted = input.notes
     .filter((n) => (n.votes ?? 0) > 0)
     .sort((a, b) => (b.votes ?? 0) - (a.votes ?? 0));
@@ -128,47 +163,97 @@ export function buildDeck(input: {
     });
   }
 
-  themes.forEach((theme, i) => {
-    const notes = theme.noteIds.map((id) => byId.get(id)).filter((n): n is DeckNote => !!n);
-    const points = theme.points
-      .map((text, index) => ({ index, text: text.trim() }))
-      .filter((p) => p.text);
-    const parts = chunks(points, POINTS_PER_SLIDE);
-    (parts.length ? parts : [[]]).forEach((points, part) =>
+  // The chapters, each opened by a breaker when the deck has more than one of them.
+  const means = patterns.length + shifts.length + kept.length;
+  const todo = actions.length + open.length;
+  const chapters = [themes.length > 0, means > 0, todo > 0].filter(Boolean).length;
+  let chapter = 0;
+  const breaker = (kind: Chapter, items: number) => {
+    if (chapters < 2) return;
+    chapter += 1;
+    slides.push({
+      kind: "section",
+      number: chapter,
+      chapter: kind,
+      facts: { notes: input.notes.length, themes: themes.length, photos, items },
+    });
+  };
+
+  if (themes.length > 0) {
+    breaker("found", themes.length);
+    if (themes.length >= 3) {
       slides.push({
-        kind: "theme",
-        themeId: theme.id,
-        number: i + 1,
-        title: theme.title.trim(),
-        summary: part === 0 ? theme.summary.trim() : "",
-        points,
-        notes: part === 0 ? notes.slice(0, NOTES_ON_THEME) : [],
-        moreNotes: part === 0 ? Math.max(0, notes.length - NOTES_ON_THEME) : 0,
-        continued: part > 0,
-      }),
+        kind: "themeMap",
+        notes: input.notes.length,
+        themes: themes.map((t, i) => ({
+          id: t.id,
+          title: t.title.trim(),
+          icon: themeTelling(story, t, i).icon,
+          notes: t.noteIds.length,
+        })),
+      });
+    }
+    themes.forEach((theme, i) => {
+      const told = themeTelling(story, theme, i);
+      const notes = theme.noteIds.map((id) => byId.get(id)).filter((n): n is DeckNote => !!n);
+      // The notes with the most dots first, so the wall's priority shows on the slide.
+      notes.sort((a, b) => (b.votes ?? 0) - (a.votes ?? 0));
+      const points = theme.points
+        .map((text, index) => ({ index, text: text.trim() }))
+        .filter((p) => p.text);
+      const parts = chunks(points, POINTS_PER_SLIDE);
+      (parts.length ? parts : [[]]).forEach((points, part) =>
+        slides.push({
+          kind: "theme",
+          themeId: theme.id,
+          number: i + 1,
+          title: theme.title.trim(),
+          headline: told.headline,
+          icon: told.icon,
+          summary: part === 0 ? theme.summary.trim() : "",
+          points,
+          notes: part === 0 ? notes.slice(0, NOTES_ON_THEME) : [],
+          moreNotes: part === 0 ? Math.max(0, notes.length - NOTES_ON_THEME) : 0,
+          soWhat: part === parts.length - 1 || parts.length === 0 ? told.soWhat : "",
+          continued: part > 0,
+        }),
+      );
+    });
+    const quoted = story.quoteNoteId ? byId.get(story.quoteNoteId) : undefined;
+    if (quoted) slides.push({ kind: "quote", note: quoted });
+    // The drawings come after the themes: they are the participants' own pictures of the work.
+    for (const d of input.diagrams ?? []) {
+      slides.push({ kind: "diagram", title: d.diagram.title.trim(), ...d });
+    }
+  }
+
+  if (means > 0) {
+    breaker("means", means);
+    chunks(patterns, ITEMS_PER_SLIDE).forEach((items, j) =>
+      slides.push({ kind: "list", heading: "patterns", items, continued: j > 0 }),
     );
+    if (shifts.length > 0) slides.push({ kind: "shifts", rows: shifts });
+    chunks(kept, ITEMS_PER_SLIDE).forEach((items, j) =>
+      slides.push({ kind: "list", heading: "recommendations", items, continued: j > 0 }),
+    );
+  }
+
+  if (todo > 0) {
+    breaker("do", todo);
+    chunks(actions, ACTIONS_PER_SLIDE).forEach((rows, j) =>
+      slides.push({ kind: "actions", rows, continued: j > 0 }),
+    );
+    chunks(open, ITEMS_PER_SLIDE).forEach((items, j) =>
+      slides.push({ kind: "list", heading: "open", items, continued: j > 0 }),
+    );
+  }
+
+  slides.push({
+    kind: "closing",
+    title: input.title,
+    date: input.date,
+    line: story.closing.trim(),
   });
-
-  // The drawings come after the themes: they are the participants' own pictures of the work.
-  for (const d of input.diagrams ?? []) {
-    slides.push({ kind: "diagram", title: d.diagram.title.trim(), ...d });
-  }
-
-  const lists: [Extract<Slide, { kind: "list" }>["heading"], { id: string; text: string }[]][] = [
-    ["patterns", filledItems(outline.patterns)],
-    ["recommendations", kept],
-  ];
-  for (const [heading, items] of lists) {
-    chunks(items, ITEMS_PER_SLIDE).forEach((part, j) =>
-      slides.push({ kind: "list", heading, items: part, continued: j > 0 }),
-    );
-  }
-  chunks(actions, ACTIONS_PER_SLIDE).forEach((rows, j) =>
-    slides.push({ kind: "actions", rows, continued: j > 0 }),
-  );
-  chunks(open, ITEMS_PER_SLIDE).forEach((items, j) =>
-    slides.push({ kind: "list", heading: "open", items, continued: j > 0 }),
-  );
 
   if (input.includeTranscript && input.notes.length > 0) {
     chunks(input.notes, NOTES_PER_TRANSCRIPT).forEach((part, j) => {
@@ -181,5 +266,5 @@ export function buildDeck(input: {
       slides.push({ kind: "transcript", groups, continued: j > 0 });
     });
   }
-  return slides;
+  return { look: outline.look ?? DEFAULT_LOOK, slides };
 }

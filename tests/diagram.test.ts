@@ -130,7 +130,7 @@ describe("a stored drawing", () => {
       includeTranscript: false,
       diagrams: [{ photo: 3, diagram: FAKE_DIAGRAM, width: 1600, height: 1000 }],
     });
-    expect(slides.map((s) => s.kind)).toEqual(["title", "overview", "theme", "diagram"]);
+    expect(slides.map((s) => s.kind)).toEqual(["cover", "summary", "theme", "diagram", "closing"]);
     expect(slides[3]).toMatchObject({ photo: 3, title: "Salgsflowet" });
   });
 });

@@ -73,3 +73,9 @@ export function EditableOr({ value, at }: { value: string; at: DeckRef }) {
     />
   );
 }
+
+/** Shows its children when there is a value, or while editing so an empty one can be filled in. */
+export function WhenFilled({ value, children }: { value: string; children: React.ReactNode }) {
+  const { editing } = useContext(DeckEditContext);
+  return value || editing ? <>{children}</> : null;
+}

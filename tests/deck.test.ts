@@ -67,15 +67,37 @@ const deck = (includeTranscript = false) =>
   buildDeck({ title: "Workshop", date: "12. november 2026", outline, notes, includeTranscript });
 
 describe("the presentation", () => {
-  it("opens with the title and the workshop on one page", () => {
-    const [title, overview] = deck();
-    expect(title).toEqual({ kind: "title", title: "Workshop", date: "12. november 2026" });
-    expect(overview).toMatchObject({
-      kind: "overview",
-      summary: "Vi talte om onboarding.",
-      found: ["Onboarding", "Værktøjer"],
-      recommend: ["Beholdt"],
+  it("opens with a cover and the whole message on one slide, told by rule without a story", () => {
+    const [cover, summary] = deck();
+    expect(cover).toEqual({
+      kind: "cover",
+      title: "Workshop",
+      date: "12. november 2026",
+      tagline: "",
     });
+    expect(summary).toMatchObject({
+      kind: "summary",
+      headline: "Vi talte om onboarding.",
+      soWhat: "",
+    });
+    if (summary?.kind !== "summary") throw new Error("no summary");
+    expect(summary.cards.map((c) => [c.title, c.text])).toEqual([
+      ["Onboarding", "Dag 1 er tung."],
+      ["Værktøjer", "p0"],
+    ]);
+  });
+
+  it("tells it in chapters, each opened by a breaker, and ends with a closing slide", () => {
+    const kinds = deck().map((s) => s.kind);
+    const sections = deck().filter((s) => s.kind === "section");
+    expect(sections.map((s) => [s.number, s.chapter])).toEqual([
+      [1, "found"],
+      [2, "means"],
+      [3, "do"],
+    ]);
+    expect(kinds.indexOf("section")).toBeLessThan(kinds.indexOf("theme"));
+    expect(kinds.at(-1)).toBe("closing");
+    expect(kinds).not.toContain("themeMap"); // only from three themes
   });
 
   it("gives each named theme its notes, and splits a long one over two slides", () => {
@@ -89,8 +111,8 @@ describe("the presentation", () => {
     expect(themes[1]!.notes).toHaveLength(NOTES_ON_THEME);
     expect(themes[1]!.moreNotes).toBe(3);
     expect(themes[2]!.points).toEqual([
-      { index: 7, text: "p7" },
-      { index: 8, text: "p8" },
+      { index: POINTS_PER_SLIDE, text: `p${POINTS_PER_SLIDE}` },
+      { index: POINTS_PER_SLIDE + 1, text: `p${POINTS_PER_SLIDE + 1}` },
     ]);
     expect(themes[2]!.notes).toEqual([]);
   });
@@ -120,7 +142,7 @@ describe("the presentation", () => {
     ]);
   });
 
-  it("has a title and an overview even from an empty outline", () => {
+  it("has a cover, a message and a closing even from an empty outline", () => {
     const empty = buildDeck({
       title: "W",
       date: "d",
@@ -128,7 +150,7 @@ describe("the presentation", () => {
       notes: [],
       includeTranscript: true,
     });
-    expect(empty.map((s) => s.kind)).toEqual(["title", "overview"]);
+    expect(empty.map((s) => s.kind)).toEqual(["cover", "summary", "closing"]);
   });
 });
 

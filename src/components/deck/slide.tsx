@@ -1,303 +1,179 @@
 import type { Slide } from "@/domain/deck";
 import type { DeckWords } from "@/domain/deck-words";
-import { DiagramView } from "@/components/diagram/diagram-view";
-import { NOTE_EDGE, NOTE_FILL } from "@/components/workshop/colours";
-import { Editable, EditableOr } from "./editable";
-import { Bullets, Frame, Heading, OverviewColumn, PostIt, cq } from "./slide-parts";
+import type { Look } from "@/domain/story";
+import { NOTE_EDGE } from "@/components/workshop/colours";
+import { Editable } from "./editable";
+import { c } from "./look";
+import { Frame, Kicker, px } from "./slide-parts";
+import {
+  ListSlide,
+  ActionsSlide,
+  DiagramSlide,
+  ShiftsSlide,
+  TranscriptSlide,
+  VotesSlide,
+} from "./slide-lists";
+import { SummarySlide, ThemeMapSlide, ThemeSlide } from "./slide-story";
 
 /**
- * One slide, 16:9, neutral: no brand, white, ink text, a hairline and the
- * colours of the real post-its. Sizes are in container units, so a slide
- * looks the same small on the screen and full-page in the PDF.
+ * One slide, 16:9, in the deck's colour theme. The cover, the chapter
+ * breakers, the quote and the closing slide are here; the slides that tell
+ * the findings are in slide-story, the lists in slide-lists.
  */
 
-export function SlideView({
-  slide,
-  number,
-  total,
-  words,
-}: {
-  slide: Slide;
+export type SlideProps = {
   number: number;
   total: number;
   words: DeckWords;
-}) {
-  const frame = (children: React.ReactNode) => (
-    <Frame number={number} total={total} words={words}>
-      {children}
-    </Frame>
-  );
-  const sub = (continued: boolean) => (continued ? words.continued : undefined);
+  look: Look;
+  /** The workshop and its date, at the foot of every slide. */
+  footer: string;
+};
 
+export function SlideView({ slide, ...props }: SlideProps & { slide: Slide }) {
+  const { words } = props;
   switch (slide.kind) {
-    case "title":
-      return frame(
-        <div
-          className="flex flex-1 flex-col justify-end"
-          style={{ gap: cq(1.4), paddingBottom: cq(4) }}
-        >
-          <span className="block bg-bronze" style={{ width: cq(6), height: cq(0.35) }} />
-          <h1
-            className="leading-[1.05] font-semibold tracking-[-0.02em]"
-            style={{ fontSize: cq(5.4) }}
+    case "cover":
+      return (
+        <Frame {...props} tone="brand" motif="cover" footer={slide.date}>
+          <div
+            className="flex flex-1 flex-col justify-end"
+            style={{ paddingBottom: px(50), maxWidth: px(720) }}
           >
-            <Editable value={slide.title} at={{ kind: "workshopTitle" }} />
-          </h1>
-          <p className="text-slate" style={{ fontSize: cq(2) }}>
-            {slide.date}
-          </p>
-        </div>,
-      );
-    case "overview": {
-      const next = [...slide.agreed, ...slide.open];
-      return frame(
-        <>
-          <Heading>{words.overview}</Heading>
-          {slide.summary && (
-            <p
-              className="leading-relaxed"
-              style={{ fontSize: cq(1.9), marginBottom: cq(3), maxWidth: "88%" }}
+            <Kicker light>{words.coverKicker}</Kicker>
+            <h1
+              className="font-extrabold"
+              style={{
+                fontSize: px(62),
+                lineHeight: 1.05,
+                letterSpacing: "-.02em",
+                marginTop: px(18),
+              }}
             >
-              <Editable value={slide.summary} at={{ kind: "summary" }} multiline />
-            </p>
-          )}
-          <div
-            className="grid flex-1 content-start border-t border-hairline"
-            style={{
-              gap: cq(3.5),
-              paddingTop: cq(2.4),
-              // Only the columns that have something in them, so none stands empty.
-              gridTemplateColumns: `repeat(${[slide.found, slide.recommend, next].filter((c) => c.length > 0).length || 1}, minmax(0, 1fr))`,
-            }}
-          >
-            <OverviewColumn title={words.found} items={slide.found} />
-            <OverviewColumn title={words.recommend} items={slide.recommend} />
-            <OverviewColumn
-              title={words.nextSteps}
-              items={next}
-              mark={(i) => (i < slide.agreed.length ? "✓" : "?")}
-            />
-          </div>
-        </>,
-      );
-    }
-    case "theme": {
-      const columns = slide.notes.length > 8 ? 4 : 3;
-      return frame(
-        <>
-          <Heading sub={sub(slide.continued)}>
-            <span className="text-slate tabular">{slide.number} </span>
-            <Editable value={slide.title} at={{ kind: "themeTitle", themeId: slide.themeId }} />
-          </Heading>
-          <div
-            className="grid flex-1 grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]"
-            style={{ gap: cq(4) }}
-          >
-            <div className="flex min-w-0 flex-col" style={{ gap: cq(2) }}>
-              {slide.summary && (
-                <p className="leading-relaxed text-slate" style={{ fontSize: cq(1.7) }}>
-                  <Editable
-                    value={slide.summary}
-                    at={{ kind: "themeSummary", themeId: slide.themeId }}
-                    multiline
-                  />
-                </p>
-              )}
-              <Bullets
-                items={slide.points.map((p) => (
-                  <Editable
-                    key={p.index}
-                    value={p.text}
-                    at={{ kind: "point", themeId: slide.themeId, index: p.index }}
-                  />
-                ))}
-              />
-            </div>
-            {slide.notes.length > 0 && (
-              <div className="flex min-w-0 flex-col" style={{ gap: cq(1) }}>
-                <ul
-                  className="grid content-start"
-                  style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`, gap: cq(1) }}
-                >
-                  {slide.notes.map((n) => (
-                    <PostIt key={n.id} note={n} size={columns === 4 ? 1.05 : 1.25} />
-                  ))}
-                </ul>
-                {slide.moreNotes > 0 && (
-                  <p className="text-slate" style={{ fontSize: cq(1.2) }}>
-                    {words.more(slide.moreNotes)}
-                  </p>
-                )}
-              </div>
-            )}
-          </div>
-        </>,
-      );
-    }
-    case "diagram":
-      return frame(
-        <>
-          <Heading>{slide.title || words.drawing(slide.photo)}</Heading>
-          <div className="flex min-h-0 flex-1 items-center justify-center">
-            <DiagramView
-              diagram={slide.diagram}
-              width={slide.width}
-              height={slide.height}
-              className="h-full max-h-full w-full"
-            />
-          </div>
-        </>,
-      );
-    case "list":
-      return frame(
-        <>
-          <Heading sub={sub(slide.continued)}>
-            {slide.heading === "patterns"
-              ? words.patterns
-              : slide.heading === "recommendations"
-                ? words.recommendations
-                : words.open}
-          </Heading>
-          <Bullets
-            size={2.05}
-            items={slide.items.map((item) => (
-              <Editable
-                key={item.id}
-                value={item.text}
-                at={{
-                  kind: "item",
-                  list:
-                    slide.heading === "open"
-                      ? "openPoints"
-                      : slide.heading === "patterns"
-                        ? "patterns"
-                        : "recommendations",
-                  id: item.id,
-                }}
-              />
-            ))}
-          />
-        </>,
-      );
-    case "actions":
-      return frame(
-        <>
-          <Heading sub={sub(slide.continued)}>{words.agreed}</Heading>
-          <table className="w-full table-fixed border-collapse" style={{ fontSize: cq(1.7) }}>
-            <thead>
-              <tr className="text-left text-slate" style={{ fontSize: cq(1.2) }}>
-                <th
-                  className="font-semibold tracking-[0.08em] uppercase"
-                  style={{ width: "58%", paddingBottom: cq(1) }}
-                >
-                  {words.what}
-                </th>
-                <th
-                  className="font-semibold tracking-[0.08em] uppercase"
-                  style={{ paddingBottom: cq(1) }}
-                >
-                  {words.who}
-                </th>
-                <th
-                  className="font-semibold tracking-[0.08em] uppercase"
-                  style={{ paddingBottom: cq(1) }}
-                >
-                  {words.when}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {slide.rows.map((r) => (
-                <tr key={r.id} className="border-t border-hairline align-top">
-                  <td style={{ padding: `${cq(1)} ${cq(2)} ${cq(1)} 0` }}>
-                    <Editable value={r.what} at={{ kind: "action", id: r.id, field: "what" }} />
-                  </td>
-                  <td className="text-slate" style={{ padding: `${cq(1)} ${cq(1)} ${cq(1)} 0` }}>
-                    <EditableOr value={r.who} at={{ kind: "action", id: r.id, field: "who" }} />
-                  </td>
-                  <td className="text-slate" style={{ padding: `${cq(1)} 0` }}>
-                    <EditableOr value={r.when} at={{ kind: "action", id: r.id, field: "when" }} />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </>,
-      );
-    case "votes": {
-      const most = Math.max(...slide.notes.map((n) => n.votes ?? 0), 1);
-      return frame(
-        <>
-          <Heading sub={words.votesTotal(slide.total)}>{words.votes}</Heading>
-          <ol className="flex flex-col" style={{ gap: cq(1.1) }}>
-            {slide.notes.map((n) => (
-              <li
-                key={n.id}
-                className="grid items-center"
+              <Editable value={slide.title} at={{ kind: "workshopTitle" }} />
+            </h1>
+            {slide.tagline && (
+              <p
                 style={{
-                  gridTemplateColumns: "minmax(0, 1fr) 38% 3.5em",
-                  gap: cq(1.6),
-                  fontSize: cq(1.6),
+                  fontSize: px(22),
+                  lineHeight: 1.4,
+                  marginTop: px(20),
+                  color: "rgba(255,255,255,.8)",
                 }}
               >
-                <span className="truncate">{n.text}</span>
-                <span className="block" style={{ height: cq(1.1), background: "#EFEAE4" }}>
-                  <span
-                    className="block h-full"
-                    style={{
-                      width: `${((n.votes ?? 0) / most) * 100}%`,
-                      background:
-                        n.colour === "none" || n.colour === "white"
-                          ? "#A88E6E"
-                          : NOTE_EDGE[n.colour],
-                    }}
-                  />
-                </span>
-                <span className="text-right font-semibold tabular">{n.votes}</span>
-              </li>
-            ))}
-          </ol>
-        </>,
+                <Editable value={slide.tagline} at={{ kind: "story", field: "tagline" }} />
+              </p>
+            )}
+          </div>
+        </Frame>
+      );
+    case "section":
+      return (
+        <Frame {...props} tone="deep" motif="section">
+          <div className="flex flex-1 flex-col justify-center">
+            <p
+              className="font-extrabold"
+              style={{ fontSize: px(120), lineHeight: 1, color: c("accent") }}
+            >
+              {String(slide.number).padStart(2, "0")}
+            </p>
+            <h1
+              className="font-extrabold"
+              style={{ fontSize: px(60), lineHeight: 1.05, marginTop: px(14) }}
+            >
+              {words.chapters[slide.chapter]}
+            </h1>
+            <p style={{ fontSize: px(20), marginTop: px(16), color: "rgba(255,255,255,.7)" }}>
+              {words.facts(slide.facts, slide.chapter)}
+            </p>
+          </div>
+        </Frame>
+      );
+    case "quote": {
+      const n = slide.note;
+      return (
+        <Frame {...props} motif="quote">
+          <div className="flex flex-1 flex-col justify-center" style={{ maxWidth: px(1000) }}>
+            <Kicker>{words.quoteKicker}</Kicker>
+            <span
+              aria-hidden
+              className="font-extrabold"
+              style={{
+                fontSize: px(150),
+                lineHeight: 0.8,
+                height: px(80),
+                color: c("brand"),
+                marginTop: px(24),
+              }}
+            >
+              “
+            </span>
+            <blockquote
+              className="font-bold"
+              style={{ fontSize: px(46), lineHeight: 1.2, letterSpacing: "-.01em" }}
+            >
+              {n.text}
+            </blockquote>
+            <p
+              className="flex items-center"
+              style={{ gap: px(10), marginTop: px(28), fontSize: px(17), color: c("muted") }}
+            >
+              <span
+                style={{
+                  width: px(16),
+                  height: px(16),
+                  background: n.colour === "none" ? "transparent" : NOTE_EDGE[n.colour],
+                  border: `1px solid ${NOTE_EDGE[n.colour]}`,
+                }}
+              />
+              {words.photo(n.photo)}
+              {(n.votes ?? 0) > 0 && ` · ${words.votesTotal(n.votes ?? 0)}`}
+            </p>
+          </div>
+        </Frame>
       );
     }
-    case "transcript":
-      return frame(
-        <>
-          <Heading sub={sub(slide.continued)}>{words.transcript}</Heading>
-          <div style={{ columnCount: 3, columnGap: cq(3), fontSize: cq(1.15) }}>
-            {slide.groups.map((g, i) => (
-              <div key={i} style={{ marginBottom: cq(1.2) }}>
-                <p
-                  className="break-after-avoid font-semibold text-slate"
-                  style={{ marginBottom: cq(0.4) }}
-                >
-                  {words.photo(g.photo)}
-                </p>
-                <ul>
-                  {g.notes.map((n) => (
-                    <li
-                      key={n.id}
-                      className="flex break-inside-avoid leading-snug"
-                      style={{ gap: cq(0.6), marginBottom: cq(0.35) }}
-                    >
-                      <span
-                        className="shrink-0"
-                        style={{
-                          width: cq(0.9),
-                          height: cq(0.9),
-                          marginTop: cq(0.25),
-                          background: n.colour === "none" ? "transparent" : NOTE_FILL[n.colour],
-                          border: `1px solid ${NOTE_EDGE[n.colour]}`,
-                        }}
-                      />
-                      <span>{n.text}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+    case "closing":
+      return (
+        <Frame {...props} tone="brand" motif="closing" footer={slide.date}>
+          <div className="flex flex-1 flex-col items-end justify-center text-right">
+            <h1
+              className="font-extrabold"
+              style={{
+                fontSize: px(58),
+                lineHeight: 1.08,
+                maxWidth: px(760),
+                letterSpacing: "-.02em",
+              }}
+            >
+              <Editable
+                value={slide.line || words.closing}
+                at={{ kind: "story", field: "closing" }}
+              />
+            </h1>
+            <p style={{ fontSize: px(20), marginTop: px(18), color: "rgba(255,255,255,.75)" }}>
+              {slide.title}
+            </p>
           </div>
-        </>,
+        </Frame>
       );
+    case "summary":
+      return <SummarySlide slide={slide} {...props} />;
+    case "themeMap":
+      return <ThemeMapSlide slide={slide} {...props} />;
+    case "theme":
+      return <ThemeSlide slide={slide} {...props} />;
+    case "list":
+      return <ListSlide slide={slide} {...props} />;
+    case "shifts":
+      return <ShiftsSlide slide={slide} {...props} />;
+    case "actions":
+      return <ActionsSlide slide={slide} {...props} />;
+    case "votes":
+      return <VotesSlide slide={slide} {...props} />;
+    case "diagram":
+      return <DiagramSlide slide={slide} {...props} />;
+    case "transcript":
+      return <TranscriptSlide slide={slide} {...props} />;
   }
 }

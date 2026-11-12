@@ -599,7 +599,8 @@
       "notConfigured": "Distil er ikke sat op til at lave dispositioner på denne installation endnu.",
       "provider": "Distil svarede ikke. Prøv igen om lidt.",
       "unreadable": "Distils svar kunne ikke bruges. Prøv igen.",
-      "expired": "Linket fra computeren er udløbet. Scan en ny QR-kode under »Tilføj fra telefon«."
+      "expired": "Linket fra computeren er udløbet. Scan en ny QR-kode under »Tilføj fra telefon«.",
+      "noOutline": "Lav dispositionen først. Historien skrives ud fra den."
     },
     "and": "og"
   },
@@ -624,7 +625,24 @@
       "conflict": "Dispositionen er ændret et andet sted. Rettelsen er ikke gemt; siden er hentet igen.",
       "failed": "Det blev ikke gemt. Prøv igen."
     },
-    "savePptx": "Hent som PowerPoint"
+    "savePptx": "Hent som PowerPoint",
+    "story": {
+      "untoldTitle": "Lad Distil skrive historien",
+      "untoldBody": "Distil skriver en skarp overskrift til hver slide, tre hovedbudskaber, et »Så hvad?«, fra–til og vælger ikoner og et citat fra væggen. Det sker ud fra dispositionen, og du kan rette hvert ord bagefter. Tæller som én disposition i dag.",
+      "toldTitle": "Historien er skrevet af Distil",
+      "toldBody": "Overskrifterne og budskaberne er Distils forslag ud fra dispositionen. Ret dem direkte på slides. Ændrer du dispositionen med Distil, skal historien skrives igen.",
+      "tell": "Skriv historien",
+      "again": "Skriv historien igen",
+      "working": "Distil skriver historien. Det tager typisk 10–30 sekunder …",
+      "look": "Farvetema",
+      "looks": {
+        "kobolt": "Kobolt",
+        "aubergine": "Aubergine og lime",
+        "petrol": "Petrol og sol",
+        "skov": "Skov og rav",
+        "sand": "Sand og blæk"
+      }
+    }
   },
   "diagram": {
     "title": "Tegningen, genskabt",

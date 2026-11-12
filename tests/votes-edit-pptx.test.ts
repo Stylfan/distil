@@ -52,7 +52,7 @@ describe("dot votes", () => {
       notes,
       includeTranscript: false,
     });
-    expect(slides.map((s) => s.kind)).toEqual(["title", "overview", "votes"]);
+    expect(slides.map((s) => s.kind)).toEqual(["cover", "summary", "votes", "closing"]);
     const votes = slides[2] as Extract<(typeof slides)[number], { kind: "votes" }>;
     expect(votes.notes).toHaveLength(VOTED_ON_SLIDE);
     expect(votes.notes.map((n) => n.votes)).toEqual([2, 2, 2, 2, 1, 1, 1, 1]);

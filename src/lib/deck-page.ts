@@ -1,8 +1,9 @@
 import { withUser } from "@/db/client";
 import type { NoteColour, Workshop } from "@/db/schema";
-import { buildDeck, type Slide } from "@/domain/deck";
+import { makeDeck, type Slide } from "@/domain/deck";
 import { detectLanguage, type DeckLanguage } from "@/domain/deck-words";
 import type { Outline } from "@/domain/outline";
+import { DEFAULT_LOOK, type Look } from "@/domain/story";
 import { formatDay } from "@/lib/dates";
 import { getOutline, notesOfWorkshop } from "@/services/outlines";
 import { listDiagrams } from "@/services/diagrams";
@@ -19,6 +20,9 @@ export type DeckPage = {
   slides: Slide[] | null;
   language: DeckLanguage;
   includeTranscript: boolean;
+  look: Look;
+  /** Whether Distil has told the story, or the deck is made from the outline by rule. */
+  told: boolean;
   /** The outline the slides were built from, for editing them where they stand. */
   outline: { content: Outline; version: number } | null;
 };
@@ -36,9 +40,17 @@ export async function loadDeck(userId: string, workshopId: string): Promise<Deck
     const sizes = new Map(full?.photos.map((ph) => [ph.seq, ph]) ?? []);
     const language = detectLanguage(notes.map((n) => n.text));
     if (!outline) {
-      return { workshop, slides: null, language, includeTranscript: false, outline: null };
+      return {
+        workshop,
+        slides: null,
+        language,
+        includeTranscript: false,
+        look: DEFAULT_LOOK,
+        told: false,
+        outline: null,
+      };
     }
-    const slides = buildDeck({
+    const deck = makeDeck({
       title: workshop.name,
       date: formatDay(workshop.heldOn, language),
       outline: outline.content,
@@ -61,9 +73,11 @@ export async function loadDeck(userId: string, workshopId: string): Promise<Deck
     });
     return {
       workshop,
-      slides,
+      slides: deck.slides,
       language,
       includeTranscript: outline.includeTranscript,
+      look: deck.look,
+      told: !!outline.content.story,
       outline: { content: outline.content, version: outline.version },
     };
   });

@@ -1,364 +1,221 @@
 import PptxGenJS from "pptxgenjs";
-import type { DeckNote, Slide } from "@/domain/deck";
+import type { Slide } from "@/domain/deck";
 import type { DeckWords } from "@/domain/deck-words";
+import { DEFAULT_LOOK, type Look } from "@/domain/story";
 import { addDiagram } from "./diagram";
-import { COLOURS, FONT, H, MARGIN, NOTE_EDGE, NOTE_FILL, W } from "./style";
+import { CONTENT_W, coloursOf, kicker, motif, title, type Ctx } from "./parts";
+import {
+  listSlide,
+  actionsSlide,
+  shiftsSlide,
+  summarySlide,
+  themeMapSlide,
+  themeSlide,
+  votesSlide,
+} from "./slides";
+import { FONT, H, MARGIN, W } from "./style";
 
 /**
  * The same slides as the HTML deck, as a PowerPoint file to keep working
- * in: real text boxes, tables and shapes, not pictures of slides, so every
- * word can be changed in PowerPoint. Built from the same slide list
- * (src/domain/deck.ts), so the two never disagree. No images go in: the
- * photos are gone by then, and the drawings are redrawn as shapes.
+ * in: real text boxes and shapes in the deck's colour theme, not pictures
+ * of slides, so every word can be changed in PowerPoint. Built from the
+ * same slide list (src/domain/deck.ts), so the two never disagree. No
+ * images go in: the photos are gone by then, and the drawings are
+ * redrawn as shapes.
  */
 
-const CONTENT_W = W - MARGIN * 2;
-
-function heading(slide: PptxGenJS.Slide, text: string, sub?: string) {
-  slide.addText(
-    [
-      { text, options: { bold: true, fontSize: 28, color: COLOURS.ink } },
-      ...(sub ? [{ text: `  ·  ${sub}`, options: { fontSize: 16, color: COLOURS.slate } }] : []),
-    ],
-    { x: MARGIN, y: 0.45, w: CONTENT_W, h: 0.8, fontFace: FONT, valign: "middle", margin: 0 },
-  );
-}
-
-function pageNumber(slide: PptxGenJS.Slide, words: DeckWords, n: number, total: number) {
+function footer(
+  { slide, k }: Ctx,
+  words: DeckWords,
+  text: string,
+  n: number,
+  total: number,
+  dark: boolean,
+) {
+  const color = dark ? "C9D2DE" : k.muted;
+  slide.addText(text, {
+    x: MARGIN,
+    y: H - 0.45,
+    w: CONTENT_W - 1.4,
+    h: 0.3,
+    fontFace: FONT,
+    fontSize: 9,
+    color,
+    margin: 0,
+  });
   slide.addText(words.page(n, total), {
-    x: W - 1.6,
-    y: H - 0.5,
+    x: W - MARGIN - 1.2,
+    y: H - 0.45,
     w: 1.2,
     h: 0.3,
     align: "right",
     fontFace: FONT,
     fontSize: 9,
-    color: COLOURS.slate,
+    color,
+    margin: 0,
   });
 }
 
-function bullets(items: string[], size = 18) {
-  return items.map((text) => ({
-    text,
-    options: { bullet: { indent: 18 }, fontSize: size, color: COLOURS.ink, paraSpaceAfter: 8 },
-  }));
-}
-
-function postIt(
-  slide: PptxGenJS.Slide,
-  pptx: PptxGenJS,
-  note: DeckNote,
-  x: number,
+function big(
+  ctx: Ctx,
+  text: string,
   y: number,
   size: number,
+  color: string,
+  align: "left" | "right" = "left",
 ) {
-  slide.addText(note.text, {
-    x,
+  ctx.slide.addText(text, {
+    x: MARGIN,
     y,
-    w: size,
-    h: size,
-    shape: pptx.ShapeType.rect,
-    fill: { color: NOTE_FILL[note.colour] },
-    line: { color: NOTE_EDGE[note.colour], width: 0.75 },
+    w: align === "right" ? CONTENT_W : CONTENT_W * 0.62,
+    h: size / 30,
     fontFace: FONT,
-    fontSize: 10,
-    color: COLOURS.ink,
-    align: "center",
-    valign: "middle",
+    fontSize: size,
+    bold: true,
+    color,
+    align,
+    valign: "top",
+    margin: 0,
     fit: "shrink",
   });
-  if ((note.votes ?? 0) > 0) {
-    const votes = note.votes ?? 0;
-    slide.addText(votes <= 5 ? "●".repeat(votes) : `● ${votes}`, {
-      x: x + size * 0.35,
-      y,
-      w: size * 0.62,
-      h: 0.25,
-      align: "right",
-      fontFace: FONT,
-      fontSize: 8,
-      color: COLOURS.bronzeDeep,
-    });
-  }
 }
 
 export async function buildPptx(input: {
   slides: Slide[];
   words: DeckWords;
   title: string;
+  footer?: string;
+  look?: Look;
 }): Promise<Buffer> {
   const pptx = new PptxGenJS();
   pptx.layout = "LAYOUT_WIDE";
   pptx.title = input.title;
   pptx.company = "";
   const { words, slides } = input;
-  const sub = (continued: boolean) => (continued ? words.continued : undefined);
+  const k = coloursOf(input.look ?? DEFAULT_LOOK);
 
   slides.forEach((s, i) => {
     const slide = pptx.addSlide();
-    slide.background = { color: COLOURS.white };
+    const ctx: Ctx = { pptx, slide, k };
+    let dark = false;
+    slide.background = { color: k.paper };
     switch (s.kind) {
-      case "title":
-        slide.addShape(pptx.ShapeType.rect, {
+      case "cover":
+        dark = true;
+        slide.background = { color: k.brand };
+        motif(ctx, "right", k.deep);
+        kicker({ ...ctx }, words.coverKicker, true);
+        big(ctx, s.title, 3.4, 44, "FFFFFF");
+        if (s.tagline) {
+          slide.addText(s.tagline, {
+            x: MARGIN,
+            y: 5.0,
+            w: CONTENT_W * 0.6,
+            h: 0.8,
+            fontFace: FONT,
+            fontSize: 18,
+            color: "E8ECF5",
+            margin: 0,
+          });
+        }
+        break;
+      case "section":
+        dark = true;
+        slide.background = { color: k.deep };
+        motif(ctx, "right", k.brand);
+        big(ctx, String(s.number).padStart(2, "0"), 1.9, 80, k.accent);
+        big(ctx, words.chapters[s.chapter], 3.5, 44, "FFFFFF");
+        slide.addText(words.facts(s.facts, s.chapter), {
           x: MARGIN,
-          y: 4.2,
-          w: 0.8,
-          h: 0.05,
-          fill: { color: COLOURS.bronze },
-          line: { color: COLOURS.bronze },
+          y: 4.6,
+          w: CONTENT_W * 0.6,
+          h: 0.5,
+          fontFace: FONT,
+          fontSize: 16,
+          color: "C9D2DE",
+          margin: 0,
         });
+        break;
+      case "quote":
+        kicker(ctx, words.quoteKicker);
+        big(ctx, "“", 1.0, 96, k.brand);
+        slide.addText(s.note.text, {
+          x: MARGIN,
+          y: 2.3,
+          w: CONTENT_W * 0.85,
+          h: 2.8,
+          fontFace: FONT,
+          fontSize: 32,
+          bold: true,
+          color: k.ink,
+          valign: "top",
+          margin: 0,
+          fit: "shrink",
+        });
+        slide.addText(words.photo(s.note.photo), {
+          x: MARGIN,
+          y: 5.3,
+          w: 4,
+          h: 0.4,
+          fontFace: FONT,
+          fontSize: 13,
+          color: k.muted,
+          margin: 0,
+        });
+        break;
+      case "closing":
+        dark = true;
+        slide.background = { color: k.brand };
+        motif(ctx, "left", k.deep);
+        big(ctx, s.line || words.closing, 2.8, 40, "FFFFFF", "right");
         slide.addText(s.title, {
           x: MARGIN,
           y: 4.4,
           w: CONTENT_W,
-          h: 1.2,
-          fontFace: FONT,
-          fontSize: 44,
-          bold: true,
-          color: COLOURS.ink,
-          margin: 0,
-        });
-        slide.addText(s.date, {
-          x: MARGIN,
-          y: 5.6,
-          w: CONTENT_W,
           h: 0.5,
           fontFace: FONT,
-          fontSize: 18,
-          color: COLOURS.slate,
+          fontSize: 16,
+          color: "E8ECF5",
+          align: "right",
           margin: 0,
         });
         break;
-      case "overview": {
-        heading(slide, words.overview);
-        if (s.summary) {
-          slide.addText(s.summary, {
-            x: MARGIN,
-            y: 1.35,
-            w: CONTENT_W * 0.88,
-            h: 1.4,
-            fontFace: FONT,
-            fontSize: 16,
-            color: COLOURS.ink,
-            valign: "top",
-            margin: 0,
-            fit: "shrink",
-          });
-        }
-        const next = [...s.agreed.map((t) => `✓ ${t}`), ...s.open.map((t) => `? ${t}`)];
-        const columns = (
-          [
-            [words.found, s.found],
-            [words.recommend, s.recommend],
-            [words.nextSteps, next],
-          ] as [string, string[]][]
-        ).filter(([, items]) => items.length > 0);
-        const colW = CONTENT_W / Math.max(1, columns.length);
-        slide.addShape(pptx.ShapeType.line, {
-          x: MARGIN,
-          y: 3,
-          w: CONTENT_W,
-          h: 0,
-          line: { color: COLOURS.hairline, width: 0.75 },
-        });
-        columns.forEach(([title, items], c) => {
-          slide.addText(
-            [
-              {
-                text: title.toUpperCase(),
-                options: {
-                  fontSize: 10,
-                  bold: true,
-                  color: COLOURS.slate,
-                  paraSpaceAfter: 10,
-                  charSpacing: 1,
-                },
-              },
-              ...items.map((t) => ({
-                text: t,
-                options: { fontSize: 14, color: COLOURS.ink, paraSpaceAfter: 6, breakLine: true },
-              })),
-            ],
-            {
-              x: MARGIN + c * colW,
-              y: 3.2,
-              w: colW - 0.3,
-              h: 3.4,
-              fontFace: FONT,
-              valign: "top",
-              margin: 0,
-            },
-          );
-        });
+      case "summary":
+        summarySlide(ctx, s, words);
         break;
-      }
-      case "votes": {
-        heading(slide, words.votes, words.votesTotal(s.total));
-        const most = Math.max(...s.notes.map((n) => n.votes ?? 0), 1);
-        s.notes.forEach((n, r) => {
-          const y = 1.5 + r * 0.62;
-          slide.addText(n.text, {
-            x: MARGIN,
-            y,
-            w: 6.4,
-            h: 0.45,
-            fontFace: FONT,
-            fontSize: 14,
-            color: COLOURS.ink,
-            valign: "middle",
-            fit: "shrink",
-            margin: 0,
-          });
-          slide.addShape(pptx.ShapeType.rect, {
-            x: 7.4,
-            y: y + 0.12,
-            w: 4.4,
-            h: 0.22,
-            fill: { color: COLOURS.sand },
-            line: { color: COLOURS.sand },
-          });
-          slide.addShape(pptx.ShapeType.rect, {
-            x: 7.4,
-            y: y + 0.12,
-            w: Math.max(0.05, (4.4 * (n.votes ?? 0)) / most),
-            h: 0.22,
-            fill: { color: NOTE_EDGE[n.colour] },
-            line: { color: NOTE_EDGE[n.colour] },
-          });
-          slide.addText(String(n.votes ?? 0), {
-            x: 11.9,
-            y,
-            w: 0.7,
-            h: 0.45,
-            align: "right",
-            fontFace: FONT,
-            fontSize: 14,
-            bold: true,
-            color: COLOURS.ink,
-            margin: 0,
-          });
-        });
+      case "themeMap":
+        themeMapSlide(ctx, s, words);
         break;
-      }
-      case "theme": {
-        heading(slide, `${s.number}  ${s.title}`, sub(s.continued));
-        const left = s.notes.length > 0 ? 6.6 : CONTENT_W;
-        const body = [
-          ...(s.summary
-            ? [
-                {
-                  text: s.summary,
-                  options: { fontSize: 15, color: COLOURS.slate, paraSpaceAfter: 14 },
-                },
-              ]
-            : []),
-          ...bullets(s.points.map((p) => p.text)),
-        ];
-        if (body.length > 0) {
-          slide.addText(body, {
-            x: MARGIN,
-            y: 1.4,
-            w: left,
-            h: 5.4,
-            fontFace: FONT,
-            valign: "top",
-            margin: 0,
-            fit: "shrink",
-          });
-        }
-        const columns = s.notes.length > 8 ? 4 : 3;
-        const size = Math.min(
-          1.45,
-          (W - MARGIN - (MARGIN + left + 0.4) - (columns - 1) * 0.15) / columns,
-        );
-        s.notes.forEach((n, k) => {
-          const x = MARGIN + left + 0.4 + (k % columns) * (size + 0.15);
-          const y = 1.45 + Math.floor(k / columns) * (size + 0.15);
-          postIt(slide, pptx, n, x, y, size);
-        });
-        if (s.moreNotes > 0) {
-          slide.addText(words.more(s.moreNotes), {
-            x: MARGIN + left + 0.4,
-            y: H - 0.9,
-            w: 4,
-            h: 0.3,
-            fontFace: FONT,
-            fontSize: 10,
-            color: COLOURS.slate,
-            margin: 0,
-          });
-        }
+      case "theme":
+        themeSlide(ctx, s, words);
         break;
-      }
-      case "diagram":
-        heading(slide, s.title || words.drawing(s.photo));
-        addDiagram(slide, pptx, s.diagram, s, { x: MARGIN, y: 1.4, w: CONTENT_W, h: H - 2.1 });
+      case "votes":
+        votesSlide(ctx, s, words);
         break;
       case "list":
-        heading(
-          slide,
-          s.heading === "patterns"
-            ? words.patterns
-            : s.heading === "recommendations"
-              ? words.recommendations
-              : words.open,
-          sub(s.continued),
-        );
-        slide.addText(
-          bullets(
-            s.items.map((item) => item.text),
-            20,
-          ),
-          {
-            x: MARGIN,
-            y: 1.4,
-            w: CONTENT_W,
-            h: 5.4,
-            fontFace: FONT,
-            valign: "top",
-            margin: 0,
-            fit: "shrink",
-          },
-        );
+        listSlide(ctx, s, words);
         break;
-      case "actions": {
-        heading(slide, words.agreed, sub(s.continued));
-        const head = { bold: true, fontSize: 10, color: COLOURS.slate, fontFace: FONT };
-        const cell = { fontSize: 14, color: COLOURS.ink, fontFace: FONT };
-        slide.addTable(
-          [
-            [
-              { text: words.what.toUpperCase(), options: head },
-              { text: words.who.toUpperCase(), options: head },
-              { text: words.when.toUpperCase(), options: head },
-            ],
-            ...s.rows.map((r) => [
-              { text: r.what, options: cell },
-              { text: r.who || "–", options: { ...cell, color: COLOURS.slate } },
-              { text: r.when || "–", options: { ...cell, color: COLOURS.slate } },
-            ]),
-          ],
-          {
-            x: MARGIN,
-            y: 1.45,
-            w: CONTENT_W,
-            colW: [CONTENT_W * 0.58, CONTENT_W * 0.22, CONTENT_W * 0.2],
-            border: { type: "solid", pt: 0.75, color: COLOURS.hairline },
-            margin: 0.08,
-          },
-        );
+      case "shifts":
+        shiftsSlide(ctx, s, words);
         break;
-      }
+      case "actions":
+        actionsSlide(ctx, s, words);
+        break;
+      case "diagram":
+        kicker(ctx, words.photo(s.photo));
+        title(ctx, s.title || words.drawing(s.photo));
+        addDiagram(slide, pptx, s.diagram, s, { x: MARGIN, y: 1.8, w: CONTENT_W, h: H - 2.5 });
+        break;
       case "transcript": {
-        heading(slide, words.transcript, sub(s.continued));
+        title(ctx, words.transcript + (s.continued ? ` · ${words.continued}` : ""), 22);
         const runs = s.groups.flatMap((g) => [
           {
             text: words.photo(g.photo),
-            options: { bold: true, fontSize: 10, color: COLOURS.slate, breakLine: true },
+            options: { bold: true, fontSize: 10, color: k.muted, breakLine: true },
           },
           ...g.notes.map((n) => ({
             text: n.text,
-            options: { fontSize: 10, color: COLOURS.ink, bullet: true, breakLine: true },
+            options: { fontSize: 10, color: k.ink, bullet: true, breakLine: true },
           })),
         ]);
         const third = Math.ceil(runs.length / 3);
@@ -367,9 +224,9 @@ export async function buildPptx(input: {
           if (part.length === 0) return;
           slide.addText(part, {
             x: MARGIN + c * (CONTENT_W / 3),
-            y: 1.4,
+            y: 1.6,
             w: CONTENT_W / 3 - 0.25,
-            h: 5.5,
+            h: 5.3,
             fontFace: FONT,
             valign: "top",
             margin: 0,
@@ -379,7 +236,7 @@ export async function buildPptx(input: {
         break;
       }
     }
-    pageNumber(slide, words, i + 1, slides.length);
+    footer(ctx, words, input.footer ?? input.title, i + 1, slides.length, dark);
   });
 
   const data = await pptx.write({ outputType: "nodebuffer" });

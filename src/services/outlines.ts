@@ -3,6 +3,7 @@ import type { Db } from "@/db/client";
 import { notes, outlines, photos, type OutlineRow } from "@/db/schema";
 import { keepAnswers, outlineSchema, type Outline } from "@/domain/outline";
 import type { NoteForOutline } from "@/domain/outline-reading";
+import type { Look, Story } from "@/domain/story";
 import { Conflict, NotFound } from "./errors";
 import { requireWorkshop } from "./workshops";
 
@@ -65,7 +66,12 @@ export async function storeGenerated(
   now = Date.now(),
 ): Promise<void> {
   const current = await lockOutline(db, userId, workshopId);
-  const content = outlineSchema.parse(keepAnswers(outline, current?.content ?? null));
+  // The colour theme stays; the story was told for the outline before, so it goes.
+  const content = outlineSchema.parse({
+    ...keepAnswers(outline, current?.content ?? null),
+    story: null,
+    look: current?.content.look,
+  });
   if (!current) {
     await db.insert(outlines).values({ workshopId, content, generatedAt: now });
     return;
@@ -87,7 +93,13 @@ export async function saveOutline(
   const current = await lockOutline(db, userId, workshopId);
   if (!current) throw new NotFound();
   // The questions are answered on their own (answerQuestion), so an edit never undoes an answer.
-  const checked = outlineSchema.parse({ ...content, questions: current.content.questions });
+  // An editor that does not know the story or the colour theme leaves them as they were.
+  const checked = outlineSchema.parse({
+    ...content,
+    story: content.story === undefined ? current.content.story : content.story,
+    look: content.look ?? current.content.look,
+    questions: current.content.questions,
+  });
   const saved = await db
     .update(outlines)
     .set({ content: checked, version: version + 1 })
@@ -144,4 +156,37 @@ export async function setIncludeTranscript(
   const current = await lockOutline(db, userId, workshopId);
   if (!current) throw new NotFound();
   await db.update(outlines).set({ includeTranscript: include }).where(eq(outlines.id, current.id));
+}
+
+/** The story Distil told for the outline as it is now; a new version, so open editors reload. */
+export async function storeStory(
+  db: Db,
+  userId: string,
+  workshopId: string,
+  story: Story,
+): Promise<void> {
+  const current = await lockOutline(db, userId, workshopId);
+  if (!current) throw new NotFound();
+  await db
+    .update(outlines)
+    .set({
+      content: outlineSchema.parse({ ...current.content, story }),
+      version: current.version + 1,
+    })
+    .where(eq(outlines.id, current.id));
+}
+
+/** The colour theme of the presentation; a setting, so it leaves the version alone. */
+export async function setLook(
+  db: Db,
+  userId: string,
+  workshopId: string,
+  look: Look,
+): Promise<void> {
+  const current = await lockOutline(db, userId, workshopId);
+  if (!current) throw new NotFound();
+  await db
+    .update(outlines)
+    .set({ content: outlineSchema.parse({ ...current.content, look }) })
+    .where(eq(outlines.id, current.id));
 }

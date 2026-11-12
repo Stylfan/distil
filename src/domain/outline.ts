@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { LOOKS, storySchema } from "./story";
 
 /**
  * The outline of a workshop: what Distil makes of all its notes, and what
@@ -56,6 +57,10 @@ export const outlineSchema = z.object({
       }),
     )
     .max(10),
+  /** How the presentation tells it (domain/story); absent until Distil has written it. */
+  story: storySchema.nullable().optional(),
+  /** The colour theme of the presentation. */
+  look: z.enum(LOOKS).optional(),
 });
 
 export type Outline = z.infer<typeof outlineSchema>;

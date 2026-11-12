@@ -15,9 +15,12 @@ import { Button, buttonClass } from "@/components/ui/controls";
 export function DeckToolbar({
   workshopId,
   includeTranscript,
+  primary,
 }: {
   workshopId: string;
   includeTranscript: boolean;
+  /** Whether saving is the view's main action; before the story is told, telling it is. */
+  primary: boolean;
 }) {
   const t = useTranslations("deck");
   const router = useRouter();
@@ -54,7 +57,7 @@ export function DeckToolbar({
         <Download className="size-4" aria-hidden />
         {t("savePptx")}
       </a>
-      <Button variant="primary" onClick={() => window.print()}>
+      <Button variant={primary ? "primary" : "secondary"} onClick={() => window.print()}>
         <Printer className="size-4" aria-hidden />
         {t("savePdf")}
       </Button>

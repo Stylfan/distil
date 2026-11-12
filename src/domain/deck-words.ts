@@ -28,6 +28,27 @@ export type DeckWords = {
   more: (n: number) => string;
   notes: (n: number) => string;
   page: (n: number, of: number) => string;
+  coverKicker: string;
+  summaryKicker: string;
+  soWhat: string;
+  chapters: Record<"found" | "means" | "do", string>;
+  facts: (
+    f: { notes: number; themes: number; photos: number; items: number },
+    chapter: "found" | "means" | "do",
+  ) => string;
+  mapKicker: string;
+  mapHeadline: (themes: number, largest: string) => string;
+  theme: (n: number) => string;
+  fromWall: string;
+  quoteKicker: string;
+  shifts: string;
+  today: string;
+  ahead: string;
+  suggestion: string;
+  insight: (n: number) => string;
+  agreedLine: string;
+  openKicker: string;
+  closing: string;
 };
 
 export const DECK_WORDS: Record<DeckLanguage, DeckWords> = {
@@ -52,6 +73,29 @@ export const DECK_WORDS: Record<DeckLanguage, DeckWords> = {
     more: (n) => `+ ${n} flere`,
     notes: (n) => (n === 1 ? "1 seddel" : `${n} sedler`),
     page: (n, of) => `${n} / ${of}`,
+    coverKicker: "Opsamling fra workshoppen",
+    summaryKicker: "Sammenfatning",
+    soWhat: "Så hvad?",
+    chapters: { found: "Det fandt vi", means: "Det betyder det", do: "Det gør vi nu" },
+    facts: (f, c) =>
+      c === "found"
+        ? `${f.notes} sedler · ${f.themes} temaer · ${f.photos === 1 ? "1 billede" : `${f.photos} billeder`}`
+        : c === "means"
+          ? `${f.items} indsigter og forslag`
+          : `${f.items} ${f.items === 1 ? "punkt" : "punkter"} at handle på`,
+    mapKicker: "Temalandskab",
+    mapHeadline: (n, largest) => `${n} temaer bærer workshoppen – ${largest} fylder mest`,
+    theme: (n) => `Tema ${n}`,
+    fromWall: "Fra væggen",
+    quoteKicker: "Med deltagernes egne ord",
+    shifts: "Fra i dag til fremover",
+    today: "I dag",
+    ahead: "Fremover",
+    suggestion: "Distils forslag",
+    insight: (n) => `Indsigt ${n}`,
+    agreedLine: "Det blev besluttet i rummet",
+    openKicker: "Skal afklares",
+    closing: "Tak for en god workshop",
   },
   en: {
     overview: "The workshop on one page",
@@ -74,6 +118,29 @@ export const DECK_WORDS: Record<DeckLanguage, DeckWords> = {
     more: (n) => `+ ${n} more`,
     notes: (n) => (n === 1 ? "1 note" : `${n} notes`),
     page: (n, of) => `${n} / ${of}`,
+    coverKicker: "Workshop summary",
+    summaryKicker: "Executive summary",
+    soWhat: "So what?",
+    chapters: { found: "What we found", means: "What it means", do: "What we do now" },
+    facts: (f, c) =>
+      c === "found"
+        ? `${f.notes} notes · ${f.themes} themes · ${f.photos === 1 ? "1 photo" : `${f.photos} photos`}`
+        : c === "means"
+          ? `${f.items} insights and proposals`
+          : `${f.items} ${f.items === 1 ? "item" : "items"} to act on`,
+    mapKicker: "Theme landscape",
+    mapHeadline: (n, largest) => `${n} themes carry the workshop – ${largest} weighs most`,
+    theme: (n) => `Theme ${n}`,
+    fromWall: "From the wall",
+    quoteKicker: "In the participants’ own words",
+    shifts: "From today to tomorrow",
+    today: "Today",
+    ahead: "Going forward",
+    suggestion: "Distil’s suggestion",
+    insight: (n) => `Insight ${n}`,
+    agreedLine: "Decided in the room",
+    openKicker: "To be clarified",
+    closing: "Thank you for a good workshop",
   },
 };
 
