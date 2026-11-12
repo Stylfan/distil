@@ -1,0 +1,6 @@
+# Secrets scanning configuration. Findings that are not secrets are
+# allowlisted by value, each with a sentence on why it is harmless. If you
+# cannot write that sentence, rotate the value instead.
+
+[extend]
+useDefault = true

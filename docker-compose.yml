@@ -1,0 +1,69 @@
+# Distil on one server: Postgres, a one-off migration step and the app.
+# The one outside service is Mistral, which reads the photos (MISTRAL_API_KEY).
+# See docs/self-hosting.md.
+#
+#   cp .env.production.example .env.production   # fill in the three secrets
+#   docker compose --env-file .env.production up -d --build
+#
+# The app listens on 127.0.0.1:3001 (3000 is Prismatic's); put a reverse proxy with HTTPS in
+# front of it (Caddy, nginx, Coolify's Traefik).
+
+services:
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
+      POSTGRES_DB: distil
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d distil"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  migrate:
+    build:
+      context: .
+      target: migrator
+    # Runs once and stops; the app starts when it has. Said outright, because
+    # Coolify otherwise gives every service a restart policy and it never ends.
+    restart: "no"
+    environment:
+      MIGRATION_DATABASE_URL: postgres://postgres:${POSTGRES_PASSWORD}@db:5432/distil
+      DISTIL_APP_PASSWORD: ${DISTIL_APP_PASSWORD:?set DISTIL_APP_PASSWORD}
+    depends_on:
+      db:
+        condition: service_healthy
+
+  app:
+    build:
+      context: .
+      target: runner
+    restart: unless-stopped
+    environment:
+      APP_DATABASE_URL: postgres://distil_app:${DISTIL_APP_PASSWORD}@db:5432/distil
+      DISTIL_SECRET: ${DISTIL_SECRET:?set DISTIL_SECRET}
+      DISTIL_URL: ${DISTIL_URL:?set DISTIL_URL}
+      DISTIL_SIGNUP: ${DISTIL_SIGNUP:-}
+      DISTIL_OPERATOR_NAME: ${DISTIL_OPERATOR_NAME:-}
+      DISTIL_OPERATOR_EMAIL: ${DISTIL_OPERATOR_EMAIL:-}
+      DISTIL_OPERATOR_ADDRESS: ${DISTIL_OPERATOR_ADDRESS:-}
+      DISTIL_HOSTING: ${DISTIL_HOSTING:-}
+      DISTIL_DEMO: ${DISTIL_DEMO:-}
+      DISTIL_SOURCE_URL: ${DISTIL_SOURCE_URL:-}
+      MISTRAL_API_KEY: ${MISTRAL_API_KEY:-}
+      DISTIL_MISTRAL_MODEL: ${DISTIL_MISTRAL_MODEL:-}
+      DISTIL_MISTRAL_URL: ${DISTIL_MISTRAL_URL:-}
+      DISTIL_PHOTO_ALLOWANCE: ${DISTIL_PHOTO_ALLOWANCE:-}
+      DISTIL_DAILY_PHOTO_LIMIT: ${DISTIL_DAILY_PHOTO_LIMIT:-}
+    ports:
+      - "127.0.0.1:3001:3000"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+volumes:
+  pgdata:

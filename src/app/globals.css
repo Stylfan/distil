@@ -1,0 +1,81 @@
+@import "tailwindcss";
+
+/*
+ * Distil's visual identity: warm paper, white surfaces, ink and slate
+ * for text, a hairline for structure, bronze for the few things that should
+ * catch the eye. Colour carries meaning, never decoration: blue and ochre
+ * tell technical from business work, green, amber and red carry good, watch
+ * and bad, and the forecast's three tempi keep one colour each.
+ */
+@theme {
+  --font-sans: var(--font-inter), system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --color-paper: #f7f6f3;
+  --color-surface: #ffffff;
+  --color-sand: #efeae4;
+  --color-ink: #1f2d33;
+  --color-ink-soft: #2f3f44;
+  --color-slate: #5c6a6f;
+  --color-hairline: #dad6cf;
+  --color-hairline-soft: #e9e6e0;
+  --color-bronze: #a88e6e;
+  --color-bronze-deep: #7d6748;
+  --color-sidebar: #efede8;
+  --color-technical: #3b74ad;
+  --color-technical-soft: #e5eef8;
+  --color-business: #a8742f;
+  --color-business-soft: #f6ecdc;
+  /* Business goals green, features blue: the two kinds of card on the roadmap. */
+  --color-goal: #4f8a3c;
+  --color-goal-soft: #e6f0df;
+  --color-feature: #3b74ad;
+  --color-feature-soft: #e5eef8;
+  /* Work in progress: its own colour, apart from the two kinds of card. */
+  --color-progress: #7a5a9a;
+  --color-progress-soft: #efe9f5;
+  --color-success: #4f7a5a;
+  --color-warning: #b8862f;
+  --color-danger: #a8483f;
+  --color-success-soft: #e7f0e4;
+  --color-warning-soft: #f8eedb;
+  --color-danger-soft: #f6e3e0;
+
+  /* The three tempi of the forecast, the same everywhere they appear. */
+  --color-tempo-low: #c8524a;
+  --color-tempo-avg: #3b74ad;
+  --color-tempo-high: #4f8a3c;
+}
+
+@layer base {
+  html {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-feature-settings: "cv11", "ss01";
+  }
+
+  body {
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 2px;
+  }
+
+  @media print {
+    html,
+    body {
+      background: white;
+    }
+    @page {
+      size: A4 landscape;
+      margin: 14mm;
+    }
+  }
+
+  /* Numbers line up in columns everywhere, so tables and tiles read at a glance. */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+}

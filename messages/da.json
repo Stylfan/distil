@@ -1,0 +1,511 @@
+{
+  "app": {
+    "tagline": "Fra post-its, tavler og tegninger til en præsentation: tag billeder, tjek hvad der blev læst, og hent den.",
+    "skipToContent": "Spring til indholdet",
+    "maker": "fra Lenskjold Consulting"
+  },
+  "errors": {
+    "invalid": "Noget i det du skrev kunne ikke bruges. Se felterne igennem.",
+    "notFound": "Det findes ikke længere. Siden er hentet igen.",
+    "generic": "Det gik galt. Prøv igen.",
+    "unauthorized": "Du er ikke logget ind længere. Log ind igen."
+  },
+  "common": {
+    "cancel": "Annullér",
+    "save": "Gem",
+    "saving": "Gemmer …",
+    "saved": "Gemt",
+    "howToRead": "Sådan læses siden"
+  },
+  "nav": {
+    "label": "Hovedmenu",
+    "home": "Distil, til forsiden",
+    "workshops": "Workshops",
+    "newWorkshop": "Ny workshop",
+    "none": "Ingen workshops endnu.",
+    "account": "Konto",
+    "maker": "fra Lenskjold Consulting"
+  },
+  "workshops": {
+    "title": "Workshops",
+    "new": "Ny workshop",
+    "name": "Navn",
+    "namePlaceholder": "Fx Onboarding-workshop hos kunden",
+    "heldOn": "Dato",
+    "create": "Opret og tag billeder",
+    "photosLeft": "{count, plural, =0 {Din konto kan ikke få læst flere billeder lige nu.} one {Din konto kan få læst # billede mere.} other {Din konto kan få læst # billeder mere.}}",
+    "empty": "Opret en workshop, og tag billeder af post-its, tavler og flipovers. Distil læser hvert ord, og du tjekker det bagefter på computeren.",
+    "counts": "{photos, plural, =0 {ingen billeder} one {# billede} other {# billeder}}, {notes, plural, one {# seddel} other {# sedler}}",
+    "edit": "Ret navn og dato",
+    "delete": "Slet workshop",
+    "deleteQuestion": "Slet {name}?",
+    "deleteDetail": "Workshoppen, alle dens billeder og alle sedler slettes med det samme. Det kan ikke fortrydes.",
+    "deleteConfirm": "Slet workshop"
+  },
+  "workshop": {
+    "checkOnComputer": "Tjek og ret sedlerne på din computer. Åbn workshoppen dér, så står hvert billede ved siden af det, Distil har læst.",
+    "summary": "{photos, plural, =0 {Ingen billeder} one {# billede} other {# billeder}}{toCheck, plural, =0 {} other {, # at tjekke}}",
+    "empty": "Tag billeder med telefonen, eller træk dem herind fra computeren. Distil læser hvert billede, og du ser det her ved siden af sedlerne."
+  },
+  "intake": {
+    "camera": "Tag billede",
+    "gallery": "Fra galleri",
+    "drop": "Træk billeder herind, eller vælg dem. Op til 50 pr. workshop.",
+    "choose": "Vælg billeder",
+    "shrinking": "Gør billedet klar …",
+    "sending": "Sender …",
+    "reading": "Distil læser billedet …",
+    "done": "{count, plural, =0 {Læst, men der stod ingenting} one {Læst: # seddel} other {Læst: # sedler}}",
+    "errors": {
+      "unauthorized": "Du er ikke logget ind længere. Log ind igen.",
+      "invalid": "Billedet kom ikke med. Prøv igen.",
+      "notFound": "Det findes ikke længere.",
+      "generic": "Det gik galt. Prøv igen.",
+      "type": "Billedet kunne ikke læses som et foto. Prøv et andet, eller tag det igen.",
+      "size": "Billedet er for stort.",
+      "dimensions": "Billedet er for lille til at kunne læses.",
+      "workshopFull": "Workshoppen har allerede 50 billeder. Opret en ny til resten.",
+      "stored": "Du har mange billeder, der venter på at blive tjekket. Godkend eller slet nogle, før du sender flere.",
+      "allowance": "Din konto har fået læst alle de billeder, den må. Billedet er gemt, så det kan læses, når du får lov til flere.",
+      "daily": "Distil har læst så mange billeder i dag, som den må. Prøv igen i morgen.",
+      "notConfigured": "Læsning er ikke sat op på denne installation endnu.",
+      "provider": "Læsningen svarede ikke. Prøv igen om lidt.",
+      "unreadable": "Svaret fra læsningen kunne ikke bruges. Prøv igen."
+    }
+  },
+  "photos": {
+    "photo": "Billede {number}",
+    "status": {
+      "waiting": "venter",
+      "reading": "læses",
+      "read": "læst",
+      "failed": "ikke læst",
+      "approved": "godkendt"
+    },
+    "notes": "{count, plural, one {# seddel} other {# sedler}}",
+    "unsure": "{count} usikre"
+  },
+  "review": {
+    "photoTitle": "Billede {number}",
+    "photoAlt": "Billedet af væggen eller tavlen",
+    "imageGone": "Billedet er slettet. Sedlerne står, hvor de var.",
+    "imageGoneHint": "Billedet er slettet. Teksten er din, til du sletter den.",
+    "deletedIn": "{hours, plural, one {Billedet slettes, når du godkender, og senest om # time.} other {Billedet slettes, når du godkender, og senest om # timer.}}",
+    "marker": "Seddel {number}",
+    "noteCount": "{count, plural, =0 {Ingen sedler} one {# seddel} other {# sedler}}",
+    "unsureCount": "{count, plural, one {# usikker} other {# usikre}}",
+    "colour": "Farve",
+    "noteText": "Tekst på seddel {number}",
+    "orMaybe": "Eller:",
+    "unsure": "Distil er usikker. Se efter på billedet.",
+    "deleteNote": "Slet seddel {number}",
+    "saveFailed": "Det blev ikke gemt. Prøv igen.",
+    "add": "Tilføj seddel",
+    "addPlaceholder": "En seddel Distil ikke fik med",
+    "approve": "Godkend og slet billedet",
+    "approveHint": "Teksten er tjekket. Billedet slettes, sedlerne bliver.",
+    "approveHintUnsure": "{count, plural, one {# seddel er markeret usikker.} other {# sedler er markeret usikre.}} Ret dem, eller godkend alligevel. Billedet slettes, sedlerne bliver.",
+    "approved": "Godkendt. Billedet er slettet.",
+    "read": "Læs billedet",
+    "readAgain": "Prøv at læse igen",
+    "deletePhoto": "Slet billede",
+    "deletePhotoQuestion": "Slet billedet og dets sedler?",
+    "deletePhotoDetail": "Billedet og alle sedler fra det slettes med det samme.",
+    "deletePhotoConfirm": "Slet"
+  },
+  "colours": {
+    "yellow": "Gul",
+    "orange": "Orange",
+    "pink": "Lyserød",
+    "red": "Rød",
+    "green": "Grøn",
+    "blue": "Blå",
+    "purple": "Lilla",
+    "white": "Hvid",
+    "none": "Ingen (skrevet på tavlen)"
+  },
+  "auth": {
+    "logout": "Log ud",
+    "loginLabel": "Log ind",
+    "loginTitle": "Log ind på Distil",
+    "registerLabel": "Opret konto",
+    "registerTitle": "Opret din konto",
+    "firstAccount": "Det er den første konto i denne installation.",
+    "closedTitle": "Tilmelding er lukket",
+    "closedBody": "Denne installation tager ikke imod nye konti. Den, der driver den, kan åbne for tilmelding.",
+    "name": "Navn",
+    "email": "E-mail",
+    "password": "Kodeord",
+    "passwordHint": "Mindst {count} tegn.",
+    "loginSubmit": "Log ind",
+    "registerSubmit": "Opret konto",
+    "toLogin": "Har du en konto? Log ind",
+    "toRegister": "Ny her? Opret en konto",
+    "errors": {
+      "invalid": "Udfyld felterne. Kodeordet skal have mindst 10 tegn.",
+      "credentials": "E-mail eller kodeord passer ikke.",
+      "tooMany": "For mange forsøg. Vent et kvarter, og prøv igen.",
+      "signupClosed": "Tilmelding er lukket i denne installation.",
+      "emailTaken": "Der findes allerede en konto med den e-mail.",
+      "code": "Koden passer ikke. Prøv igen med den nyeste kode.",
+      "expired": "Det tog for lang tid. Log ind igen.",
+      "passkeyCancelled": "Der blev ikke brugt en passkey. Prøv igen, eller log ind med kodeord."
+    },
+    "code": "Kode",
+    "codeHint": "De seks cifre fra din godkendelses-app, eller en af dine gendannelseskoder.",
+    "codeSubmit": "Bekræft",
+    "or": "Eller uden kodeord:",
+    "passkeyLogin": "Log ind med passkey"
+  },
+  "account": {
+    "label": "Konto",
+    "title": "Konto",
+    "export": {
+      "label": "Dine data",
+      "title": "Hent alle dine data",
+      "hint": "Workshops, sedler, billedernes oplysninger og ændringsloggen, som JSON. Selve billederne gemmes ikke længe nok til at kunne hentes.",
+      "json": "JSON"
+    },
+    "delete": {
+      "label": "Slet konto",
+      "title": "Slet konto",
+      "lead": "Sletter din konto og alt, hvad den ejer, også ændringsloggen. Hent dine data først, hvis du vil beholde dem.",
+      "open": "Slet min konto",
+      "question": "Slet din konto for altid?",
+      "detail": "Alle dine workshops, billeder og sedler og hele ændringsloggen slettes med det samme. Det kan ikke fortrydes.",
+      "confirmLabel": "Skriv {email} for at bekræfte",
+      "cancel": "Fortryd",
+      "confirm": "Slet alt",
+      "errors": {
+        "unauthorized": "Du er ikke logget ind længere.",
+        "mismatch": "E-mailen passer ikke med din konto.",
+        "generic": "Det lykkedes ikke. Intet er slettet. Prøv igen."
+      }
+    },
+    "security": {
+      "label": "Sikkerhed",
+      "title": "Sikkerhed",
+      "lead": "Slå to-trinsbekræftelse til, så et kodeord alene ikke er nok, eller log ind med en passkey på din computer eller telefon."
+    },
+    "totp": {
+      "title": "To-trinsbekræftelse",
+      "off": "Slået fra. Kun kodeordet skal til for at logge ind.",
+      "on": "Slået til. Du har {count, plural, =0 {ingen gendannelseskoder} one {# gendannelseskode} other {# gendannelseskoder}} tilbage.",
+      "enable": "Slå to-trinsbekræftelse til",
+      "scanTitle": "Scan koden med din godkendelses-app",
+      "scanBody": "Brug fx Microsoft Authenticator, Google Authenticator eller 1Password. Skriv derefter de seks cifre, appen viser.",
+      "qrLabel": "QR-kode til godkendelses-appen",
+      "manual": "Kan du ikke scanne? Skriv nøglen ind i appen:",
+      "codeLabel": "Kode fra appen",
+      "confirm": "Slå til",
+      "cancel": "Fortryd",
+      "codesTitle": "Gem dine gendannelseskoder",
+      "codesBody": "Hver kode virker én gang, hvis du mister din telefon. De vises kun nu. Gem dem et sikkert sted, fx i din adgangskodemanager.",
+      "codesDone": "Jeg har gemt dem",
+      "newCodes": "Lav nye gendannelseskoder",
+      "disable": "Slå fra",
+      "codeNeeded": "Skriv en kode fra appen for at lave nye gendannelseskoder eller slå to-trinsbekræftelse fra."
+    },
+    "passkeys": {
+      "title": "Passkeys",
+      "none": "Ingen passkeys endnu.",
+      "unnamed": "Passkey uden navn",
+      "added": "Tilføjet {date}",
+      "used": "sidst brugt {date}",
+      "addedNow": "Passkey tilføjet.",
+      "nameLabel": "Navn",
+      "namePlaceholder": "Navn, fx Arbejdscomputer",
+      "add": "Tilføj passkey",
+      "remove": "Fjern",
+      "removeQuestion": "Fjern {name}?",
+      "removeDetail": "Du kan ikke længere logge ind med den. Dit kodeord og andre passkeys virker stadig.",
+      "cancel": "Fortryd",
+      "count": "{count, plural, one {# passkey} other {# passkeys}}"
+    },
+    "errors": {
+      "unauthorized": "Du er ikke logget ind længere.",
+      "invalid": "Det lykkedes ikke. Prøv igen.",
+      "code": "Koden passer ikke. Prøv igen med den nyeste kode.",
+      "expired": "Det tog for lang tid. Start forfra.",
+      "tooMany": "For mange forsøg. Vent et kvarter, og prøv igen.",
+      "generic": "Det lykkedes ikke. Prøv igen.",
+      "cancelled": "Der blev ikke lavet en passkey."
+    },
+    "profile": {
+      "title": "Profil",
+      "name": "Navn",
+      "email": "E-mail"
+    }
+  },
+  "demoVisit": {
+    "label": "Demo",
+    "title": "Prøv Distil",
+    "body": "Du får en demo, hvor du kan tage op til 10 billeder af post-its og tavler og se, hvad Distil læser. Der skal ikke bruges e-mail eller adgangskode, og alt slettes igen efter {hours} timer.",
+    "noRealData": "Anbefaling: Fotografér ikke noget med navne, ansigter eller fortrolige oplysninger i demoen.",
+    "start": "Start demoen",
+    "busy": "Der er startet mange demoer herfra lige nu. Prøv igen om et kvarter.",
+    "full": "Demoen er fuld lige nu. Prøv igen senere.",
+    "banner": "Det her er en demo. Alt, du laver, slettes {when}. Fotografér ikke navne eller fortrolige oplysninger.",
+    "bannerSource": "Hent koden",
+    "end": "Afslut demoen nu",
+    "endQuestion": "Afslut demoen nu?",
+    "endDetail": "Dine workshops, billeder og sedler i demoen slettes med det samme. Du kan starte en ny demo bagefter.",
+    "endConfirm": "Afslut og slet",
+    "sourceButton": "Hent koden og kør den selv",
+    "loginButton": "Log ind",
+    "registerButton": "Opret konto",
+    "backToDemo": "Tilbage til demoen"
+  },
+  "legal": {
+    "privacyLink": "Privatlivspolitik",
+    "termsLink": "Vilkår",
+    "updated": "Senest ændret 12. november 2026",
+    "backToStart": "Til forsiden",
+    "registerNote": "Når du opretter en konto, accepterer du <terms>vilkårene</terms> og har læst <privacy>privatlivspolitikken</privacy>.",
+    "accountLabel": "Om denne installation",
+    "accountBody": "Distil køres her af {name}. Sådan behandles dine data, og det er reglerne for at bruge den:",
+    "privacy": {
+      "title": "Privatlivspolitik",
+      "lead": "Sådan behandler {name} dine oplysninger, når du bruger Distil på denne adresse. Kort fortalt: kun det, der skal til for at give dig en konto og læse dine billeder, ingen sporing, billederne slettes hurtigt, og du kan altid tage alt med dig og slette det.",
+      "hostingNamed": "Serveren og dens sikkerhedskopier drives af {hosting} som databehandler for {name}. Data forlader ikke EU og EØS.",
+      "hostingSelf": "Serveren og dens sikkerhedskopier drives af {name} selv. Data forlader ikke EU og EØS.",
+      "sections": [
+        {
+          "title": "Hvem er ansvarlig",
+          "body": [
+            "{name} er dataansvarlig for de oplysninger, der hører til din konto. {address}",
+            "Skriv til {email}, hvis du har spørgsmål om dine data, eller vil bruge dine rettigheder."
+          ]
+        },
+        {
+          "title": "Hvad der gemmes",
+          "list": [
+            "Din konto: e-mailadresse, navn hvis du skriver et, og din adgangskode gemt som en hash, aldrig i klartekst.",
+            "Totrinslogin, hvis du slår det til: hemmeligheden til din app gemmes krypteret, gendannelseskoder som hash, og fra passkeys gemmes kun den offentlige nøgle.",
+            "Dine billeder, men kun indtil du har tjekket og godkendt dem, og aldrig mere end 24 timer. Billederne gøres mindre i din browser, før de sendes, og det fjerner også GPS-position og andre oplysninger fra kameraet.",
+            "Det, der er læst af billederne, og det, du selv retter og skriver: workshops og sedler. Det bliver, til du sletter det.",
+            "En ændringslog over, hvem der har ændret hvad og hvornår i dine workshops. Den indeholder aldrig billederne.",
+            "Hvor mange billeder din konto har fået læst, så lofterne kan overholdes.",
+            "En sessionscookie, så du forbliver logget ind."
+          ],
+          "body": [
+            "Din IP-adresse bruges kun et øjeblik i serverens hukommelse for at bremse gentagne loginforsøg og gemmes ikke i databasen. Serverens webproxy kan føre almindelige tekniske logs med IP-adresser i en kort periode, for at fejl og angreb kan findes."
+          ]
+        },
+        {
+          "title": "Hvorfor og med hvilken ret",
+          "body": [
+            "Oplysningerne bruges til at give dig den tjeneste, du har bedt om: en konto, læsning af dine billeder og dine workshops. Grundlaget er aftalen med dig (GDPR artikel 6, stk. 1, litra b).",
+            "Ændringsloggen, lofterne, begrænsningen af loginforsøg og de tekniske logs bruges til at holde tjenesten sikker. Grundlaget er en legitim interesse i at beskytte dig og andre brugere (artikel 6, stk. 1, litra f).",
+            "Oplysningerne bruges ikke til noget andet: ingen reklame, ingen analyse af din adfærd, og der sendes ingen mails."
+          ]
+        },
+        {
+          "title": "Kunstig intelligens",
+          "body": [
+            "Billederne læses af Mistral AI (Frankrig), som databehandler for {name}. Billedet sendes til Mistral, når det læses. Mistral behandler data i EU og kan gemme det, der sendes, i op til 30 dage for at opdage misbrug, hvorefter det slettes.",
+            "Det, Distil læser, er et forslag. Du ser det ved siden af billedet og retter det, før du bruger det til noget."
+          ]
+        },
+        {
+          "title": "Oplysninger om andre",
+          "body": [
+            "Et billede fra en workshop kan vise navne eller personer. Det er dig eller din organisation, der er ansvarlig for at måtte fotografere og bruge det. {name} behandler den slags indhold kun på dine vegne, for at du kan bruge Distil.",
+            "Undgå så vidt muligt at fotografere ansigter og følsomme oplysninger, fx om helbred eller CPR-numre."
+          ]
+        },
+        {
+          "title": "Hvem der kan se dine data",
+          "body": [
+            "Kun du, når du er logget ind. Workshops er adskilt i databasen, så én bruger ikke kan se en andens.",
+            "{hostingSentence}",
+            "Billederne læses af Mistral AI (Frankrig), som databehandler for {name}. Billedet sendes til Mistral, når det læses. Mistral behandler data i EU og kan gemme det, der sendes, i op til 30 dage for at opdage misbrug, hvorefter det slettes.",
+            "{name} kigger ikke i dit indhold, medmindre du beder om hjælp, eller det er nødvendigt for at rette en fejl eller stoppe misbrug."
+          ]
+        },
+        {
+          "title": "Hvor længe",
+          "body": [
+            "Billeder: til du godkender læsningen, og højst 24 timer. Tekst og workshops: så længe du har en konto. Sletter du kontoen under Konto, slettes alt, hvad den ejer, straks fra databasen, også ændringsloggen. Sikkerhedskopierne slettes af sig selv inden for 7 dage."
+          ]
+        },
+        {
+          "title": "Dine rettigheder",
+          "list": [
+            "Indsigt: se alt, hvad der er gemt om dig.",
+            "Dataportabilitet: hent alt som JSON under Konto.",
+            "Berigtigelse: ret dine oplysninger og dit indhold selv.",
+            "Sletning: slet billeder, workshops eller hele din konto med alt indhold.",
+            "Begrænsning og indsigelse: skriv til {email}."
+          ],
+          "body": [
+            "Er du utilfreds med, hvordan dine oplysninger behandles, kan du klage til Datatilsynet, datatilsynet.dk."
+          ]
+        },
+        {
+          "title": "Cookies",
+          "body": [
+            "Distil bruger kun én cookie: den, der holder dig logget ind. Den er nødvendig, for at tjenesten virker, og der er ingen sporing. Derfor er der ingen cookiebanner."
+          ]
+        },
+        {
+          "title": "Sikkerhed",
+          "body": [
+            "Forbindelsen er krypteret med HTTPS. Workshops er adskilt i databasen, billeder slettes hurtigt og kommer aldrig i ændringsloggen, totrinslogin og passkeys kan slås til, og ændringsloggen kan ikke redigeres. Distil er open source, så alle kan se, hvordan det er bygget."
+          ]
+        },
+        {
+          "title": "Ændringer",
+          "body": [
+            "Ændres politikken, står datoen øverst. Væsentlige ændringer varsles her mindst 30 dage, før de gælder."
+          ]
+        }
+      ]
+    },
+    "terms": {
+      "title": "Vilkår",
+      "lead": "Reglerne for at bruge Distil på denne adresse, som {name} driver. De er skrevet, så de kan læses.",
+      "sections": [
+        {
+          "title": "Tjenesten",
+          "body": [
+            "{name} stiller Distil til rådighed på denne adresse. Distil er open source under licensen AGPL-3.0: koden kan hentes fra GitHub og køres af alle selv. Vilkårene her gælder brugen af denne installation."
+          ]
+        },
+        {
+          "title": "Din konto",
+          "body": [
+            "En konto er til én person. Hold din adgangskode for dig selv, og slå gerne totrinslogin eller en passkey til. Opdager du, at andre har fået adgang til din konto, så skriv til {email}."
+          ]
+        },
+        {
+          "title": "Dit indhold",
+          "body": [
+            "Det, du lægger ind, er dit. Du kan altid hente det som JSON og slette det. Du er selv ansvarlig for indholdet og for at have lov til at fotografere og lægge det ind, også når det viser navne eller personer.",
+            "Det, Distil læser og foreslår, kan være forkert. Tjek det, før du bruger det."
+          ]
+        },
+        {
+          "title": "Lofter",
+          "body": [
+            "En ny konto kan få læst et begrænset antal billeder. Har du brug for flere, kan du bede om det. Der er også et loft over, hvor mange billeder hele tjenesten læser pr. dag."
+          ]
+        },
+        {
+          "title": "God brug",
+          "body": [
+            "Brug Distil lovligt. Forsøg ikke at få adgang til andres data, overbelaste eller angribe tjenesten, eller bruge den til at sprede skadeligt indhold. Finder du et sikkerhedshul, så meld det som beskrevet i SECURITY.md på GitHub i stedet for at udnytte det."
+          ]
+        },
+        {
+          "title": "Pris",
+          "body": [
+            "Tjenesten er gratis. Skal det ændres, varsles det mindst 30 dage før, så du kan nå at hente dine data og slette din konto."
+          ]
+        },
+        {
+          "title": "Drift og ansvar",
+          "body": [
+            "Distil leveres, som den er. {name} gør sig umage for, at den kører stabilt og sikkert, og der tages daglige sikkerhedskopier, men der er ingen garanti for, at den altid er tilgængelig eller fri for fejl. Hent selv en eksport af det, der er vigtigt for dig.",
+            "{name} er ikke ansvarlig for indirekte tab, fx tabt arbejdstid, og ansvaret er i øvrigt begrænset, så langt dansk ret tillader det."
+          ]
+        },
+        {
+          "title": "Ophør",
+          "body": [
+            "Du kan altid slette din konto under Konto. {name} kan lukke en konto, der bryder vilkårene, og kan lukke tjenesten med mindst 30 dages varsel, så alle kan nå at hente deres data."
+          ]
+        },
+        {
+          "title": "Databehandling",
+          "body": [
+            "Privatlivspolitikken beskriver, hvordan oplysninger behandles. Skal din organisation have en databehandleraftale, så skriv til {email}."
+          ]
+        },
+        {
+          "title": "Ændringer og lov",
+          "body": [
+            "Ændres vilkårene, står datoen øverst, og væsentlige ændringer varsles her mindst 30 dage før. Vilkårene følger dansk ret, og en eventuel tvist afgøres ved de danske domstole."
+          ]
+        }
+      ]
+    },
+    "demoPrivacy": {
+      "title": "Privatlivspolitik",
+      "lead": "Det her er en demo af Distil, som {name} driver. Den er lavet, så du kan prøve den uden at give nogen oplysninger om dig selv.",
+      "sections": [
+        {
+          "title": "Hvem er ansvarlig",
+          "body": ["{name} er dataansvarlig. {address}", "Spørgsmål kan sendes til {email}."]
+        },
+        {
+          "title": "Hvad der gemmes",
+          "list": [
+            "En midlertidig demokonto uden navn, e-mail eller adgangskode, du kender.",
+            "Dine billeder, indtil du godkender dem, og højst 24 timer.",
+            "Det, der er læst af billederne, og det, du selv retter, og en ændringslog over det.",
+            "En cookie, der holder dig logget ind i demoen."
+          ],
+          "body": [
+            "Din IP-adresse bruges kun et øjeblik i serverens hukommelse for at begrænse, hvor mange demoer der startes fra samme sted, og gemmes ikke i databasen. Serverens webproxy kan føre almindelige tekniske logs med IP-adresser i en kort periode.",
+            "Fotografér ikke navne, ansigter eller fortrolige oplysninger i demoen."
+          ]
+        },
+        {
+          "title": "Hvor længe",
+          "body": [
+            "Demokontoen og alt, hvad den indeholder, billeder og tekst, slettes automatisk efter 24 timer, eller med det samme, hvis du vælger at afslutte demoen. Sikkerhedskopier slettes af sig selv inden for 7 dage."
+          ]
+        },
+        {
+          "title": "Hvem der kan se det",
+          "body": [
+            "Kun dig, mens demoen kører. {hostingSentence}",
+            "Billederne læses af Mistral AI (Frankrig), som databehandler for {name}. Billedet sendes til Mistral, når det læses. Mistral behandler data i EU og kan gemme det, der sendes, i op til 30 dage for at opdage misbrug, hvorefter det slettes.",
+            "Der er ingen reklame, ingen sporing og ingen mails."
+          ]
+        },
+        {
+          "title": "Cookies",
+          "body": [
+            "Kun den ene cookie, der holder demoen åben. Den er nødvendig, og derfor er der ingen cookiebanner."
+          ]
+        },
+        {
+          "title": "Dine rettigheder",
+          "body": [
+            "Du kan hente alt fra din demo under Konto og afslutte den, når du vil. Er du utilfreds med behandlingen, kan du klage til Datatilsynet, datatilsynet.dk."
+          ]
+        }
+      ]
+    },
+    "demoTerms": {
+      "title": "Vilkår",
+      "lead": "Reglerne for demoen af Distil, som {name} driver.",
+      "sections": [
+        {
+          "title": "En demo",
+          "body": [
+            "Demoen er til at prøve Distil. Du kan få læst op til 10 billeder. Alt slettes efter 24 timer. Den er gratis og leveres, som den er, uden garanti for, at den altid kører, eller at noget bliver gemt."
+          ]
+        },
+        {
+          "title": "God brug",
+          "body": [
+            "Fotografér ikke rigtige navne, ansigter eller fortrolige oplysninger. Forsøg ikke at få adgang til andres demoer, overbelaste eller angribe tjenesten. Finder du et sikkerhedshul, så meld det som beskrevet i SECURITY.md på GitHub."
+          ]
+        },
+        {
+          "title": "Koden",
+          "body": [
+            "Distil er open source under licensen AGPL-3.0. Kan du lide den, kan du hente koden fra GitHub og køre den selv."
+          ]
+        },
+        {
+          "title": "Lov",
+          "body": ["Vilkårene følger dansk ret. Spørgsmål kan sendes til {email}."]
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,26 @@
+# Postgres for development and tests. The app runs on the host (pnpm dev).
+#
+#   pnpm db:up && pnpm db:migrate && pnpm dev
+#
+# Port 5434 on loopback only, so it neither clashes with another Postgres
+# on 5432 nor listens on a network someone else is on.
+services:
+  db:
+    image: postgres:16
+    container_name: distil-dev-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: distil
+    ports:
+      - "127.0.0.1:5434:5432"
+    volumes:
+      - distil-dev-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d distil"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  distil-dev-pgdata:

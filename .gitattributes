@@ -1,0 +1,9 @@
+# Text files are stored and checked out with LF on every platform.
+#
+# A Windows checkout with core.autocrlf=true otherwise turns every text file
+# into CRLF, and two things break: the Postgres image cannot run
+# docker/postgres-init/01-roles.sh ("cannot execute: required file not
+# found", the shell looks for "bash\r"), and `pnpm format:check` flags every
+# file because Prettier expects LF. Git still detects binaries (images,
+# fonts) on its own and leaves them alone.
+* text=auto eol=lf
