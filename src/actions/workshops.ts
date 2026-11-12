@@ -3,7 +3,13 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { contextSchema } from "@/domain/context";
-import { createWorkshop, deleteWorkshop, renameWorkshop, setContext } from "@/services/workshops";
+import {
+  createWorkshop,
+  deleteWorkshop,
+  renameWorkshop,
+  setArchived,
+  setContext,
+} from "@/services/workshops";
 import { run, type Result } from "./result";
 
 const fields = z.object({
@@ -49,4 +55,16 @@ export async function setContextAction(input: z.infer<typeof context>): Promise<
     await setContext(db, userId, d.id, d.context);
     return undefined;
   });
+}
+
+const archive = z.object({ id: z.string().min(1), archived: z.boolean() });
+
+/** Puts a workshop away from the list, or takes it back. */
+export async function setArchivedAction(input: z.infer<typeof archive>): Promise<Result> {
+  const result = await run(archive, input, async (db, userId, d) => {
+    await setArchived(db, userId, d.id, d.archived);
+    return undefined;
+  });
+  if (result.ok) revalidatePath("/");
+  return result;
 }

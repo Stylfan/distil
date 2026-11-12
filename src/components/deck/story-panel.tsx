@@ -44,14 +44,23 @@ export function useTellStory(workshopId: string) {
   return { tell, telling, message };
 }
 
+/** The ask field and its help behind "?": on the presentation, and on the outline. */
 export function StoryAsk({
   telling,
   onAsk,
+  words = "deck.story",
+  suggestions = SUGGESTIONS,
+  extra,
 }: {
   telling: boolean;
   onAsk: (request: string, done: () => void) => void;
+  /** Where its words are: the presentation's, or the outline's. Both have the same keys. */
+  words?: "deck.story" | "outline.bar";
+  suggestions?: readonly string[];
+  /** More to do, shown with the help behind "?". */
+  extra?: React.ReactNode;
 }) {
-  const t = useTranslations("deck.story");
+  const t = useTranslations(words);
   const [request, setRequest] = useState("");
   const [help, setHelp] = useState(false);
   const box = useRef<HTMLDivElement>(null);
@@ -107,8 +116,9 @@ export function StoryAsk({
       {help && (
         <div className="absolute top-full right-0 left-0 z-20 mt-1 flex flex-col gap-2 rounded-lg border border-hairline bg-surface p-3 text-[12px] leading-relaxed text-slate shadow-[0_8px_24px_rgba(31,45,51,0.12)]">
           <p>{t("askHint")}</p>
+          {extra}
           <div className="flex flex-wrap gap-1.5">
-            {SUGGESTIONS.map((s) => (
+            {suggestions.map((s) => (
               <button
                 key={s}
                 type="button"

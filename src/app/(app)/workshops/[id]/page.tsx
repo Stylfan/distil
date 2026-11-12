@@ -11,11 +11,9 @@ import { PhotoIntake } from "@/components/workshop/photo-intake";
 import { WorkshopTabs } from "@/components/workshop/workshop-tabs";
 import { PhotoList } from "@/components/workshop/photo-list";
 import { ReviewPanel } from "@/components/workshop/review-panel";
-import { PhoneLink } from "@/components/workshop/phone-link";
-import { WorkshopMenu } from "@/components/workshop/workshop-menu";
-import { PageHeader } from "@/components/ui/layout";
+import { MaterialToolbar } from "@/components/workshop/material-toolbar";
+import { WorkshopHeader } from "@/components/workshop/workshop-header";
 import { withUser } from "@/db/client";
-import { formatDay } from "@/lib/dates";
 import { loadDesk } from "@/lib/workshop-desk";
 import { getWorkshop } from "@/services/workshops";
 
@@ -49,22 +47,23 @@ export default async function WorkshopPage({ params, searchParams }: Props) {
 
   return (
     <div className="flex flex-col gap-5">
-      <PageHeader
-        label={formatDay(workshop.heldOn)}
-        title={workshop.name}
-        actions={
-          <div className="hidden items-center gap-2 md:flex">
-            <PhoneLink workshopId={workshop.id} />
-            <WorkshopMenu id={workshop.id} name={workshop.name} heldOn={workshop.heldOn} />
-          </div>
-        }
-      />
+      <WorkshopHeader workshop={workshop} />
 
       <WorkshopTabs workshopId={workshop.id} current="transcript" />
 
-      <ContextPanel workshopId={workshop.id} context={workshop.context} />
+      {/* The computer: one calm line for the material. */}
+      <MaterialToolbar
+        workshopId={workshop.id}
+        context={workshop.context}
+        status={t("summary", { photos: photos.length, toCheck })}
+        next={outline ? "open" : readCount > 0 ? "make" : null}
+      />
 
-      <PhotoIntake workshopId={workshop.id} />
+      {/* The phone: what the workshop was about, and the camera. */}
+      <div className="flex flex-col gap-3 md:hidden">
+        <ContextPanel workshopId={workshop.id} context={workshop.context} />
+        <PhotoIntake workshopId={workshop.id} mode="phone" />
+      </div>
 
       {/* The phone: Distil's questions, the status, and where the checking happens. */}
       <div className="flex flex-col gap-4 md:hidden">
@@ -89,9 +88,6 @@ export default async function WorkshopPage({ params, searchParams }: Props) {
       {/* The computer: the desk. */}
       <div className="hidden gap-6 md:grid md:grid-cols-[13rem_minmax(0,1fr)]">
         <aside className="flex flex-col gap-2">
-          <p className="px-2.5 text-[12px] text-slate">
-            {t("summary", { photos: photos.length, toCheck })}
-          </p>
           <PhotoList workshopId={workshop.id} photos={photos} selected={chosen?.id} links />
         </aside>
         {chosen ? (

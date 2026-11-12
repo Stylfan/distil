@@ -1,0 +1,1 @@
+ALTER TABLE "workshops" ADD COLUMN "archived_at" bigint;

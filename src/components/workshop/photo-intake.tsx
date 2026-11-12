@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Camera, ImagePlus, Upload } from "lucide-react";
@@ -31,10 +31,17 @@ const isPhoto = (f: File) =>
 export function PhotoIntake({
   workshopId,
   linkToken,
+  mode = "both",
 }: {
   workshopId: string;
   /** Set on a phone let in by a link: the photos go through the link's own routes. */
   linkToken?: string;
+  /**
+   * "both": the phone's two buttons and the computer's drop zone, by screen size.
+   * "phone": only the phone's buttons. "toolbar": one button for a computer's
+   * toolbar, with photos dropped anywhere on the page.
+   */
+  mode?: "both" | "phone" | "toolbar";
 }) {
   const t = useTranslations("intake");
   const router = useRouter();
@@ -107,10 +114,79 @@ export function PhotoIntake({
     if (input) input.value = "";
   };
 
+  // In the toolbar, photos can be dropped anywhere on the page.
+  useEffect(() => {
+    if (mode !== "toolbar") return;
+    const files = (e: DragEvent) => !!e.dataTransfer && [...e.dataTransfer.types].includes("Files");
+    const over = (e: DragEvent) => {
+      if (!files(e)) return;
+      e.preventDefault();
+      setOver(true);
+    };
+    const leave = (e: DragEvent) => {
+      if (e.relatedTarget === null) setOver(false);
+    };
+    const drop = (e: DragEvent) => {
+      if (!files(e)) return;
+      e.preventDefault();
+      setOver(false);
+      void take(e.dataTransfer!.files);
+    };
+    window.addEventListener("dragover", over);
+    window.addEventListener("dragleave", leave);
+    window.addEventListener("drop", drop);
+    return () => {
+      window.removeEventListener("dragover", over);
+      window.removeEventListener("dragleave", leave);
+      window.removeEventListener("drop", drop);
+    };
+  });
+
+  if (mode === "toolbar") {
+    const working = jobs.filter((j) => j.step !== "done" && j.step !== "error").length;
+    const failed = jobs.filter((j) => j.step === "error");
+    const done = jobs.filter((j) => j.step === "done").length;
+    return (
+      <>
+        <Button onClick={() => gallery.current?.click()}>
+          <Upload className="size-4" aria-hidden />
+          {t("add")}
+        </Button>
+        <input
+          ref={gallery}
+          type="file"
+          accept={ACCEPT}
+          multiple
+          className="sr-only"
+          tabIndex={-1}
+          aria-hidden
+          onChange={(e) => pick(e.currentTarget)}
+        />
+        {jobs.length > 0 && (
+          <span
+            role="status"
+            className="text-[12px] text-slate"
+            title={failed.map((j) => j.message).join("\n")}
+          >
+            {working > 0 ? t("working", { count: working }) : t("finished", { count: done })}
+            {failed.length > 0 && (
+              <span className="text-danger"> · {t("failed", { count: failed.length })}</span>
+            )}
+          </span>
+        )}
+        {over && (
+          <div className="pointer-events-none fixed inset-3 z-50 grid place-items-center rounded-xl border-2 border-dashed border-ink bg-paper/85 text-[15px] font-medium text-ink">
+            {t("dropHere")}
+          </div>
+        )}
+      </>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-3">
       {/* On a phone: two big buttons, the camera first. */}
-      <div className="grid grid-cols-2 gap-2 md:hidden">
+      <div className={cn("grid grid-cols-2 gap-2", mode === "both" && "md:hidden")}>
         <Button
           variant="primary"
           className="h-14 text-[15px]"
@@ -125,28 +201,30 @@ export function PhotoIntake({
         </Button>
       </div>
       {/* On a computer: drop the photos here, or choose them. */}
-      <div
-        onDragOver={(e) => {
-          e.preventDefault();
-          setOver(true);
-        }}
-        onDragLeave={() => setOver(false)}
-        onDrop={(e) => {
-          e.preventDefault();
-          setOver(false);
-          void take(e.dataTransfer.files);
-        }}
-        className={cn(
-          "hidden items-center gap-3 rounded-lg border border-dashed px-4 py-3 text-[13px] text-slate md:flex",
-          over ? "border-ink bg-sand/60" : "border-hairline bg-surface",
-        )}
-      >
-        <Upload className="size-4 shrink-0" aria-hidden />
-        <span className="flex-1">{t("drop")}</span>
-        <Button size="sm" onClick={() => gallery.current?.click()}>
-          {t("choose")}
-        </Button>
-      </div>
+      {mode === "both" && (
+        <div
+          onDragOver={(e) => {
+            e.preventDefault();
+            setOver(true);
+          }}
+          onDragLeave={() => setOver(false)}
+          onDrop={(e) => {
+            e.preventDefault();
+            setOver(false);
+            void take(e.dataTransfer.files);
+          }}
+          className={cn(
+            "hidden items-center gap-3 rounded-lg border border-dashed px-4 py-3 text-[13px] text-slate md:flex",
+            over ? "border-ink bg-sand/60" : "border-hairline bg-surface",
+          )}
+        >
+          <Upload className="size-4 shrink-0" aria-hidden />
+          <span className="flex-1">{t("drop")}</span>
+          <Button size="sm" onClick={() => gallery.current?.click()}>
+            {t("choose")}
+          </Button>
+        </div>
+      )}
       <input
         ref={camera}
         type="file"

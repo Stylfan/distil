@@ -11,7 +11,14 @@ import { Button } from "@/components/ui/controls";
  * camera, which opens this workshop's camera on the phone without signing
  * in there. The link works for two hours and can be closed at once.
  */
-export function PhoneLink({ workshopId }: { workshopId: string }) {
+export function PhoneLink({
+  workshopId,
+  inToolbar = false,
+}: {
+  workshopId: string;
+  /** A normal button, the size of the others in a toolbar. */
+  inToolbar?: boolean;
+}) {
   const t = useTranslations("phoneLink");
   const dialog = useRef<HTMLDialogElement>(null);
   const [link, setLink] = useState<{ url: string; qr: string; expiresAt: number } | null>(null);
@@ -42,8 +49,13 @@ export function PhoneLink({ workshopId }: { workshopId: string }) {
 
   return (
     <>
-      <Button size="sm" variant="ghost" onClick={open} disabled={pending}>
-        <Smartphone className="size-3.5" aria-hidden />
+      <Button
+        size={inToolbar ? undefined : "sm"}
+        variant={inToolbar ? "secondary" : "ghost"}
+        onClick={open}
+        disabled={pending}
+      >
+        <Smartphone className={inToolbar ? "size-4" : "size-3.5"} aria-hidden />
         {t("open")}
       </Button>
       {error && <span className="text-[12px] text-danger">{t("failed")}</span>}

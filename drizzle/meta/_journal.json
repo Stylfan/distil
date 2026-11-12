@@ -78,6 +78,13 @@
       "when": 1794499200617,
       "tag": "0010_workshop_context",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1794502327848,
+      "tag": "0011_workshop_archive",
+      "breakpoints": true
     }
   ]
 }

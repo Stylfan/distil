@@ -8,7 +8,7 @@ import { DeckToolbar } from "@/components/deck/deck-toolbar";
 import { lookStyle } from "@/components/deck/look";
 import { SlideView } from "@/components/deck/slide";
 import { WorkshopTabs } from "@/components/workshop/workshop-tabs";
-import { PageHeader } from "@/components/ui/layout";
+import { WorkshopHeader } from "@/components/workshop/workshop-header";
 import { DECK_WORDS } from "@/domain/deck-words";
 import { formatDay } from "@/lib/dates";
 import { loadDeck } from "@/lib/deck-page";
@@ -48,7 +48,7 @@ export default async function DeckPage({ params }: Props) {
   return (
     <div className="flex flex-col gap-5 print:block">
       <style>{PRINT}</style>
-      <PageHeader label={formatDay(workshop.heldOn)} title={workshop.name} />
+      <WorkshopHeader workshop={workshop} />
       <WorkshopTabs workshopId={workshop.id} current="deck" />
       {!slides ? (
         <div className="flex max-w-2xl flex-col gap-3 rounded-lg border border-dashed border-hairline p-6 print:hidden">

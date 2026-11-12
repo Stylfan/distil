@@ -4,10 +4,10 @@ import { getTranslations } from "next-intl/server";
 import { requireUser } from "@/auth/session";
 import { OutlineEditor } from "@/components/outline/outline-editor";
 import { AskDistil, MakeOutline } from "@/components/outline/outline-run";
+import { OutlineToolbar } from "@/components/outline/outline-toolbar";
 import { QuestionCards } from "@/components/outline/question-cards";
 import { WorkshopTabs } from "@/components/workshop/workshop-tabs";
-import { PageHeader } from "@/components/ui/layout";
-import { formatDay } from "@/lib/dates";
+import { WorkshopHeader } from "@/components/workshop/workshop-header";
 import { loadOutlinePage } from "@/lib/outline-page";
 
 export const dynamic = "force-dynamic";
@@ -38,7 +38,7 @@ export default async function OutlinePage({ params }: Props) {
 
   return (
     <div className="flex flex-col gap-5">
-      <PageHeader label={formatDay(workshop.heldOn)} title={workshop.name} />
+      <WorkshopHeader workshop={workshop} />
       <WorkshopTabs workshopId={workshop.id} current="outline" />
       {!outline ? (
         <div className="flex max-w-2xl flex-col gap-3 rounded-lg border border-dashed border-hairline p-6">
@@ -49,23 +49,36 @@ export default async function OutlinePage({ params }: Props) {
           {noteCount > 0 && <MakeOutline workshopId={workshop.id} />}
         </div>
       ) : (
-        <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_22rem]">
-          <OutlineEditor
-            key={outline.generatedAt}
+        <>
+          <OutlineToolbar
             workshopId={workshop.id}
-            initial={outline.content}
-            version={outline.version}
-            notes={notes}
+            canUndo={outline.previous !== null}
+            status={t("bar.status", {
+              themes: outline.content.themes.length,
+              notes: noteCount,
+            })}
           />
-          <aside className="flex flex-col gap-5 xl:sticky xl:top-20 xl:self-start">
-            <QuestionCards
+          <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_22rem]">
+            <OutlineEditor
+              key={outline.generatedAt}
               workshopId={workshop.id}
-              questions={outline.content.questions}
-              notes={questionNotes}
+              initial={outline.content}
+              version={outline.version}
+              notes={notes}
             />
-            <AskDistil workshopId={workshop.id} canUndo={outline.previous !== null} />
-          </aside>
-        </div>
+            <aside className="flex flex-col gap-5 xl:sticky xl:top-20 xl:self-start">
+              <QuestionCards
+                workshopId={workshop.id}
+                questions={outline.content.questions}
+                notes={questionNotes}
+              />
+              {/* On a phone the toolbar is not there: the conversation stays here. */}
+              <div className="md:hidden">
+                <AskDistil workshopId={workshop.id} canUndo={outline.previous !== null} />
+              </div>
+            </aside>
+          </div>
+        </>
       )}
     </div>
   );

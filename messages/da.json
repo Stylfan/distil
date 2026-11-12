@@ -42,7 +42,11 @@
     "deleteQuestion": "Slet {name}?",
     "deleteDetail": "Workshoppen, alle dens billeder og alle sedler slettes med det samme. Det kan ikke fortrydes.",
     "deleteConfirm": "Slet workshop",
-    "actions": "Flere handlinger for workshoppen"
+    "actions": "Flere handlinger for workshoppen",
+    "archive": "Arkivér",
+    "restore": "Tag frem igen",
+    "archived": "{count, plural, one {# arkiveret workshop} other {# arkiverede workshops}}",
+    "archivedNote": "Arkiveret. Den er væk fra listen, men alt er gemt."
   },
   "workshop": {
     "checkOnComputer": "Tjek og ret sedlerne på din computer. Åbn workshoppen dér, så står hvert billede ved siden af det, Distil har læst.",
@@ -51,7 +55,8 @@
     "steps": "Workshoppens trin",
     "tabTranscript": "Materiale",
     "tabOutline": "Disposition",
-    "tabDeck": "Præsentation"
+    "tabDeck": "Præsentation",
+    "toOutline": "Til dispositionen"
   },
   "intake": {
     "camera": "Tag billede",
@@ -78,7 +83,12 @@
       "provider": "Læsningen svarede ikke. Prøv igen om lidt.",
       "unreadable": "Svaret fra læsningen kunne ikke bruges. Prøv igen.",
       "expired": "Linket fra computeren er udløbet. Scan en ny QR-kode under »Tilføj fra telefon«."
-    }
+    },
+    "add": "Tilføj billeder",
+    "dropHere": "Slip billederne her",
+    "working": "{count, plural, one {Læser # billede …} other {Læser # billeder …}}",
+    "finished": "{count, plural, one {# billede læst} other {# billeder læst}}",
+    "failed": "{count, plural, one {# fejlede} other {# fejlede}}"
   },
   "photos": {
     "photo": "Billede {number}",
@@ -608,7 +618,23 @@
     "unsure": "Distil er i tvivl · {at} af {of}",
     "onPhotos": "{count, plural, one {Billede {photos}} other {Billede {photos}}}",
     "skip": "Spring over",
-    "summaryMore": "Klik i teksten for at læse og rette det hele."
+    "summaryMore": "Klik i teksten for at læse og rette det hele.",
+    "bar": {
+      "askTitle": "Bed Distil om en ændring",
+      "askPlaceholder": "Bed Distil ændre dispositionen …",
+      "askHint": "Distil ændrer dispositionen og beholder resten, som det er, fx slår temaer sammen, deler dem eller skriver punkterne kortere. Du kan altid fortryde. Du kan også tale (mikrofonen på tastaturet). Hver ændring tæller som én disposition i dag.",
+      "help": "Hvad kan Distil ændre?",
+      "send": "Send",
+      "working": "Distil arbejder, typisk 20–60 sekunder …",
+      "suggestions": {
+        "merge": "Slå de to mindste temaer sammen",
+        "shorter": "Skriv punkterne kortere og mere konkrete",
+        "agreed": "Flyt det, der blev aftalt, til Aftalt"
+      },
+      "undo": "Fortryd",
+      "toDeck": "Til præsentationen",
+      "status": "{themes, plural, one {# tema} other {# temaer}} · {notes, plural, one {# seddel} other {# sedler}}"
+    }
   },
   "deck": {
     "savePdf": "Gem som PDF",
@@ -773,6 +799,8 @@
       "saving": "Gemmer …",
       "saved": "Gemt.",
       "failed": "Det blev ikke gemt. Prøv igen."
-    }
+    },
+    "short": "Om workshoppen:",
+    "shortLead": "formål, deltagere, hvem den er til, agenda"
   }
 }

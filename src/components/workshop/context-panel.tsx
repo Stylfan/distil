@@ -20,13 +20,20 @@ import { preparePhoto } from "./shrink";
 export function ContextPanel({
   workshopId,
   context,
+  open: shown,
+  headless = false,
 }: {
   workshopId: string;
   context: WorkshopContext | null;
+  /** Set from outside (the toolbar on a computer); otherwise the panel opens itself. */
+  open?: boolean;
+  /** Without its own heading: the toolbar has the button that opens it. */
+  headless?: boolean;
 }) {
   const t = useTranslations("context");
   const [value, setValue] = useState<WorkshopContext>(context ?? EMPTY_CONTEXT);
-  const [open, setOpen] = useState(!hasContext(context));
+  const [ownOpen, setOpen] = useState(!hasContext(context));
+  const open = shown ?? ownOpen;
   const [state, setState] = useState<"idle" | "saving" | "saved" | "failed">("idle");
   const [agendaState, setAgendaState] = useState<string | null>(null);
   const [reading, startReading] = useTransition();
@@ -69,28 +76,33 @@ export function ContextPanel({
     </div>
   );
 
+  if (headless && !open) return null;
   return (
     <section className="rounded-lg border border-hairline bg-surface">
-      <button
-        type="button"
-        onClick={() => setOpen((o) => !o)}
-        aria-expanded={open}
-        className="flex w-full items-center gap-3 px-4 py-3 text-left"
-      >
-        <MessageSquareText className="size-5 shrink-0 text-bronze" aria-hidden />
-        <span className="flex min-w-0 flex-1 flex-col">
-          <span className="text-[15px] font-semibold text-ink">{t("title")}</span>
-          <span className="text-[13px] text-slate">
-            {hasContext(value) ? summary(value, t("none")) : t("lead")}
+      {!headless && (
+        <button
+          type="button"
+          onClick={() => setOpen((o) => !o)}
+          aria-expanded={open}
+          className="flex w-full items-center gap-3 px-4 py-3 text-left"
+        >
+          <MessageSquareText className="size-5 shrink-0 text-bronze" aria-hidden />
+          <span className="flex min-w-0 flex-1 flex-col">
+            <span className="text-[15px] font-semibold text-ink">{t("title")}</span>
+            <span className="text-[13px] text-slate">
+              {hasContext(value) ? summary(value, t("none")) : t("lead")}
+            </span>
           </span>
-        </span>
-        <ChevronDown
-          className={cn("size-4 text-slate transition", open && "rotate-180")}
-          aria-hidden
-        />
-      </button>
+          <ChevronDown
+            className={cn("size-4 text-slate transition", open && "rotate-180")}
+            aria-hidden
+          />
+        </button>
+      )}
       {open && (
-        <div className="flex flex-col gap-4 border-t border-hairline px-4 py-4">
+        <div
+          className={cn("flex flex-col gap-4 px-4 py-4", !headless && "border-t border-hairline")}
+        >
           <p className="flex items-start gap-2 text-[13px] leading-relaxed text-slate">
             <Mic className="mt-0.5 size-4 shrink-0" aria-hidden />
             {t("speak")}
@@ -233,7 +245,7 @@ export function ContextPanel({
   );
 }
 
-function summary(c: WorkshopContext, none: string): string {
+export function summary(c: WorkshopContext, none: string): string {
   const text = [c.purpose, c.audience].filter((s) => s.trim()).join(" · ");
   return text ? (text.length > 140 ? `${text.slice(0, 140)}…` : text) : none;
 }

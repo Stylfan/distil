@@ -19,7 +19,7 @@ function Working() {
   );
 }
 
-function useRun(workshopId: string) {
+export function useRun(workshopId: string) {
   const t = useTranslations("outline");
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
@@ -37,13 +37,22 @@ function useRun(workshopId: string) {
 }
 
 /** The first outline: one button, and what happens when it is pressed. */
-export function MakeOutline({ workshopId, big = false }: { workshopId: string; big?: boolean }) {
+export function MakeOutline({
+  workshopId,
+  big = false,
+  quiet = false,
+}: {
+  workshopId: string;
+  big?: boolean;
+  /** A secondary button, where the view already has its main one. */
+  quiet?: boolean;
+}) {
   const t = useTranslations("outline");
   const { go, pending, error } = useRun(workshopId);
   return (
     <div className="flex flex-col gap-2">
       <Button
-        variant="primary"
+        variant={quiet ? "secondary" : "primary"}
         className={big ? "h-12 self-stretch text-[15px] md:self-start" : "self-start"}
         disabled={pending}
         onClick={() => go(null)}

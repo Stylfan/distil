@@ -39,6 +39,8 @@ export const workshops = pgTable(
     heldOn: text("held_on").notNull(),
     /** What the facilitator told Distil about the workshop (domain/context); null until then. */
     context: jsonb("context").$type<WorkshopContext>(),
+    /** When the facilitator put it away; it stays whole and can be taken back. Null while in use. */
+    archivedAt: bigint("archived_at", { mode: "number" }),
     ...timestamps,
   },
   (t) => [index("workshops_owner_idx").on(t.ownerId)],

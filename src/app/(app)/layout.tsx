@@ -27,7 +27,9 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     <div className="min-h-screen md:grid md:grid-cols-[15rem_minmax(0,1fr)] print:block">
       <aside className="sticky top-0 hidden h-screen md:block print:hidden">
         <Sidebar
-          workshops={workshops.map((w) => ({ id: w.id, name: w.name }))}
+          workshops={workshops
+            .filter((w) => w.archivedAt === null)
+            .map((w) => ({ id: w.id, name: w.name }))}
           user={{ name: user.name, email: demo === null ? user.email : "" }}
           requests={requests}
         />

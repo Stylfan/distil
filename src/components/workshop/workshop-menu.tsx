@@ -3,16 +3,27 @@
 import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { Ellipsis, Pencil } from "lucide-react";
-import { deleteWorkshopAction, renameWorkshopAction } from "@/actions/workshops";
+import { Archive, ArchiveRestore, Ellipsis, Pencil } from "lucide-react";
+import { deleteWorkshopAction, renameWorkshopAction, setArchivedAction } from "@/actions/workshops";
 import { Button, Input, Label } from "@/components/ui/controls";
 import { ConfirmButton } from "@/components/ui/confirm";
 
 /**
- * The workshop's own actions, behind one "⋯" in its header: change its name
- * or day, or delete it with everything (asked first).
+ * The workshop's own actions, behind one "⋯": change its name or day, put
+ * it away in the archive (or take it back), or delete it with everything
+ * (asked first). In the workshop's header and on each row of the list.
  */
-export function WorkshopMenu({ id, name, heldOn }: { id: string; name: string; heldOn: string }) {
+export function WorkshopMenu({
+  id,
+  name,
+  heldOn,
+  archived = false,
+}: {
+  id: string;
+  name: string;
+  heldOn: string;
+  archived?: boolean;
+}) {
   const t = useTranslations("workshops");
   const tc = useTranslations("common");
   const te = useTranslations("errors");
@@ -67,6 +78,26 @@ export function WorkshopMenu({ id, name, heldOn }: { id: string; name: string; h
           >
             <Pencil className="size-3.5" aria-hidden />
             {t("edit")}
+          </button>
+          <button
+            type="button"
+            role="menuitem"
+            disabled={pending}
+            onClick={() =>
+              start(async () => {
+                setOpen(false);
+                const result = await setArchivedAction({ id, archived: !archived });
+                if (result.ok) router.refresh();
+              })
+            }
+            className="flex items-center gap-2 rounded px-3 py-2 text-left text-[13px] text-ink hover:bg-sand"
+          >
+            {archived ? (
+              <ArchiveRestore className="size-3.5" aria-hidden />
+            ) : (
+              <Archive className="size-3.5" aria-hidden />
+            )}
+            {archived ? t("restore") : t("archive")}
           </button>
           <span className="my-1 h-px bg-hairline" aria-hidden />
           <ConfirmButton

@@ -144,3 +144,18 @@ export async function setContext(
     .set({ context: contextSchema.parse(context) })
     .where(eq(workshops.id, id));
 }
+
+/** Puts a workshop away, or takes it back. Nothing in it changes, and nothing is deleted. */
+export async function setArchived(
+  db: Db,
+  userId: string,
+  id: string,
+  archived: boolean,
+  now = Date.now(),
+): Promise<void> {
+  await requireWorkshop(db, userId, id);
+  await db
+    .update(workshops)
+    .set({ archivedAt: archived ? now : null })
+    .where(eq(workshops.id, id));
+}
