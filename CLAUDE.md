@@ -63,6 +63,8 @@ Read this file at the start of every session.
 - A workshop holds at most 50 photos; a photo at most a set size and
   resolution.
 - Demo: 10 photos per visit and 300 per day for the whole installation.
+- Outlines: 30 per account and 500 per installation per day. Only the
+  notes' text goes to Mistral for an outline, as numbered lines.
 - A ceiling on Mistral calls per day for the installation, whatever the
   accounts allow. When a ceiling is hit, Distil says so plainly and stops;
   it never queues or silently degrades.

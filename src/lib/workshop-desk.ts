@@ -1,5 +1,6 @@
 import { withUser } from "@/db/client";
-import type { Note } from "@/db/schema";
+import type { Note, OutlineRow } from "@/db/schema";
+import { getOutline } from "@/services/outlines";
 import { getWorkshop, listNotes, type WorkshopFull } from "@/services/workshops";
 
 /**
@@ -13,6 +14,7 @@ export type Desk = {
   full: WorkshopFull;
   chosen: (WorkshopFull["photos"][number] & { imageExpiresIn: number | null }) | undefined;
   notes: Note[];
+  outline: OutlineRow | null;
 };
 
 export async function loadDesk(
@@ -33,6 +35,7 @@ export async function loadDesk(
       ...photo,
       imageExpiresIn: photo.imageExpiresAt === null ? null : photo.imageExpiresAt - now,
     };
-    return { full, chosen, notes };
+    const outline = await getOutline(tx, userId, workshopId);
+    return { full, chosen, notes, outline };
   });
 }

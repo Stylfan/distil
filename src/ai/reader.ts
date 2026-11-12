@@ -2,6 +2,7 @@ import type { ReadItem } from "@/domain/reading";
 import { ReadError } from "./errors";
 import { fakeReader } from "./fake";
 import { mistralReader } from "./mistral";
+import { mistralFromEnv } from "./mistral-chat";
 
 /**
  * The one door to the model. Everything that reads a photo goes through a
@@ -19,17 +20,9 @@ export type Reader = {
  */
 export function getReader(env: NodeJS.ProcessEnv = process.env): Reader {
   if (env.DISTIL_READER === "fake") return fakeReader;
-  const key = env.MISTRAL_API_KEY?.trim();
-  if (!key) {
-    return {
-      read: () => Promise.reject(new ReadError("notConfigured")),
-    };
-  }
-  return mistralReader({
-    key,
-    model: env.DISTIL_MISTRAL_MODEL?.trim() || "mistral-medium-latest",
-    base: env.DISTIL_MISTRAL_URL?.trim(),
-  });
+  const options = mistralFromEnv(env);
+  if (!options) return { read: () => Promise.reject(new ReadError("notConfigured")) };
+  return mistralReader(options);
 }
 
 export { ReadError, type ReadFailure } from "./errors";

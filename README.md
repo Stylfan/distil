@@ -11,7 +11,7 @@ The interface is in Danish.
 
 ## Status
 
-Early: the first slice. What works today:
+Early: two slices. What works today:
 
 - Accounts with e-mail and password, two-step sign-in (authenticator app
   and recovery codes) and passkeys, as in Prismatic. Each account sees only
@@ -24,14 +24,23 @@ Early: the first slice. What works today:
   in amber with the other readings it considered; correct the text and
   colour, add a missed note, delete one; approve the photo, which deletes
   the image.
+- The outline (Disposition): from all the read notes, Distil makes a
+  summary, themes with their points and the notes they came from,
+  patterns, recommendations (its proposals, until kept), what was agreed
+  and what is open. Edit everything in place, saved as you type; ask
+  Distil for a change in plain words, make it again, or undo its last
+  change.
+- Distil's questions (whether the colours meant something, an unclear
+  word, whether something was agreed), answered by a tap on the phone or
+  on the computer, and used the next time.
 - Limits: 10 photos per account, 300 per day for the installation, 50 per
-  workshop, and checks on every photo.
+  workshop, checks on every photo; 30 outlines per account and 500 per
+  installation a day.
 - Under **Konto**: download everything as JSON, delete the account with
   everything in it. A demo mode where a visit is gone after a day.
 
-Next: an outline (themes, patterns, recommendations, agreed and open
-points) with Distil's questions on the phone; then the presentation and
-PDF; then whiteboard drawings redrawn as diagrams. See
+Next: the presentation and PDF, built from the outline; then whiteboard
+drawings redrawn as diagrams. See
 [docs/plan-first-slice.md](docs/plan-first-slice.md).
 
 ## Run it on your own machine

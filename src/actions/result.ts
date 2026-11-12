@@ -1,11 +1,12 @@
 import type { z } from "zod";
 import { currentUser } from "@/auth/session";
 import { withUser, type Db } from "@/db/client";
-import { NotFound } from "@/services/errors";
+import { Conflict, NotFound } from "@/services/errors";
 
 /** Every action answers with one of these; the page never sees a stack trace. */
 export type Result<T = undefined> =
-  { ok: true; data: T } | { ok: false; error: "unauthorized" | "invalid" | "notFound" | "generic" };
+  | { ok: true; data: T }
+  | { ok: false; error: "unauthorized" | "invalid" | "notFound" | "conflict" | "generic" };
 
 /**
  * The shape of every server action: resolve the signed-in user, validate
@@ -31,6 +32,7 @@ export async function run<S extends z.ZodType, T>(
     };
   } catch (error) {
     if (error instanceof NotFound) return { ok: false, error: "notFound" };
+    if (error instanceof Conflict) return { ok: false, error: "conflict" };
     console.error("action failed", error);
     return { ok: false, error: "generic" };
   }

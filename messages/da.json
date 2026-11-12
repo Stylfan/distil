@@ -45,7 +45,10 @@
   "workshop": {
     "checkOnComputer": "Tjek og ret sedlerne på din computer. Åbn workshoppen dér, så står hvert billede ved siden af det, Distil har læst.",
     "summary": "{photos, plural, =0 {Ingen billeder} one {# billede} other {# billeder}}{toCheck, plural, =0 {} other {, # at tjekke}}",
-    "empty": "Tag billeder med telefonen, eller træk dem herind fra computeren. Distil læser hvert billede, og du ser det her ved siden af sedlerne."
+    "empty": "Tag billeder med telefonen, eller træk dem herind fra computeren. Distil læser hvert billede, og du ser det her ved siden af sedlerne.",
+    "steps": "Workshoppens trin",
+    "tabTranscript": "Afskrift",
+    "tabOutline": "Disposition"
   },
   "intake": {
     "camera": "Tag billede",
@@ -303,8 +306,8 @@
         {
           "title": "Kunstig intelligens",
           "body": [
-            "Billederne læses af Mistral AI (Frankrig), som databehandler for {name}. Billedet sendes til Mistral, når det læses. Mistral behandler data i EU og kan gemme det, der sendes, i op til 30 dage for at opdage misbrug, hvorefter det slettes.",
-            "Det, Distil læser, er et forslag. Du ser det ved siden af billedet og retter det, før du bruger det til noget."
+            "Billederne læses af Mistral AI (Frankrig), som databehandler for {name}, og Mistral laver også dispositionen ud fra teksten på sedlerne. Billedet sendes til Mistral, når det læses, og teksten, når du beder om en disposition eller en ændring. Mistral behandler data i EU og kan gemme det, der sendes, i op til 30 dage for at opdage misbrug, hvorefter det slettes.",
+            "Det, Distil læser og foreslår, er et forslag. Du ser det ved siden af billedet og retter det, og Distils egne anbefalinger er markeret, til du har valgt at beholde dem."
           ]
         },
         {
@@ -319,7 +322,7 @@
           "body": [
             "Kun du, når du er logget ind. Workshops er adskilt i databasen, så én bruger ikke kan se en andens.",
             "{hostingSentence}",
-            "Billederne læses af Mistral AI (Frankrig), som databehandler for {name}. Billedet sendes til Mistral, når det læses. Mistral behandler data i EU og kan gemme det, der sendes, i op til 30 dage for at opdage misbrug, hvorefter det slettes.",
+            "Billederne læses af Mistral AI (Frankrig), som databehandler for {name}, og Mistral laver også dispositionen ud fra teksten på sedlerne. Billedet sendes til Mistral, når det læses, og teksten, når du beder om en disposition eller en ændring. Mistral behandler data i EU og kan gemme det, der sendes, i op til 30 dage for at opdage misbrug, hvorefter det slettes.",
             "{name} kigger ikke i dit indhold, medmindre du beder om hjælp, eller det er nødvendigt for at rette en fejl eller stoppe misbrug."
           ]
         },
@@ -461,7 +464,7 @@
           "title": "Hvem der kan se det",
           "body": [
             "Kun dig, mens demoen kører. {hostingSentence}",
-            "Billederne læses af Mistral AI (Frankrig), som databehandler for {name}. Billedet sendes til Mistral, når det læses. Mistral behandler data i EU og kan gemme det, der sendes, i op til 30 dage for at opdage misbrug, hvorefter det slettes.",
+            "Billederne læses af Mistral AI (Frankrig), som databehandler for {name}, og Mistral laver også dispositionen ud fra teksten på sedlerne. Billedet sendes til Mistral, når det læses, og teksten, når du beder om en disposition eller en ændring. Mistral behandler data i EU og kan gemme det, der sendes, i op til 30 dage for at opdage misbrug, hvorefter det slettes.",
             "Der er ingen reklame, ingen sporing og ingen mails."
           ]
         },
@@ -507,5 +510,86 @@
         }
       ]
     }
+  },
+  "outline": {
+    "make": "Lav disposition",
+    "working": "Distil arbejder. Det tager typisk 10-40 sekunder …",
+    "emptyTitle": "Ingen disposition endnu",
+    "emptyBody": "{count, plural, one {Distil har # seddel at arbejde med.} other {Distil har # sedler at arbejde med.}} Distil samler dem i temaer, finder mønstre og foreslår anbefalinger, og trækker det aftalte og det udestående frem. Du retter det hele bagefter.",
+    "emptyNoNotes": "Der er ingen læste sedler endnu. Tag billeder, og lad Distil læse dem under Afskrift først.",
+    "summary": "Sammenfatning",
+    "themes": "Temaer",
+    "patterns": "Mønstre",
+    "recommendations": "Anbefalinger",
+    "actions": "Aftalt",
+    "openPoints": "Udestår",
+    "distilsReading": "Distils tolkning",
+    "distilsProposal": "Forslag fra Distil",
+    "keep": "Behold",
+    "kept": "Beholdt",
+    "newTheme": "Nyt tema",
+    "addTheme": "Tilføj tema",
+    "addPoint": "Tilføj punkt",
+    "addPattern": "Tilføj mønster",
+    "addRecommendation": "Tilføj anbefaling",
+    "addAction": "Tilføj aftale",
+    "addOpenPoint": "Tilføj udestående",
+    "point": "Punkt {number}",
+    "pattern": "Mønster {number}",
+    "recommendation": "Anbefaling {number}",
+    "action": "Aftale {number}",
+    "openPoint": "Udestående {number}",
+    "remove": "Fjern {item}",
+    "removeTheme": "Fjern tema {number}",
+    "moveUp": "Flyt op",
+    "moveDown": "Flyt ned",
+    "themeTitle": "Navn på tema {number}",
+    "themeSummary": "Om tema {number}",
+    "themeSummaryPlaceholder": "En linje eller to om temaet",
+    "fromNotes": "{count, plural, one {Fra # seddel} other {Fra # sedler}}",
+    "what": "Hvad",
+    "who": "Hvem",
+    "when": "Hvornår",
+    "notWritten": "Står ikke",
+    "actionWhat": "Aftale {number}, hvad",
+    "actionWho": "Aftale {number}, hvem",
+    "actionWhen": "Aftale {number}, hvornår",
+    "save": {
+      "saved": "Alt er gemt.",
+      "saving": "Gemmer …",
+      "conflict": "Dispositionen er ændret et andet sted. Dine sidste ændringer er ikke gemt.",
+      "failed": "Det blev ikke gemt. Prøv igen."
+    },
+    "reload": "Hent den nyeste",
+    "askTitle": "Bed Distil om en ændring",
+    "askPlaceholder": "Fx Slå tema 2 og 3 sammen, eller Skriv anbefalingerne kortere",
+    "ask": "Send",
+    "remake": "Lav forfra med dine svar",
+    "undo": "Fortryd Distils sidste ændring",
+    "askHint": "Distil ændrer dispositionen og beholder resten, som det er. Du kan altid fortryde.",
+    "questionsOpen": "{count, plural, one {Distil har # spørgsmål} other {Distil har # spørgsmål}}",
+    "questionsDone": "Distils spørgsmål er besvaret",
+    "ownAnswer": "Eller skriv dit svar",
+    "answer": "Svar",
+    "changeAnswer": "Ret",
+    "saveFailed": "Svaret blev ikke gemt. Prøv igen.",
+    "colourQuestion": "Der er sedler i {colours}. Betyder farverne noget, fx én farve pr. gruppe eller pr. slags input?",
+    "colourNone": "Nej, ingen betydning",
+    "errors": {
+      "unauthorized": "Du er ikke logget ind længere. Log ind igen.",
+      "invalid": "Ændringen kunne ikke bruges. Prøv at skrive den anderledes.",
+      "notFound": "Workshoppen findes ikke længere.",
+      "generic": "Det gik galt. Prøv igen.",
+      "noNotes": "Der er ingen læste sedler at arbejde med endnu.",
+      "outlines": "Distil har lavet så mange dispositioner for dig i dag, som den må. Prøv igen i morgen.",
+      "daily": "Distil har arbejdet så meget i dag, som den må. Prøv igen i morgen.",
+      "allowance": "Din konto har ikke flere læsninger tilbage.",
+      "workshopFull": "Workshoppen er fuld.",
+      "stored": "Der venter for mange billeder.",
+      "notConfigured": "Distil er ikke sat op til at lave dispositioner på denne installation endnu.",
+      "provider": "Distil svarede ikke. Prøv igen om lidt.",
+      "unreadable": "Distils svar kunne ikke bruges. Prøv igen."
+    },
+    "and": "og"
   }
 }

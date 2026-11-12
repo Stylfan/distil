@@ -10,7 +10,7 @@ export class NotFound extends Error {
  * installation's ceiling for today is reached, the workshop is full, or
  * the account already has as many images waiting as it may.
  */
-export type LimitKind = "allowance" | "daily" | "workshopFull" | "stored";
+export type LimitKind = "allowance" | "daily" | "workshopFull" | "stored" | "outlines";
 
 export class LimitReached extends Error {
   constructor(readonly kind: LimitKind) {
@@ -22,5 +22,12 @@ export class LimitReached extends Error {
 export class BadPhoto extends Error {
   constructor(readonly reason: "type" | "size" | "dimensions") {
     super(reason);
+  }
+}
+
+/** Someone saved the same thing in the meantime (another window, the phone). */
+export class Conflict extends Error {
+  constructor() {
+    super("conflict");
   }
 }

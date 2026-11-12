@@ -45,9 +45,13 @@ photo is gone afterwards.
 
 ## The slices after (each planned before it is built)
 
-2. **Outline:** themes, patterns, Distil's recommendations (marked),
-   agreed actions and open points; Distil's questions on the phone; the
-   conversation field on the computer.
+2. **Outline (built 12 November 2026):** themes, patterns, Distil's
+   recommendations (marked), agreed actions and open points; Distil's
+   questions on the phone; the conversation field on the computer. One
+   document per workshop ([ADR 0003](adr/0003-the-outline-is-one-document.md)).
+   Tried with the fake outliner only; untested against Mistral. Voice
+   answers use the phone keyboard's own microphone: the browser's speech
+   recognition would send audio to Google or Apple, outside the rules.
 3. **Presentation:** overview first, themes like the wall, actions,
    transcript as an optional appendix; PDF through print.
 4. **Drawings:** boxes, arrows, lines and roles from whiteboards and

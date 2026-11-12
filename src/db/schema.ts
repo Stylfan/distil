@@ -9,6 +9,7 @@ import {
   uniqueIndex,
 } from "drizzle-orm/pg-core";
 import { bytea, id, now, timestamps } from "./columns";
+import type { Outline } from "@/domain/outline";
 import { users } from "./schema-accounts";
 
 export * from "./schema-accounts";
@@ -140,9 +141,31 @@ export const notes = pgTable(
   (t) => [index("notes_photo_idx").on(t.photoId, t.seq)],
 );
 
+/**
+ * The outline of a workshop (src/domain/outline.ts), as one document: what
+ * Distil made of the notes, as the facilitator has shaped it since. The
+ * version before Distil's last change is kept, so that change can be
+ * undone.
+ */
+export const outlines = pgTable("outlines", {
+  id: id(),
+  workshopId: text("workshop_id")
+    .notNull()
+    .unique()
+    .references(() => workshops.id, { onDelete: "cascade" }),
+  content: jsonb("content").$type<Outline>().notNull(),
+  previous: jsonb("previous").$type<Outline>(),
+  /** Raised on every save, so two windows cannot overwrite each other unseen. */
+  version: integer("version").notNull().default(1),
+  /** When Distil last made or changed it. */
+  generatedAt: bigint("generated_at", { mode: "number" }).notNull(),
+  ...timestamps,
+});
+
 export type Workshop = typeof workshops.$inferSelect;
 export type Photo = typeof photos.$inferSelect;
 export type Note = typeof notes.$inferSelect;
+export type OutlineRow = typeof outlines.$inferSelect;
 
 /**
  * Every change to a workshop's data, written by a database trigger

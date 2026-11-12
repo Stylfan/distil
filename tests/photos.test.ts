@@ -95,7 +95,7 @@ describe("reading", () => {
   it("stops at the installation's ceiling for the day, and starts again the next day", async () => {
     const bob = await seedUser(db, "bob@example.com");
     const day = Date.UTC(2026, 10, 12, 12);
-    const config = { allowance: 10, dailyCeiling: 2 };
+    const config = { allowance: 10, dailyCeiling: 2, outlinesPerAccount: 30, outlineCeiling: 500 };
     await reservePhoto(db, alice, day, config);
     await reservePhoto(db, bob, day, config);
     await expect(reservePhoto(db, alice, day, config)).rejects.toThrow("daily");

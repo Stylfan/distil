@@ -67,3 +67,59 @@ export async function photosLeft(db: Db, userId: string): Promise<number> {
     .where(eq(users.id, userId));
   return row ? Math.max(0, row.allowance - row.read) : 0;
 }
+
+/**
+ * Counts one outline Distil makes or changes, against the account's day
+ * and the installation's day. Text is cheap next to photos, but a public
+ * demo must still not be able to run it in a loop.
+ */
+export async function reserveOutline(
+  db: Db,
+  userId: string,
+  now = Date.now(),
+  config: Limits = limits(),
+): Promise<void> {
+  const day = dayKey(now);
+  const taken = await db
+    .update(users)
+    .set({
+      outlineDay: day,
+      outlinesOnDay: sql`case when ${users.outlineDay} = ${day} then ${users.outlinesOnDay} + 1 else 1 end`,
+    })
+    .where(
+      and(
+        eq(users.id, userId),
+        sql`(${users.outlineDay} is distinct from ${day} or ${users.outlinesOnDay} < ${config.outlinesPerAccount})`,
+      ),
+    )
+    .returning({ id: users.id });
+  if (taken.length === 0) throw new LimitReached("outlines");
+  const counted = await db
+    .insert(usageDays)
+    .values({ day, outlines: 1 })
+    .onConflictDoUpdate({
+      target: usageDays.day,
+      set: { outlines: sql`${usageDays.outlines} + 1` },
+      setWhere: lt(usageDays.outlines, config.outlineCeiling),
+    })
+    .returning({ day: usageDays.day });
+  if (counted.length === 0) {
+    await releaseOutline(db, userId, now, false);
+    throw new LimitReached("daily");
+  }
+}
+
+/** Undoes a reservation whose outline did not come back. */
+export async function releaseOutline(db: Db, userId: string, now = Date.now(), daily = true) {
+  const day = dayKey(now);
+  await db
+    .update(users)
+    .set({ outlinesOnDay: sql`greatest(${users.outlinesOnDay} - 1, 0)` })
+    .where(and(eq(users.id, userId), eq(users.outlineDay, day)));
+  if (daily) {
+    await db
+      .update(usageDays)
+      .set({ outlines: sql`greatest(${usageDays.outlines} - 1, 0)` })
+      .where(eq(usageDays.day, day));
+  }
+}

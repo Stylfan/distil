@@ -54,13 +54,15 @@ passkey under **Konto**.
 
 So a public installation cannot run up the bill at Mistral:
 
-| Setting                    | Default | What it does                                                   |
-| -------------------------- | ------- | -------------------------------------------------------------- |
-| `DISTIL_PHOTO_ALLOWANCE`   | 10      | Photos a new account (or demo visit) may have read in all      |
-| `DISTIL_DAILY_PHOTO_LIMIT` | 300     | Photos the whole installation may have read per day (UTC)      |
-| (in the code)              | 50      | Photos per workshop                                            |
-| (in the code)              | 100     | Images an account may have waiting to be checked at once       |
-| (in the code)              | 4 MB    | Largest photo the server takes; the browser shrinks to ~0.5 MB |
+| Setting                             | Default | What it does                                                   |
+| ----------------------------------- | ------- | -------------------------------------------------------------- |
+| `DISTIL_PHOTO_ALLOWANCE`            | 10      | Photos a new account (or demo visit) may have read in all      |
+| `DISTIL_DAILY_PHOTO_LIMIT`          | 300     | Photos the whole installation may have read per day (UTC)      |
+| `DISTIL_DAILY_OUTLINES_PER_ACCOUNT` | 30      | Outlines Distil may make or change for one account per day     |
+| `DISTIL_DAILY_OUTLINE_LIMIT`        | 500     | Outlines for the whole installation per day                    |
+| (in the code)                       | 50      | Photos per workshop                                            |
+| (in the code)                       | 100     | Images an account may have waiting to be checked at once       |
+| (in the code)                       | 4 MB    | Largest photo the server takes; the browser shrinks to ~0.5 MB |
 
 Raising one account's allowance is, for now, done in the database:
 `update users set photo_allowance = 100 where email = '…';`. A "Bed om

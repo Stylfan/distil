@@ -189,8 +189,10 @@ describe("Mistral", () => {
 
 describe("the limits", () => {
   it("default to 10 photos an account and 300 a day, and may be set", () => {
-    expect(limits(env({}))).toEqual({ allowance: 10, dailyCeiling: 300 });
-    expect(limits(env({ DISTIL_PHOTO_ALLOWANCE: "25", DISTIL_DAILY_PHOTO_LIMIT: "-4" }))).toEqual({
+    expect(limits(env({}))).toMatchObject({ allowance: 10, dailyCeiling: 300 });
+    expect(
+      limits(env({ DISTIL_PHOTO_ALLOWANCE: "25", DISTIL_DAILY_PHOTO_LIMIT: "-4" })),
+    ).toMatchObject({
       allowance: 25,
       dailyCeiling: 300,
     });

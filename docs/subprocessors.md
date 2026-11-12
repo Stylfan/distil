@@ -6,12 +6,12 @@ It changes before any new third party is added.
 
 ## The software itself: Mistral, and nobody else
 
-| Who                     | What they can see                                                               | When                                       |
-| ----------------------- | ------------------------------------------------------------------------------- | ------------------------------------------ |
-| Mistral AI (France, EU) | One photo at a time, shrunk and without EXIF data, and the text it reads off it | Each time a photo is read; never otherwise |
+| Who                     | What they can see                                                                                    | When                                         |
+| ----------------------- | ---------------------------------------------------------------------------------------------------- | -------------------------------------------- |
+| Mistral AI (France, EU) | One photo at a time, shrunk and without EXIF data, and the text it reads off it                      | Each time a photo is read                    |
+| Mistral AI (France, EU) | The text, colour and kind of a workshop's notes, the outline, the facilitator's answers and requests | Each time Distil makes or changes an outline |
 
-Distil sends a photo to Mistral's API when it is read, and nothing else:
-no account details, no workshop names, no other notes. Mistral processes
+Distil sends a photo to Mistral's API when it is read, and the notes' text when an outline is made or changed, and nothing else: no account details, no workshop names, no note ids (notes go as numbered lines). Mistral processes
 API data in the EU and, by its terms, may keep what it receives for up to
 30 days to detect abuse. Whoever runs an installation should check in the
 Mistral console that the data is not used for training, ask for zero data

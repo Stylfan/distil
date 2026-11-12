@@ -3,7 +3,10 @@ import { notFound } from "next/navigation";
 import { Monitor } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { requireUser } from "@/auth/session";
+import { MakeOutline } from "@/components/outline/outline-run";
+import { QuestionCards } from "@/components/outline/question-cards";
 import { PhotoIntake } from "@/components/workshop/photo-intake";
+import { WorkshopTabs } from "@/components/workshop/workshop-tabs";
 import { PhotoList } from "@/components/workshop/photo-list";
 import { ReviewPanel } from "@/components/workshop/review-panel";
 import { WorkshopMenu } from "@/components/workshop/workshop-menu";
@@ -36,8 +39,9 @@ export default async function WorkshopPage({ params, searchParams }: Props) {
   const t = await getTranslations("workshop");
   const loaded = await loadDesk(user.id, id, wanted);
   if (!loaded) notFound();
-  const { full, chosen, notes } = loaded;
+  const { full, chosen, notes, outline } = loaded;
   const { workshop, photos } = full;
+  const readCount = photos.filter((p) => p.status === "read" || p.status === "approved").length;
   const toCheck = photos.filter((p) => p.status === "read").length;
 
   return (
@@ -52,10 +56,16 @@ export default async function WorkshopPage({ params, searchParams }: Props) {
         }
       />
 
+      <WorkshopTabs workshopId={workshop.id} current="transcript" />
+
       <PhotoIntake workshopId={workshop.id} />
 
-      {/* The phone: status only, and where the checking happens. */}
-      <div className="flex flex-col gap-3 md:hidden">
+      {/* The phone: Distil's questions, the status, and where the checking happens. */}
+      <div className="flex flex-col gap-4 md:hidden">
+        {outline && (
+          <QuestionCards workshopId={workshop.id} questions={outline.content.questions} big />
+        )}
+        {!outline && readCount > 0 && <MakeOutline workshopId={workshop.id} big />}
         {photos.length > 0 && (
           <p className="flex items-start gap-2 rounded-lg bg-technical-soft px-3 py-2.5 text-[13px] leading-relaxed text-ink">
             <Monitor className="mt-0.5 size-4 shrink-0 text-technical" aria-hidden />

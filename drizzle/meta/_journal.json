@@ -15,6 +15,20 @@
       "when": 1794482093176,
       "tag": "0001_roles_rls_audit",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1794483574862,
+      "tag": "0002_outlines",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1794483575588,
+      "tag": "0003_outlines_rls",
+      "breakpoints": true
     }
   ]
 }

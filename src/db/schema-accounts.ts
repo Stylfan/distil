@@ -30,6 +30,9 @@ export const users = pgTable(
     photoAllowance: integer("photo_allowance").notNull().default(10),
     /** How many photos the account has had read, counting those deleted since. */
     photosRead: integer("photos_read").notNull().default(0),
+    /** The day (UTC) the outline count below is for, and how many outlines Distil made that day. */
+    outlineDay: text("outline_day"),
+    outlinesOnDay: integer("outlines_on_day").notNull().default(0),
     ...timestamps,
   },
   (t) => [uniqueIndex("users_email_uq").on(t.email)],
@@ -45,6 +48,8 @@ export const usageDays = pgTable("usage_days", {
   /** The day in UTC, yyyy-mm-dd. */
   day: text("day").primaryKey(),
   photos: integer("photos").notNull().default(0),
+  /** Outlines made or changed by Distil that day. */
+  outlines: integer("outlines").notNull().default(0),
 });
 
 /**

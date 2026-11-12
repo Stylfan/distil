@@ -16,7 +16,7 @@ import { fakeJpeg, seedUser } from "./helpers";
  * photos, images or notes.
  */
 
-const CHILD_TABLES = ["photos", "photo_images", "notes"];
+const CHILD_TABLES = ["photos", "photo_images", "notes", "outlines"];
 /** Outside row-level security on purpose: signing in, and counts with no personal data. */
 const OPEN_TABLES = [
   "users",
