@@ -1,7 +1,7 @@
 # Deploying Distil with Coolify
 
 How Distil goes on the server beside Prismatic, at
-`https://distill.lenskjoldconsulting.dk`, with the presentation of it on
+`https://distil.lenskjoldconsulting.dk`, with the presentation of it on
 `lenskjoldconsulting.dk`. One address serves both the phone and the
 computer: the page adapts to the screen, and a phone can add it to its
 home screen and open it like an app.
@@ -10,9 +10,9 @@ home screen and open it like an app.
 
 At the DNS provider for `lenskjoldconsulting.dk`, add an `A` record:
 
-| Name      | Type | Value                                       |
-| --------- | ---- | ------------------------------------------- |
-| `distill` | A    | the server's IPv4 (the same as Prismatic's) |
+| Name     | Type | Value                                       |
+| -------- | ---- | ------------------------------------------- |
+| `distil` | A    | the server's IPv4 (the same as Prismatic's) |
 
 and an `AAAA` record with the IPv6 if the server has one. Coolify's
 Traefik gets the HTTPS certificate by itself once the name points at the
@@ -25,7 +25,7 @@ server.
    `https://github.com/Stylfan/distil`, branch `main`.
 3. **Build pack: Docker Compose**, file `docker-compose.yml`.
 4. On the service **app**, set the domain to
-   `https://distill.lenskjoldconsulting.dk:3000` (the port is the
+   `https://distil.lenskjoldconsulting.dk:3000` (the port is the
    container's, not the host's). Leave `db` and `migrate` without a domain.
 
 ## 3. Environment
@@ -38,7 +38,7 @@ In the resource's **Environment Variables**. Make each secret with
 | `POSTGRES_PASSWORD`       | a new secret                                                         |
 | `DISTIL_APP_PASSWORD`     | another new secret                                                   |
 | `DISTIL_SECRET`           | a third new secret; never change it once people use two-step sign-in |
-| `DISTIL_URL`              | `https://distill.lenskjoldconsulting.dk`                             |
+| `DISTIL_URL`              | `https://distil.lenskjoldconsulting.dk`                              |
 | `MISTRAL_API_KEY`         | the key from console.mistral.ai                                      |
 | `DISTIL_DEMO`             | `on`: the front page offers a demo that is gone after a day          |
 | `DISTIL_SIGNUP`           | `open`: real accounts beside the demo                                |
@@ -58,7 +58,7 @@ Press **Deploy**. Compose builds the image, starts Postgres, runs the
 migrations once (the `migrate` service stops when done; that is expected)
 and starts the app. Then:
 
-- `https://distill.lenskjoldconsulting.dk/api/health` answers `{"ok":true}`.
+- `https://distil.lenskjoldconsulting.dk/api/health` answers `{"ok":true}`.
 - The front page shows the demo button, sign-in and sign-up.
 - On a phone: open the address, then **Del → Føj til hjemmeskærm**
   (iPhone) or **⋮ → Installer app** (Android). The icon opens Distil full
@@ -92,7 +92,7 @@ keeping copies at most 7 days, as the privacy policy says.
 
 ## 6. On lenskjoldconsulting.dk
 
-The page about Distil links to `https://distill.lenskjoldconsulting.dk`
+The page about Distil links to `https://distil.lenskjoldconsulting.dk`
 for both phone and computer: one button, "Prøv Distil", is enough. A QR
 code with the same address beside it lets a visitor on a computer open it
 on the phone at once. Nothing on the homepage needs to know about Distil
