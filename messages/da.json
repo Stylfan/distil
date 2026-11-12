@@ -119,7 +119,12 @@
     "deletePhotoDetail": "Billedet og alle sedler fra det slettes med det samme.",
     "deletePhotoConfirm": "Slet",
     "votes": "Prikker fra afstemningen",
-    "votesFor": "Prikker på seddel {number}"
+    "votesFor": "Prikker på seddel {number}",
+    "place": "Sæt en manglende seddel på billedet",
+    "placeHint": "Klik på sedlen på billedet, der hvor den hænger.",
+    "placeCancel": "Fortryd",
+    "placeText": "Hvad står der på sedlen?",
+    "placeHere": "Klik der, hvor sedlen hænger"
   },
   "colours": {
     "yellow": "Gul",

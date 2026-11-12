@@ -23,7 +23,14 @@ export async function updateNoteAction(input: z.infer<typeof update>): Promise<R
   });
 }
 
-const add = z.object({ photoId: z.string().min(1), text, colour: z.enum(NOTE_COLOURS) });
+const permille = z.number().int().min(0).max(1000);
+const add = z.object({
+  photoId: z.string().min(1),
+  text,
+  colour: z.enum(NOTE_COLOURS),
+  x: permille.optional(),
+  y: permille.optional(),
+});
 
 export async function addNoteAction(input: z.infer<typeof add>): Promise<Result<string>> {
   return run(add, input, (db, userId, d) => addNote(db, userId, d.photoId, d));

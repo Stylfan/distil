@@ -40,12 +40,12 @@ export async function updateNote(
     .where(eq(notes.id, noteId));
 }
 
-/** Adds a note Distil missed, at the end of the photo's notes. Returns its id. */
+/** Adds a note Distil missed, at the end of the photo's notes, where it hangs if placed. Returns its id. */
 export async function addNote(
   db: Db,
   userId: string,
   photoId: string,
-  input: { text: string; colour: NoteColour },
+  input: { text: string; colour: NoteColour; x?: number; y?: number },
 ): Promise<string> {
   const [photo] = await db
     .select({ workshopId: photos.workshopId })
@@ -65,6 +65,9 @@ export async function addNote(
       seq: (last?.seq ?? 0) + 1,
       text: input.text.trim(),
       colour: input.colour,
+      // Where the facilitator clicked on the photo, when the note was placed there.
+      ...(input.x !== undefined && { x: input.x }),
+      ...(input.y !== undefined && { y: input.y }),
       edited: true,
     })
     .returning({ id: notes.id });

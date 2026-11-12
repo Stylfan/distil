@@ -11,6 +11,7 @@ import { Button, Input } from "@/components/ui/controls";
 import { ConfirmButton } from "@/components/ui/confirm";
 import { NoteRow } from "./note-row";
 import { PhotoView } from "./photo-view";
+import { PlaceNote } from "./place-note";
 import { requestReading } from "./request-reading";
 
 export type ReviewPhoto = {
@@ -44,6 +45,8 @@ export function ReviewPanel({
   const tc = useTranslations("common");
   const router = useRouter();
   const [active, setActive] = useState<string | null>(null);
+  const [placing, setPlacing] = useState(false);
+  const [pin, setPin] = useState<{ x: number; y: number } | null>(null);
   const [newText, setNewText] = useState("");
   const [message, setMessage] = useState<string | null>(null);
   const [pending, start] = useTransition();
@@ -69,7 +72,25 @@ export function ReviewPanel({
           notes={notes}
           active={active}
           onActive={setActive}
+          onPlace={placing && !pin ? (x, y) => setPin({ x, y }) : undefined}
+          pin={pin}
         />
+        {(photo.status === "read" || photo.status === "approved") && (
+          <PlaceNote
+            photoId={photo.id}
+            placing={placing}
+            pin={pin}
+            onStart={() => {
+              setPlacing(true);
+              setPin(null);
+            }}
+            onDone={() => {
+              setPlacing(false);
+              setPin(null);
+              router.refresh();
+            }}
+          />
+        )}
         <p className="text-[12px] text-slate">
           {photo.imageExpiresIn !== null
             ? t("deletedIn", { hours: Math.max(1, Math.ceil(photo.imageExpiresIn / 3_600_000)) })
