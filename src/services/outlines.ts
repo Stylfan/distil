@@ -50,6 +50,7 @@ export async function notesOfWorkshop(
       kind: notes.kind,
       photo: photos.seq,
       votes: notes.votes,
+      unsure: notes.unsure,
     })
     .from(notes)
     .innerJoin(photos, eq(photos.id, notes.photoId))
@@ -189,4 +190,19 @@ export async function setLook(
     .update(outlines)
     .set({ content: outlineSchema.parse({ ...current.content, look }) })
     .where(eq(outlines.id, current.id));
+}
+
+/** The notes Distil's questions are about, for showing them with the question. */
+export async function notesOfQuestions(
+  db: Db,
+  userId: string,
+  workshopId: string,
+  outline: Outline | null,
+): Promise<{ id: string; text: string; colour: string; photo: number }[]> {
+  const wanted = new Set(outline?.questions.flatMap((q) => q.noteIds ?? []) ?? []);
+  if (wanted.size === 0) return [];
+  const all = await notesOfWorkshop(db, userId, workshopId);
+  return all
+    .filter((n) => wanted.has(n.id))
+    .map((n) => ({ id: n.id, text: n.text, colour: n.colour, photo: n.photo }));
 }

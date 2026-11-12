@@ -16,6 +16,8 @@ export type NoteForOutline = {
   photo: number;
   /** Dots the participants put on it; 0 when they did not vote. */
   votes?: number;
+  /** Distil was unsure how to read it; never quoted. */
+  unsure?: boolean;
 };
 
 export type NoteRefs = { lines: string; toId: Map<string, string> };
@@ -47,6 +49,8 @@ export function outlineForModel(outline: Outline, toId: Map<string, string>): un
     themes: outline.themes.map(({ noteIds, ...t }) => ({ ...t, notes: refs(noteIds) })),
     actions: outline.actions.map(({ noteIds, ...a }) => ({ ...a, notes: refs(noteIds) })),
     openPoints: outline.openPoints.map(({ noteIds, ...o }) => ({ ...o, notes: refs(noteIds) })),
+    questions: outline.questions.map(({ noteIds, ...q }) => ({ ...q, notes: refs(noteIds ?? []) })),
+    story: undefined,
   };
 }
 
@@ -134,6 +138,7 @@ export function parseOutline(
       .map((p) => ({ id: keep(p.id, "o"), text: p.text, noteIds: ids(p.raw.notes) })),
     questions: items(o.questions)
       .map(entry)
+      .map((q) => ({ ...q, text: withoutRefs(q.text) }))
       .filter((q) => q.text)
       .slice(0, 10)
       .map((q) => {
@@ -146,9 +151,18 @@ export function parseOutline(
             .filter(Boolean)
             .slice(0, 4),
           answer: answer || null,
+          noteIds: ids(q.raw.notes).slice(0, 6),
         };
       }),
   };
   const checked = outlineSchema.safeParse(outline);
   return checked.success ? checked.data : null;
+}
+
+/** A question's text without the note references a model may still put in it, "(n7, n59)". */
+export function withoutRefs(text: string): string {
+  return text
+    .replace(/\s*\((?:\s*n\d+\s*,?)+\)/g, "")
+    .replace(/\s+([?.!,])/g, "$1")
+    .trim();
 }

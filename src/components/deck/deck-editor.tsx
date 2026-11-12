@@ -2,18 +2,15 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
-import { Check, Pencil } from "lucide-react";
 import { saveOutlineAction } from "@/actions/outlines";
 import { renameWorkshopAction } from "@/actions/workshops";
 import { applyDeckEdit, type DeckRef } from "@/domain/deck-edit";
 import type { Outline } from "@/domain/outline";
-import { Button } from "@/components/ui/controls";
-import { DeckEditContext } from "./editable";
+import { DeckEditContext, type SaveState } from "./editable";
 
 /**
- * Editing the presentation where it stands. A switch turns the slides'
- * words into fields; a change is written back to the outline (or, for the
+ * Editing the presentation where it stands. A switch in the toolbar turns
+ * the slides' words into fields; a change is written back to the outline (or, for the
  * title, to the workshop), and the deck is built again from it, so the
  * outline and the presentation can never disagree.
  */
@@ -28,10 +25,9 @@ export function DeckEditor({
   version: number;
   children: React.ReactNode;
 }) {
-  const t = useTranslations("deck");
   const router = useRouter();
   const [editing, setEditing] = useState(false);
-  const [state, setState] = useState<"idle" | "saving" | "saved" | "conflict" | "failed">("idle");
+  const [state, setState] = useState<SaveState>("idle");
   const latest = useRef({ outline, version });
 
   // A newer outline from the server (after a save here, or a change elsewhere) is the one to edit.
@@ -63,26 +59,14 @@ export function DeckEditor({
   };
 
   return (
-    <DeckEditContext.Provider value={{ editing, save: (ref, value) => void save(ref, value) }}>
-      <div className="flex flex-wrap items-center gap-3 print:hidden">
-        <Button
-          size="sm"
-          variant={editing ? "primary" : "secondary"}
-          onClick={() => setEditing((e) => !e)}
-          aria-pressed={editing}
-        >
-          {editing ? (
-            <Check className="size-3.5" aria-hidden />
-          ) : (
-            <Pencil className="size-3.5" aria-hidden />
-          )}
-          {editing ? t("doneEditing") : t("edit")}
-        </Button>
-        <span role="status" className="text-[12px] text-slate">
-          {editing && state === "idle" && t("editHint")}
-          {state !== "idle" && t(`save.${state}`)}
-        </span>
-      </div>
+    <DeckEditContext.Provider
+      value={{
+        editing,
+        save: (ref, value) => void save(ref, value),
+        toggle: () => setEditing((e) => !e),
+        state,
+      }}
+    >
       {children}
     </DeckEditContext.Provider>
   );

@@ -1,19 +1,21 @@
 /**
- * The mark: a funnel with a bronze drop under it, many notes distilled
- * into one, and the name in spaced capitals. Decorative to assistive
+ * The mark: a drop in a circle with a bronze dot under it, the essence
+ * distilled from many notes, in the same family as Prismatic's circle,
+ * triangle and dot; and the name in spaced capitals. Decorative to assistive
  * technology; the link around it carries the name.
  */
 export function Mark({ size = 24 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 28 28" aria-hidden="true">
+      <circle cx="14" cy="14" r="12.6" fill="none" stroke="currentColor" strokeWidth="1.4" />
       <path
-        d="M5 6 H23 L16 14.5 V19 L12 21 V14.5 Z"
+        d="M14 6 C 18.6 11, 18.6 15, 14 19.4 C 9.4 15, 9.4 11, 14 6 Z"
         fill="none"
         stroke="currentColor"
-        strokeWidth="1.6"
+        strokeWidth="1.5"
         strokeLinejoin="round"
       />
-      <circle cx="14" cy="24.5" r="2.1" fill="var(--color-bronze)" />
+      <circle cx="14" cy="22.6" r="1.7" fill="var(--color-bronze)" />
     </svg>
   );
 }

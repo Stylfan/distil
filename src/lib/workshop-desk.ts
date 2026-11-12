@@ -1,7 +1,7 @@
 import { withUser } from "@/db/client";
 import type { DiagramRow, Note, OutlineRow } from "@/db/schema";
 import { getDiagram } from "@/services/diagrams";
-import { getOutline } from "@/services/outlines";
+import { getOutline, notesOfQuestions } from "@/services/outlines";
 import { getWorkshop, listNotes, type WorkshopFull } from "@/services/workshops";
 
 /**
@@ -16,6 +16,8 @@ export type Desk = {
   chosen: (WorkshopFull["photos"][number] & { imageExpiresIn: number | null }) | undefined;
   notes: Note[];
   outline: OutlineRow | null;
+  /** The notes Distil's questions are about. */
+  questionNotes: { id: string; text: string; colour: string; photo: number }[];
   diagram: DiagramRow | null;
 };
 
@@ -38,7 +40,8 @@ export async function loadDesk(
       imageExpiresIn: photo.imageExpiresAt === null ? null : photo.imageExpiresAt - now,
     };
     const outline = await getOutline(tx, userId, workshopId);
+    const questionNotes = await notesOfQuestions(tx, userId, workshopId, outline?.content ?? null);
     const diagram = photo ? await getDiagram(tx, userId, photo.id) : null;
-    return { full, chosen, notes, outline, diagram };
+    return { full, chosen, notes, outline, diagram, questionNotes };
   });
 }

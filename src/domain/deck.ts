@@ -63,17 +63,25 @@ export type Slide =
       soWhat: string;
       continued: boolean;
     }
-  | { kind: "quote"; note: DeckNote }
+  | {
+      kind: "quote";
+      note: DeckNote;
+      /** Other notes that could stand here, most dots first, for swapping on the slide. */
+      options: DeckNote[];
+    }
   | {
       kind: "list";
       heading: "patterns" | "recommendations" | "open";
       items: { id: string; text: string }[];
+      /** How many there are in all, over every slide of the list. */
+      total: number;
       continued: boolean;
     }
   | { kind: "shifts"; rows: { index: number; from: string; to: string }[] }
   | {
       kind: "actions";
       rows: { id: string; what: string; who: string; when: string }[];
+      total: number;
       continued: boolean;
     }
   | { kind: "votes"; notes: DeckNote[]; total: number }
@@ -88,7 +96,14 @@ export type Slide =
     }
   | { kind: "closing"; title: string; date: string; line: string };
 
-export type Facts = { notes: number; themes: number; photos: number; items: number };
+/** What a chapter breaker counts; "of" is the whole workshop when themes are left out. */
+export type Facts = {
+  notes: number;
+  themes: number;
+  photos: number;
+  items: number;
+  of?: { notes: number; themes: number };
+};
 
 export type Deck = { look: Look; slides: Slide[] };
 
@@ -100,6 +115,8 @@ export const NOTES_PER_TRANSCRIPT = 36;
 export const VOTED_ON_SLIDE = 8;
 /** Up to this many themes are drawn as a map around the workshop; more as a grid. */
 export const MAP_THEMES = 8;
+/** How many other notes the quote can be swapped for on the slide. */
+export const QUOTE_OPTIONS = 12;
 
 function chunks<T>(items: T[], size: number): T[][] {
   const out: T[][] = [];
@@ -138,6 +155,16 @@ export function makeDeck(input: Parameters<typeof buildDeck>[0]): Deck {
   const hidden = new Set(story.hidden ?? []);
   const themes = outline.themes.filter((t) => t.title.trim() && !hidden.has(t.id));
   const photos = new Set(input.notes.map((n) => n.photo)).size;
+  const allThemes = outline.themes.filter((t) => t.title.trim());
+  // The notes the presentation is about: all of them, or those of the themes that are in it.
+  const shownNotes =
+    hidden.size === 0
+      ? input.notes.length
+      : new Set(themes.flatMap((t) => t.noteIds).filter((id) => byId.has(id))).size;
+  const of =
+    themes.length < allThemes.length
+      ? { notes: input.notes.length, themes: allThemes.length }
+      : undefined;
 
   const slides: Slide[] = [
     { kind: "cover", title: input.title, date: input.date, tagline: story.tagline.trim() },
@@ -176,7 +203,7 @@ export function makeDeck(input: Parameters<typeof buildDeck>[0]): Deck {
       kind: "section",
       number: chapter,
       chapter: kind,
-      facts: { notes: input.notes.length, themes: themes.length, photos, items },
+      facts: { notes: shownNotes, themes: themes.length, photos, items, of },
     });
   };
 
@@ -185,7 +212,7 @@ export function makeDeck(input: Parameters<typeof buildDeck>[0]): Deck {
     if (themes.length >= 3) {
       slides.push({
         kind: "themeMap",
-        notes: input.notes.length,
+        notes: shownNotes,
         themes: themes.map((t, i) => ({
           id: t.id,
           title: t.title.trim(),
@@ -221,7 +248,13 @@ export function makeDeck(input: Parameters<typeof buildDeck>[0]): Deck {
       );
     });
     const quoted = story.quoteNoteId ? byId.get(story.quoteNoteId) : undefined;
-    if (quoted) slides.push({ kind: "quote", note: quoted });
+    if (quoted) {
+      const options = input.notes
+        .filter((n) => n.id !== quoted.id && n.text.trim().split(/\s+/).length >= 3)
+        .sort((a, b) => (b.votes ?? 0) - (a.votes ?? 0) || b.text.length - a.text.length)
+        .slice(0, QUOTE_OPTIONS);
+      slides.push({ kind: "quote", note: quoted, options });
+    }
     // The drawings come after the themes: they are the participants' own pictures of the work.
     for (const d of input.diagrams ?? []) {
       slides.push({ kind: "diagram", title: d.diagram.title.trim(), ...d });
@@ -231,21 +264,33 @@ export function makeDeck(input: Parameters<typeof buildDeck>[0]): Deck {
   if (means > 0) {
     breaker("means", means);
     chunks(patterns, ITEMS_PER_SLIDE).forEach((items, j) =>
-      slides.push({ kind: "list", heading: "patterns", items, continued: j > 0 }),
+      slides.push({
+        kind: "list",
+        heading: "patterns",
+        items,
+        total: patterns.length,
+        continued: j > 0,
+      }),
     );
     if (shifts.length > 0) slides.push({ kind: "shifts", rows: shifts });
     chunks(kept, ITEMS_PER_SLIDE).forEach((items, j) =>
-      slides.push({ kind: "list", heading: "recommendations", items, continued: j > 0 }),
+      slides.push({
+        kind: "list",
+        heading: "recommendations",
+        items,
+        total: kept.length,
+        continued: j > 0,
+      }),
     );
   }
 
   if (todo > 0) {
     breaker("do", todo);
     chunks(actions, ACTIONS_PER_SLIDE).forEach((rows, j) =>
-      slides.push({ kind: "actions", rows, continued: j > 0 }),
+      slides.push({ kind: "actions", rows, total: actions.length, continued: j > 0 }),
     );
     chunks(open, ITEMS_PER_SLIDE).forEach((items, j) =>
-      slides.push({ kind: "list", heading: "open", items, continued: j > 0 }),
+      slides.push({ kind: "list", heading: "open", items, total: open.length, continued: j > 0 }),
     );
   }
 

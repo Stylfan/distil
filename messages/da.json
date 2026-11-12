@@ -41,7 +41,8 @@
     "delete": "Slet workshop",
     "deleteQuestion": "Slet {name}?",
     "deleteDetail": "Workshoppen, alle dens billeder og alle sedler slettes med det samme. Det kan ikke fortrydes.",
-    "deleteConfirm": "Slet workshop"
+    "deleteConfirm": "Slet workshop",
+    "actions": "Flere handlinger for workshoppen"
   },
   "workshop": {
     "checkOnComputer": "Tjek og ret sedlerne på din computer. Åbn workshoppen dér, så står hvert billede ved siden af det, Distil har læst.",
@@ -602,7 +603,12 @@
       "expired": "Linket fra computeren er udløbet. Scan en ny QR-kode under »Tilføj fra telefon«.",
       "noOutline": "Lav dispositionen først. Historien skrives ud fra den."
     },
-    "and": "og"
+    "and": "og",
+    "answered": "{count, plural, one {# besvaret spørgsmål} other {# besvarede spørgsmål}}",
+    "unsure": "Distil er i tvivl · {at} af {of}",
+    "onPhotos": "{count, plural, one {Billede {photos}} other {Billede {photos}}}",
+    "skip": "Spring over",
+    "summaryMore": "Klik i teksten for at læse og rette det hele."
   },
   "deck": {
     "savePdf": "Gem som PDF",
@@ -611,14 +617,14 @@
     "emptyTitle": "Ingen præsentation endnu",
     "emptyBody": "Præsentationen bygges af dispositionen. Lav dispositionen først, og ret den til.",
     "toOutline": "Gå til Disposition",
-    "summary": "{count, plural, one {# slide} other {# slides}} på {language}, det sprog sedlerne er skrevet på.",
+    "summary": "{count, plural, one {# slide} other {# slides}} · {language}",
     "language": {
       "da": "dansk",
       "en": "engelsk"
     },
     "edit": "Ret i præsentationen",
     "doneEditing": "Færdig med at rette",
-    "editHint": "Klik på en tekst for at rette den. Tøm et punkt for at fjerne det. Rettelserne gemmes i dispositionen.",
+    "editHint": "Klik på en tekst for at rette den. Tøm et punkt for at fjerne det.",
     "save": {
       "saving": "Gemmer …",
       "saved": "Gemt.",
@@ -633,7 +639,7 @@
       "toldBody": "Overskrifterne og budskaberne er Distils forslag ud fra dispositionen. Ret dem direkte på slides. Ændrer du dispositionen med Distil, skal historien skrives igen.",
       "tell": "Skriv historien",
       "again": "Skriv historien igen",
-      "working": "Distil skriver historien. Det tager typisk 10–30 sekunder …",
+      "working": "Distil arbejder, typisk 10–30 sekunder …",
       "look": "Farvetema",
       "looks": {
         "kobolt": "Kobolt",
@@ -649,8 +655,8 @@
         "lenskjold": "Lenskjold Consulting (med logo)"
       },
       "askTitle": "Bed Distil rette præsentationen",
-      "askPlaceholder": "Fx: Gør den klar til direktionen, med beslutningen først. Eller: Fjern tema 7 og 8.",
-      "askHint": "Skriv eller tal (mikrofonen på tastaturet). Distil retter overskrifter, budskaber, »Så hvad?«, fra–til, citat og hvilke temaer der er med. Skal temaerne selv slås sammen eller deles, gøres det under Disposition. Hver rettelse tæller som én disposition i dag.",
+      "askPlaceholder": "Bed Distil rette præsentationen …",
+      "askHint": "Distil retter overskrifter, budskaber, »Så hvad?«, fra–til, citatet og hvilke temaer der er med. Temaer slås sammen eller deles under Disposition. Du kan også tale (mikrofonen på tastaturet). Hver rettelse tæller som én disposition i dag.",
       "send": "Send",
       "changed": "Præsentationen er rettet.",
       "suggestions": {
@@ -658,8 +664,13 @@
         "sharper": "Gør overskrifterne skarpere og mere konkrete",
         "shorter": "Gør den kortere: kun de vigtigste temaer",
         "participants": "Skriv den til deltagerne, så de kan genkende deres egne ord"
-      }
-    }
+      },
+      "untoldShort": "Skarpe overskrifter, tre hovedbudskaber og »Så hvad?« ud fra dispositionen og det, du har fortalt under Materiale. Tæller som én disposition i dag.",
+      "help": "Hvad kan Distil rette?"
+    },
+    "editShort": "Ret på slides",
+    "pptxShort": "PowerPoint",
+    "appendix": "Bilag: alle {count} sedler ordret"
   },
   "diagram": {
     "title": "Tegningen, genskabt",

@@ -17,6 +17,7 @@ export function ConfirmButton({
   cancelLabel,
   onConfirm,
   icon = false,
+  item = false,
 }: {
   label: string;
   question: string;
@@ -26,11 +27,23 @@ export function ConfirmButton({
   onConfirm: () => void;
   /** A small bin instead of a button, for rows and headers; the label becomes its name. */
   icon?: boolean;
+  /** A line in a menu instead of a button. */
+  item?: boolean;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
   return (
     <>
-      {icon ? (
+      {item ? (
+        <button
+          type="button"
+          role="menuitem"
+          onClick={() => ref.current?.showModal()}
+          className="flex w-full items-center gap-2 rounded px-3 py-2 text-left text-[13px] text-danger hover:bg-danger-soft"
+        >
+          <Trash2 className="size-3.5" aria-hidden />
+          {label}
+        </button>
+      ) : icon ? (
         <button
           type="button"
           aria-label={label}

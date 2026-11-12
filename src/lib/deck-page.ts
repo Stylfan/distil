@@ -23,6 +23,8 @@ export type DeckPage = {
   look: Look;
   /** Whether Distil has told the story, or the deck is made from the outline by rule. */
   told: boolean;
+  /** How many notes were read, for the transcript appendix. */
+  noteCount: number;
   /** The outline the slides were built from, for editing them where they stand. */
   outline: { content: Outline; version: number } | null;
 };
@@ -47,6 +49,7 @@ export async function loadDeck(userId: string, workshopId: string): Promise<Deck
         includeTranscript: false,
         look: DEFAULT_LOOK,
         told: false,
+        noteCount: notes.length,
         outline: null,
       };
     }
@@ -78,6 +81,7 @@ export async function loadDeck(userId: string, workshopId: string): Promise<Deck
       includeTranscript: outline.includeTranscript,
       look: deck.look,
       told: !!outline.content.story,
+      noteCount: notes.length,
       outline: { content: outline.content, version: outline.version },
     };
   });

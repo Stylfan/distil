@@ -22,7 +22,9 @@ export type DeckRef =
   | { kind: "story"; field: "headline" | "tagline" | "soWhat" | "closing" }
   | { kind: "keyMessage"; index: number; field: "title" | "text" }
   | { kind: "themeStory"; themeId: string; field: "headline" | "soWhat" }
-  | { kind: "shift"; index: number; field: "from" | "to" };
+  | { kind: "shift"; index: number; field: "from" | "to" }
+  /** The quoted note: another note's id, or "" for no quote. */
+  | { kind: "quote" };
 
 /** A change to the story, starting from the one the deck was built from. */
 function editStory(outline: Outline, ref: DeckRef, value: string): Outline {
@@ -56,6 +58,8 @@ function editStory(outline: Outline, ref: DeckRef, value: string): Outline {
         : [...story.themes, entry];
       return { ...outline, story: { ...story, themes } };
     }
+    case "quote":
+      return { ...outline, story: { ...story, quoteNoteId: value.trim() || null } };
     case "shift": {
       const shifts = [...story.shifts];
       const shift = shifts[ref.index];
@@ -78,6 +82,7 @@ export function applyDeckEdit(outline: Outline, ref: DeckRef, value: string): Ou
     case "keyMessage":
     case "themeStory":
     case "shift":
+    case "quote":
       return editStory(outline, ref, text);
     case "summary":
       return { ...outline, summary: value.trim() };

@@ -5,7 +5,7 @@ import { getTranslations } from "next-intl/server";
 import { requireUser } from "@/auth/session";
 import { DiagramPanel } from "@/components/diagram/diagram-panel";
 import { MakeOutline } from "@/components/outline/outline-run";
-import { QuestionCards } from "@/components/outline/question-cards";
+import { QuestionCards, type QuestionNote } from "@/components/outline/question-cards";
 import { ContextPanel } from "@/components/workshop/context-panel";
 import { PhotoIntake } from "@/components/workshop/photo-intake";
 import { WorkshopTabs } from "@/components/workshop/workshop-tabs";
@@ -42,7 +42,7 @@ export default async function WorkshopPage({ params, searchParams }: Props) {
   const t = await getTranslations("workshop");
   const loaded = await loadDesk(user.id, id, wanted);
   if (!loaded) notFound();
-  const { full, chosen, notes, outline, diagram } = loaded;
+  const { full, chosen, notes, outline, diagram, questionNotes } = loaded;
   const { workshop, photos } = full;
   const readCount = photos.filter((p) => p.status === "read" || p.status === "approved").length;
   const toCheck = photos.filter((p) => p.status === "read").length;
@@ -69,7 +69,12 @@ export default async function WorkshopPage({ params, searchParams }: Props) {
       {/* The phone: Distil's questions, the status, and where the checking happens. */}
       <div className="flex flex-col gap-4 md:hidden">
         {outline && (
-          <QuestionCards workshopId={workshop.id} questions={outline.content.questions} big />
+          <QuestionCards
+            workshopId={workshop.id}
+            questions={outline.content.questions}
+            notes={questionNotes as QuestionNote[]}
+            big
+          />
         )}
         {!outline && readCount > 0 && <MakeOutline workshopId={workshop.id} big />}
         {photos.length > 0 && (

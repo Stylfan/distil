@@ -144,10 +144,7 @@ export function listSlide(ctx: Ctx, s: Of<"list">, words: DeckWords) {
       : s.heading === "recommendations"
         ? words.recommendations
         : words.open;
-  kicker(
-    ctx,
-    `${s.heading === "open" ? words.openKicker : words.chapters.means}${s.continued ? ` · ${words.continued}` : ""}`,
-  );
+  kicker(ctx, `${words.count(s.total, s.heading)}${s.continued ? ` · ${words.continued}` : ""}`);
   title(ctx, heading);
   const cols = s.items.length <= 3 ? s.items.length : 2;
   const rows = Math.ceil(s.items.length / cols);
@@ -183,7 +180,6 @@ export function listSlide(ctx: Ctx, s: Of<"list">, words: DeckWords) {
 }
 
 export function shiftsSlide(ctx: Ctx, s: Of<"shifts">, words: DeckWords) {
-  kicker(ctx, words.chapters.means);
   title(ctx, words.shifts);
   const w = (CONTENT_W - 0.9) / 2;
   text(ctx, words.today.toUpperCase(), { x: MARGIN, y: 1.95, w, h: 0.3 }, 10, {
@@ -237,7 +233,7 @@ export function shiftsSlide(ctx: Ctx, s: Of<"shifts">, words: DeckWords) {
 }
 
 export function actionsSlide(ctx: Ctx, s: Of<"actions">, words: DeckWords) {
-  kicker(ctx, `${words.agreedLine}${s.continued ? ` · ${words.continued}` : ""}`);
+  kicker(ctx, `${words.count(s.total, "actions")}${s.continued ? ` · ${words.continued}` : ""}`);
   title(ctx, words.agreed);
   const cols = s.rows.length <= 3 ? s.rows.length : 2;
   const rows = Math.ceil(s.rows.length / cols);

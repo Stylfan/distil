@@ -2,8 +2,8 @@ import { ImageResponse } from "next/og";
 
 /**
  * Distil's icon in the sizes a phone asks for when it is added to the
- * home screen (192 and 512) and as the favicon (32): the funnel and its
- * bronze drop on paper. Drawn by Next.js itself, so no image files and no
+ * home screen (192 and 512) and as the favicon (32): the drop in its
+ * circle and the bronze dot, on paper. Drawn by Next.js itself, so no image files and no
  * library.
  */
 
@@ -29,15 +29,16 @@ export function MarkImage({ size }: { size: number }) {
         background: "#F7F6F3",
       }}
     >
-      <svg width={size * 0.68} height={size * 0.68} viewBox="0 0 28 28">
+      <svg width={size * 0.8} height={size * 0.8} viewBox="0 0 28 28">
+        <circle cx="14" cy="14" r="12.4" fill="none" stroke="#1F2D33" strokeWidth="1.6" />
         <path
-          d="M5 6 H23 L16 14.5 V19 L12 21 V14.5 Z"
+          d="M14 6 C 18.6 11, 18.6 15, 14 19.4 C 9.4 15, 9.4 11, 14 6 Z"
           fill="none"
           stroke="#1F2D33"
           strokeWidth="1.8"
           strokeLinejoin="round"
         />
-        <circle cx="14" cy="24.5" r="2.3" fill="#A88E6E" />
+        <circle cx="14" cy="22.6" r="1.9" fill="#A88E6E" />
       </svg>
     </div>
   );

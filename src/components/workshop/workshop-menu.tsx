@@ -1,14 +1,17 @@
 "use client";
 
-import { useRef, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { Pencil } from "lucide-react";
+import { Ellipsis, Pencil } from "lucide-react";
 import { deleteWorkshopAction, renameWorkshopAction } from "@/actions/workshops";
 import { Button, Input, Label } from "@/components/ui/controls";
 import { ConfirmButton } from "@/components/ui/confirm";
 
-/** The workshop's own actions in its header: change its name or day, or delete it with everything. */
+/**
+ * The workshop's own actions, behind one "⋯" in its header: change its name
+ * or day, or delete it with everything (asked first).
+ */
 export function WorkshopMenu({ id, name, heldOn }: { id: string; name: string; heldOn: string }) {
   const t = useTranslations("workshops");
   const tc = useTranslations("common");
@@ -18,26 +21,70 @@ export function WorkshopMenu({ id, name, heldOn }: { id: string; name: string; h
   const [draft, setDraft] = useState({ name, heldOn });
   const [error, setError] = useState<string | null>(null);
   const [pending, start] = useTransition();
+  const [open, setOpen] = useState(false);
+  const menu = useRef<HTMLDivElement>(null);
+
+  // Closes when the pointer goes down anywhere else, or on Escape.
+  useEffect(() => {
+    if (!open) return;
+    const away = (e: PointerEvent) => {
+      if (!menu.current?.contains(e.target as Node)) setOpen(false);
+    };
+    const escape = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    document.addEventListener("pointerdown", away);
+    document.addEventListener("keydown", escape);
+    return () => {
+      document.removeEventListener("pointerdown", away);
+      document.removeEventListener("keydown", escape);
+    };
+  }, [open]);
 
   return (
-    <>
-      <Button size="sm" variant="ghost" onClick={() => dialog.current?.showModal()}>
-        <Pencil className="size-3.5" aria-hidden />
-        {t("edit")}
+    <div ref={menu} className="relative">
+      <Button
+        size="sm"
+        variant="ghost"
+        aria-label={t("actions")}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        onClick={() => setOpen((o) => !o)}
+      >
+        <Ellipsis className="size-4" aria-hidden />
       </Button>
-      <ConfirmButton
-        label={t("delete")}
-        question={t("deleteQuestion", { name })}
-        detail={t("deleteDetail")}
-        confirmLabel={t("deleteConfirm")}
-        cancelLabel={tc("cancel")}
-        onConfirm={() =>
-          start(async () => {
-            const result = await deleteWorkshopAction(id);
-            if (result.ok) router.replace("/");
-          })
-        }
-      />
+      {open && (
+        <div
+          role="menu"
+          className="absolute top-full right-0 z-20 mt-1 flex w-52 flex-col rounded-lg border border-hairline bg-surface p-1 shadow-[0_8px_24px_rgba(31,45,51,0.12)]"
+        >
+          <button
+            type="button"
+            role="menuitem"
+            onClick={() => {
+              setOpen(false);
+              dialog.current?.showModal();
+            }}
+            className="flex items-center gap-2 rounded px-3 py-2 text-left text-[13px] text-ink hover:bg-sand"
+          >
+            <Pencil className="size-3.5" aria-hidden />
+            {t("edit")}
+          </button>
+          <span className="my-1 h-px bg-hairline" aria-hidden />
+          <ConfirmButton
+            item
+            label={t("delete")}
+            question={t("deleteQuestion", { name })}
+            detail={t("deleteDetail")}
+            confirmLabel={t("deleteConfirm")}
+            cancelLabel={tc("cancel")}
+            onConfirm={() =>
+              start(async () => {
+                const result = await deleteWorkshopAction(id);
+                if (result.ok) router.replace("/");
+              })
+            }
+          />
+        </div>
+      )}
       <dialog
         ref={dialog}
         className="m-auto w-[min(26rem,calc(100vw-2rem))] rounded-lg border border-hairline bg-surface p-6 text-ink backdrop:bg-ink/40"
@@ -83,6 +130,6 @@ export function WorkshopMenu({ id, name, heldOn }: { id: string; name: string; h
           </div>
         </form>
       </dialog>
-    </>
+    </div>
   );
 }

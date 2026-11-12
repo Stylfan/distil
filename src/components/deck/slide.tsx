@@ -2,7 +2,7 @@ import type { Slide } from "@/domain/deck";
 import type { DeckWords } from "@/domain/deck-words";
 import type { Look } from "@/domain/story";
 import { NOTE_EDGE } from "@/components/workshop/colours";
-import { Editable } from "./editable";
+import { Editable, QuoteChoice } from "./editable";
 import { c } from "./look";
 import { BRANDED } from "./look";
 import { Frame, Kicker, Logo, px, quiet, strongTone } from "./slide-parts";
@@ -144,6 +144,12 @@ export function SlideView({ slide, ...props }: SlideProps & { slide: Slide }) {
               {words.photo(n.photo)}
               {(n.votes ?? 0) > 0 && ` · ${words.votesTotal(n.votes ?? 0)}`}
             </p>
+            <QuoteChoice
+              current={n}
+              options={slide.options}
+              label={words.quoteSwap}
+              none={words.quoteNone}
+            />
           </div>
         </Frame>
       );

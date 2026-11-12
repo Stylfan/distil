@@ -36,7 +36,7 @@ export function mistralStoryteller(options: MistralOptions): Storyteller {
   return {
     async tell(outline, notes, { context = "", request = "", current = null } = {}) {
       const quotable = [...notes]
-        .filter((n) => n.kind === "note")
+        .filter((n) => n.kind === "note" && !n.unsure)
         .sort((a, b) => (b.votes ?? 0) - (a.votes ?? 0))
         .slice(0, QUOTABLE);
       const { lines, toId } = notesForModel(quotable);

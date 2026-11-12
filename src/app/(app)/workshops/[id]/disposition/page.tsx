@@ -32,7 +32,7 @@ export default async function OutlinePage({ params }: Props) {
   const user = await requireUser();
   const page = await loadOutlinePage(user.id, id);
   if (!page) notFound();
-  const { workshop, outline, notes } = page;
+  const { workshop, outline, notes, questionNotes } = page;
   const t = await getTranslations("outline");
   const noteCount = Object.keys(notes).length;
 
@@ -58,7 +58,11 @@ export default async function OutlinePage({ params }: Props) {
             notes={notes}
           />
           <aside className="flex flex-col gap-5 xl:sticky xl:top-20 xl:self-start">
-            <QuestionCards workshopId={workshop.id} questions={outline.content.questions} />
+            <QuestionCards
+              workshopId={workshop.id}
+              questions={outline.content.questions}
+              notes={questionNotes}
+            />
             <AskDistil workshopId={workshop.id} canUndo={outline.previous !== null} />
           </aside>
         </div>

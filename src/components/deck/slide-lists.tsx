@@ -34,7 +34,7 @@ export function ListSlide({ slide, ...props }: Of<"list">) {
   return (
     <Frame {...props}>
       <Kicker>
-        {slide.heading === "open" ? words.openKicker : words.chapters.means}
+        {words.count(slide.total, slide.heading)}
         {slide.continued && ` · ${words.continued}`}
       </Kicker>
       <Headline>{title}</Headline>
@@ -92,8 +92,7 @@ export function ShiftsSlide({ slide, ...props }: Of<"shifts">) {
   const { words } = props;
   return (
     <Frame {...props}>
-      <Kicker>{words.chapters.means}</Kicker>
-      <Headline>{words.shifts}</Headline>
+      <Headline size={38}>{words.shifts}</Headline>
       <div className="flex flex-1 flex-col justify-center" style={{ paddingBottom: px(20) }}>
         <div className="grid" style={{ gridTemplateColumns: `1fr ${px(70)} 1fr`, rowGap: px(14) }}>
           <p
@@ -160,7 +159,7 @@ export function ActionsSlide({ slide, ...props }: Of<"actions">) {
   return (
     <Frame {...props}>
       <Kicker>
-        {words.agreedLine}
+        {words.count(slide.total, "actions")}
         {slide.continued && ` · ${words.continued}`}
       </Kicker>
       <Headline>{words.agreed}</Headline>

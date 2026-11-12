@@ -45,7 +45,7 @@ export function NoteRow({
       onMouseEnter={() => onActive(note.id)}
       onMouseLeave={() => onActive(null)}
       className={cn(
-        "flex items-start gap-2 rounded-md border px-2 py-1.5 transition-colors",
+        "group flex items-start gap-2 rounded-md border px-2 py-1.5 transition-colors",
         note.unsure ? "border-warning/50 bg-warning-soft/60" : "border-transparent",
         active && "border-ink/40 bg-sand/60",
       )}
@@ -118,7 +118,10 @@ export function NoteRow({
       <label
         className={cn(
           "mt-1 flex shrink-0 items-center gap-0.5 rounded px-1 text-[12px] tabular",
-          note.votes > 0 ? "text-bronze-deep" : "text-slate/50",
+          // Shown when the note has dots; otherwise only while pointing at or working in the row.
+          note.votes > 0
+            ? "text-bronze-deep"
+            : "text-slate/50 opacity-0 group-hover:opacity-100 focus-within:opacity-100 group-focus-within:opacity-100",
         )}
         title={t("votes")}
       >

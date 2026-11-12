@@ -128,8 +128,15 @@ export function OutlineEditor({
           rows={2}
           onChange={(e) => set("summary", e.target.value)}
           aria-label={t("summary")}
-          className={cn(field, "text-[15px] leading-relaxed")}
+          // Three lines to skim; the whole text while it is being read or changed.
+          className={cn(
+            field,
+            "max-h-[5.1em] overflow-hidden text-[15px] leading-relaxed [field-sizing:content] focus:max-h-none",
+          )}
         />
+        {outline.summary.length > 260 && (
+          <p className="px-1.5 text-[12px] text-slate">{t("summaryMore")}</p>
+        )}
       </Block>
 
       <Block title={t("themes")}>

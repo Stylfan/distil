@@ -10,11 +10,21 @@ import { cn } from "@/lib/cn";
  * the size of the text, saved when it is left.
  */
 
-type EditContext = { editing: boolean; save: (ref: DeckRef, value: string) => void };
+export type SaveState = "idle" | "saving" | "saved" | "conflict" | "failed";
+
+type EditContext = {
+  editing: boolean;
+  save: (ref: DeckRef, value: string) => void;
+  /** Turns editing on the slides on or off; the deck's toolbar has the switch. */
+  toggle: () => void;
+  state: SaveState;
+};
 
 export const DeckEditContext = createContext<EditContext>({
   editing: false,
   save: () => undefined,
+  toggle: () => undefined,
+  state: "idle",
 });
 
 export function Editable({
@@ -78,4 +88,41 @@ export function EditableOr({ value, at }: { value: string; at: DeckRef }) {
 export function WhenFilled({ value, children }: { value: string; children: React.ReactNode }) {
   const { editing } = useContext(DeckEditContext);
   return value || editing ? <>{children}</> : null;
+}
+
+/** While editing: choose another note for the quote, or none. Never printed. */
+export function QuoteChoice({
+  current,
+  options,
+  label,
+  none,
+}: {
+  current: { id: string; text: string };
+  options: { id: string; text: string }[];
+  label: string;
+  none: string;
+}) {
+  const { editing, save } = useContext(DeckEditContext);
+  if (!editing) return null;
+  return (
+    <label
+      className="flex items-center gap-2 text-[13px] print:hidden"
+      style={{ marginTop: "1.5cqw" }}
+    >
+      <span>{label}</span>
+      <select
+        defaultValue={current.id}
+        onChange={(e) => save({ kind: "quote" }, e.target.value)}
+        className="max-w-[60%] rounded border border-[#DAD6CF] bg-white px-2 py-1 text-[13px]"
+      >
+        <option value={current.id}>{current.text.slice(0, 80)}</option>
+        {options.map((o) => (
+          <option key={o.id} value={o.id}>
+            {o.text.slice(0, 80)}
+          </option>
+        ))}
+        <option value="">{none}</option>
+      </select>
+    </label>
+  );
 }

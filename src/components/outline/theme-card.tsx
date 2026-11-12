@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { ArrowDown, ArrowUp, Trash2 } from "lucide-react";
+import { ArrowDown, ArrowUp, Trash2, ChevronDown } from "lucide-react";
 import type { NoteColour } from "@/db/schema";
 import { newId, type Theme } from "@/domain/outline";
 import { NOTE_EDGE, NOTE_FILL } from "@/components/workshop/colours";
@@ -90,9 +90,13 @@ export function ThemeCard({
         itemLabel={(n) => t("point", { number: n })}
       />
       {chips.length > 0 && (
-        <div className="flex flex-col gap-1.5 border-t border-hairline-soft pt-2">
-          <p className="text-[12px] text-slate">{t("fromNotes", { count: chips.length })}</p>
-          <ul className="flex flex-wrap gap-1.5">
+        // The notes behind the theme, folded away: open them to see what it was made of.
+        <details className="group border-t border-hairline-soft pt-2">
+          <summary className="flex cursor-pointer list-none items-center gap-1.5 text-[12px] text-slate hover:text-ink [&::-webkit-details-marker]:hidden">
+            <ChevronDown className="size-3.5 transition group-open:rotate-180" aria-hidden />
+            {t("fromNotes", { count: chips.length })}
+          </summary>
+          <ul className="mt-1.5 flex flex-wrap gap-1.5">
             {chips.map((n, i) => (
               <li
                 key={i}
@@ -107,7 +111,7 @@ export function ThemeCard({
               </li>
             ))}
           </ul>
-        </div>
+        </details>
       )}
     </article>
   );

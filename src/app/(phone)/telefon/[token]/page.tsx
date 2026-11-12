@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { QuestionCards } from "@/components/outline/question-cards";
+import { QuestionCards, type QuestionNote } from "@/components/outline/question-cards";
 import { PhotoIntake } from "@/components/workshop/photo-intake";
 import { PhotoList } from "@/components/workshop/photo-list";
 import { getDb, withUser } from "@/db/client";
 import { formatDay } from "@/lib/dates";
-import { getOutline } from "@/services/outlines";
+import { getOutline, notesOfQuestions } from "@/services/outlines";
 import { resolvePhoneLink } from "@/services/phone-links";
 import { getWorkshop } from "@/services/workshops";
 
@@ -38,12 +38,15 @@ export default async function PhoneLinkPage({ params }: Props) {
   const loaded = await withUser(userId, async (tx) => {
     const full = await getWorkshop(tx, userId, workshopId);
     const outline = full ? await getOutline(tx, userId, workshopId) : null;
-    return full ? { full, outline } : null;
+    const questionNotes = full
+      ? await notesOfQuestions(tx, userId, workshopId, outline?.content ?? null)
+      : [];
+    return full ? { full, outline, questionNotes } : null;
   });
   if (!loaded) {
     return <p className="text-[14px] text-slate">{t("expiredBody")}</p>;
   }
-  const { full, outline } = loaded;
+  const { full, outline, questionNotes } = loaded;
   return (
     <>
       <div className="flex flex-col gap-0.5">
@@ -55,6 +58,7 @@ export default async function PhoneLinkPage({ params }: Props) {
         <QuestionCards
           workshopId={workshopId}
           questions={outline.content.questions}
+          notes={questionNotes as QuestionNote[]}
           big
           linkToken={token}
         />

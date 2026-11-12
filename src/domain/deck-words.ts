@@ -5,6 +5,8 @@
  * Distil itself stays Danish.
  */
 
+import type { Facts } from "./deck";
+
 export type DeckLanguage = "da" | "en";
 
 export type DeckWords = {
@@ -32,22 +34,21 @@ export type DeckWords = {
   summaryKicker: string;
   soWhat: string;
   chapters: Record<"found" | "means" | "do", string>;
-  facts: (
-    f: { notes: number; themes: number; photos: number; items: number },
-    chapter: "found" | "means" | "do",
-  ) => string;
+  facts: (f: Facts, chapter: "found" | "means" | "do") => string;
+  /** The small heading over a list: how many there are, e.g. "4 mønstre". */
+  count: (n: number, kind: "patterns" | "recommendations" | "open" | "actions") => string;
   mapKicker: string;
   mapHeadline: (themes: number, largest: string) => string;
   theme: (n: number) => string;
   fromWall: string;
   quoteKicker: string;
+  quoteSwap: string;
+  quoteNone: string;
   shifts: string;
   today: string;
   ahead: string;
   suggestion: string;
   insight: (n: number) => string;
-  agreedLine: string;
-  openKicker: string;
   closing: string;
 };
 
@@ -79,22 +80,33 @@ export const DECK_WORDS: Record<DeckLanguage, DeckWords> = {
     chapters: { found: "Det fandt vi", means: "Det betyder det", do: "Det gør vi nu" },
     facts: (f, c) =>
       c === "found"
-        ? `${f.notes} sedler · ${f.themes} temaer · ${f.photos === 1 ? "1 billede" : `${f.photos} billeder`}`
+        ? [
+            f.of ? `${f.notes} af ${f.of.notes} sedler` : `${f.notes} sedler`,
+            f.of ? `${f.themes} af ${f.of.themes} temaer` : `${f.themes} temaer`,
+            f.photos === 1 ? "1 billede" : `${f.photos} billeder`,
+          ].join(" · ")
         : c === "means"
-          ? `${f.items} indsigter og forslag`
+          ? `${f.items} ${f.items === 1 ? "indsigt eller forslag" : "indsigter og forslag"}`
           : `${f.items} ${f.items === 1 ? "punkt" : "punkter"} at handle på`,
+    count: (n, kind) =>
+      ({
+        patterns: n === 1 ? "1 mønster" : `${n} mønstre`,
+        recommendations: n === 1 ? "1 forslag fra Distil" : `${n} forslag fra Distil`,
+        open: n === 1 ? "1 spørgsmål til afklaring" : `${n} spørgsmål til afklaring`,
+        actions: n === 1 ? "1 aftale" : `${n} aftaler`,
+      })[kind],
     mapKicker: "Temalandskab",
     mapHeadline: (n, largest) => `${n} temaer bærer workshoppen – ${largest} fylder mest`,
     theme: (n) => `Tema ${n}`,
     fromWall: "Fra væggen",
     quoteKicker: "Med deltagernes egne ord",
+    quoteSwap: "Brug en anden seddel:",
+    quoteNone: "Intet citat",
     shifts: "Fra i dag til fremover",
     today: "I dag",
     ahead: "Fremover",
     suggestion: "Distils forslag",
     insight: (n) => `Indsigt ${n}`,
-    agreedLine: "Det blev besluttet i rummet",
-    openKicker: "Skal afklares",
     closing: "Tak for en god workshop",
   },
   en: {
@@ -124,22 +136,33 @@ export const DECK_WORDS: Record<DeckLanguage, DeckWords> = {
     chapters: { found: "What we found", means: "What it means", do: "What we do now" },
     facts: (f, c) =>
       c === "found"
-        ? `${f.notes} notes · ${f.themes} themes · ${f.photos === 1 ? "1 photo" : `${f.photos} photos`}`
+        ? [
+            f.of ? `${f.notes} of ${f.of.notes} notes` : `${f.notes} notes`,
+            f.of ? `${f.themes} of ${f.of.themes} themes` : `${f.themes} themes`,
+            f.photos === 1 ? "1 photo" : `${f.photos} photos`,
+          ].join(" · ")
         : c === "means"
-          ? `${f.items} insights and proposals`
+          ? `${f.items} ${f.items === 1 ? "insight or proposal" : "insights and proposals"}`
           : `${f.items} ${f.items === 1 ? "item" : "items"} to act on`,
+    count: (n, kind) =>
+      ({
+        patterns: n === 1 ? "1 pattern" : `${n} patterns`,
+        recommendations: n === 1 ? "1 proposal from Distil" : `${n} proposals from Distil`,
+        open: n === 1 ? "1 question to settle" : `${n} questions to settle`,
+        actions: n === 1 ? "1 agreement" : `${n} agreements`,
+      })[kind],
     mapKicker: "Theme landscape",
     mapHeadline: (n, largest) => `${n} themes carry the workshop – ${largest} weighs most`,
     theme: (n) => `Theme ${n}`,
     fromWall: "From the wall",
     quoteKicker: "In the participants’ own words",
+    quoteSwap: "Use another note:",
+    quoteNone: "No quote",
     shifts: "From today to tomorrow",
     today: "Today",
     ahead: "Going forward",
     suggestion: "Distil’s suggestion",
     insight: (n) => `Insight ${n}`,
-    agreedLine: "Decided in the room",
-    openKicker: "To be clarified",
     closing: "Thank you for a good workshop",
   },
 };

@@ -54,6 +54,8 @@ export const outlineSchema = z.object({
         text: line,
         options: z.array(z.string().trim().max(120)).max(4),
         answer: z.string().trim().max(600).nullable(),
+        /** The notes the question is about, shown with it as notes. */
+        noteIds: noteIds.optional(),
       }),
     )
     .max(10),
