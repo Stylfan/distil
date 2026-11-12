@@ -66,8 +66,8 @@ export function MaterialToolbar({
           </Link>
         )}
       </div>
-      <p className="text-[12px] text-slate">{status}</p>
       <ContextPanel workshopId={workshopId} context={context} open={open} headless />
+      <p className="text-[12px] text-slate">{status}</p>
     </div>
   );
 }

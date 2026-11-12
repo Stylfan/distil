@@ -11,6 +11,7 @@ import type { NoteColour } from "@/db/schema";
 import type { Question } from "@/domain/outline";
 import { withoutRefs } from "@/domain/outline-reading";
 import { Button, Input } from "@/components/ui/controls";
+import { MicButton, addWords } from "@/components/ui/mic-button";
 import { cn } from "@/lib/cn";
 
 /**
@@ -217,14 +218,20 @@ function QuestionCard({
               if (own.trim()) send(own.trim());
             }}
           >
-            <Input
-              value={own}
-              onChange={(e) => setOwn(e.target.value)}
-              placeholder={t("ownAnswer")}
-              aria-label={t("ownAnswer")}
-              maxLength={600}
-              className={cn("min-w-0", big && "h-10")}
-            />
+            <span className="flex min-w-0 flex-1 items-center rounded-md border border-hairline bg-white pr-1 focus-within:border-ink">
+              <Input
+                value={own}
+                onChange={(e) => setOwn(e.target.value)}
+                placeholder={t("ownAnswer")}
+                aria-label={t("ownAnswer")}
+                maxLength={600}
+                className={cn(
+                  "min-w-0 flex-1 border-0 bg-transparent shadow-none focus:ring-0",
+                  big && "h-10",
+                )}
+              />
+              <MicButton onText={(words) => setOwn((o) => addWords(o, words))} />
+            </span>
             <Button
               type="submit"
               size="sm"

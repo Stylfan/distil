@@ -17,6 +17,10 @@ export const MAX_PHOTO_EDGE = 2400;
 export const MIN_PHOTO_EDGE = 200;
 /** A photo's image is deleted when it is approved, and never kept longer than this. */
 export const IMAGE_HOURS = 24;
+/** The longest a spoken answer may be, in seconds; the browser stops recording there. */
+export const MAX_DICTATION_SECONDS = 120;
+/** The largest recording the server takes (two minutes of speech is well under it). */
+export const MAX_DICTATION_BYTES = 3 * 1024 * 1024;
 
 export type Limits = {
   /** Photos a new account (or a demo visit) may have read in all. */
@@ -29,6 +33,10 @@ export type Limits = {
   outlinesPerAccount: number;
   /** Outlines Distil may make or change for the whole installation per day. */
   outlineCeiling: number;
+  /** Times one account may have speech turned into text per day. */
+  dictationsPerAccount: number;
+  /** Times the whole installation may have speech turned into text per day. */
+  dictationCeiling: number;
 };
 
 function positive(value: string | undefined, fallback: number): number {
@@ -43,6 +51,8 @@ export function limits(env: NodeJS.ProcessEnv = process.env): Limits {
     dailyCeiling: positive(env.DISTIL_DAILY_PHOTO_LIMIT, 300),
     outlinesPerAccount: positive(env.DISTIL_DAILY_OUTLINES_PER_ACCOUNT, 30),
     outlineCeiling: positive(env.DISTIL_DAILY_OUTLINE_LIMIT, 500),
+    dictationsPerAccount: positive(env.DISTIL_DAILY_DICTATIONS_PER_ACCOUNT, 100),
+    dictationCeiling: positive(env.DISTIL_DAILY_DICTATION_LIMIT, 1000),
   };
 }
 

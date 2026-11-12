@@ -101,6 +101,8 @@ describe("reading", () => {
       dailyCeiling: 2,
       outlinesPerAccount: 30,
       outlineCeiling: 500,
+      dictationsPerAccount: 100,
+      dictationCeiling: 1000,
     };
     await reservePhoto(db, alice, day, config);
     await reservePhoto(db, bob, day, config);

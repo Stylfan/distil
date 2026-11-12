@@ -20,7 +20,11 @@ const nextConfig: NextConfig = {
           { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "X-Frame-Options", value: "DENY" },
           { key: "Referrer-Policy", value: "same-origin" },
-          { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+          {
+            key: "Permissions-Policy",
+            // The microphone only for Distil itself, for speaking instead of typing.
+            value: "camera=(), microphone=(self), geolocation=()",
+          },
         ],
       },
     ];

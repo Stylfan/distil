@@ -254,6 +254,8 @@ describe("the stored outline", () => {
       dailyCeiling: 300,
       outlinesPerAccount: 2,
       outlineCeiling: 500,
+      dictationsPerAccount: 100,
+      dictationCeiling: 1000,
     };
     await reserveOutline(db, alice, day, config);
     await reserveOutline(db, alice, day, config);

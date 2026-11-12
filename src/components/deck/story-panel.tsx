@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Send } from "lucide-react";
+import { MicButton, addWords } from "@/components/ui/mic-button";
 import type { StoryOutcome } from "@/lib/story-run";
 
 /**
@@ -95,6 +96,7 @@ export function StoryAsk({
           disabled={telling}
           className="min-w-0 flex-1 bg-transparent text-[13px] text-ink placeholder:text-slate focus:outline-none"
         />
+        <MicButton onText={(words) => setRequest((r) => addWords(r, words))} />
         <button
           type="button"
           aria-label={t("help")}

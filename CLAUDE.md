@@ -70,6 +70,9 @@ Read this file at the start of every session.
 - Demo: 10 photos per visit and 300 per day for the whole installation.
 - Outlines: 30 per account and 500 per installation per day. Only the
   notes' text goes to Mistral for an outline, as numbered lines.
+- Speaking instead of typing: 100 recordings per account and 1000 per
+  installation per day, two minutes each at most. The recording goes to
+  Mistral and is never stored or logged.
 - A ceiling on Mistral calls per day for the installation, whatever the
   accounts allow. When a ceiling is hit, Distil says so plainly and stops;
   it never queues or silently degrades.

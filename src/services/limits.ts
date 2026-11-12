@@ -123,3 +123,58 @@ export async function releaseOutline(db: Db, userId: string, now = Date.now(), d
       .where(eq(usageDays.day, day));
   }
 }
+
+/**
+ * Counts one recording turned into text, against the account's day and the
+ * installation's day, so speaking instead of typing cannot run up the bill.
+ */
+export async function reserveDictation(
+  db: Db,
+  userId: string,
+  now = Date.now(),
+  config: Limits = limits(),
+): Promise<void> {
+  const day = dayKey(now);
+  const taken = await db
+    .update(users)
+    .set({
+      dictationDay: day,
+      dictationsOnDay: sql`case when ${users.dictationDay} = ${day} then ${users.dictationsOnDay} + 1 else 1 end`,
+    })
+    .where(
+      and(
+        eq(users.id, userId),
+        sql`(${users.dictationDay} is distinct from ${day} or ${users.dictationsOnDay} < ${config.dictationsPerAccount})`,
+      ),
+    )
+    .returning({ id: users.id });
+  if (taken.length === 0) throw new LimitReached("dictations");
+  const counted = await db
+    .insert(usageDays)
+    .values({ day, dictations: 1 })
+    .onConflictDoUpdate({
+      target: usageDays.day,
+      set: { dictations: sql`${usageDays.dictations} + 1` },
+      setWhere: lt(usageDays.dictations, config.dictationCeiling),
+    })
+    .returning({ day: usageDays.day });
+  if (counted.length === 0) {
+    await releaseDictation(db, userId, now, false);
+    throw new LimitReached("daily");
+  }
+}
+
+/** Undoes a reservation whose text did not come back. */
+export async function releaseDictation(db: Db, userId: string, now = Date.now(), daily = true) {
+  const day = dayKey(now);
+  await db
+    .update(users)
+    .set({ dictationsOnDay: sql`greatest(${users.dictationsOnDay} - 1, 0)` })
+    .where(and(eq(users.id, userId), eq(users.dictationDay, day)));
+  if (daily) {
+    await db
+      .update(usageDays)
+      .set({ dictations: sql`greatest(${usageDays.dictations} - 1, 0)` })
+      .where(eq(usageDays.day, day));
+  }
+}

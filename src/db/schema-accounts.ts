@@ -33,6 +33,9 @@ export const users = pgTable(
     /** The day (UTC) the outline count below is for, and how many outlines Distil made that day. */
     outlineDay: text("outline_day"),
     outlinesOnDay: integer("outlines_on_day").notNull().default(0),
+    /** The day, and how many times that day, the account had speech turned into text. */
+    dictationDay: text("dictation_day"),
+    dictationsOnDay: integer("dictations_on_day").notNull().default(0),
     /** When the account asked to have more photos read, and why; null when it has not, or was answered. */
     moreRequestedAt: bigint("more_requested_at", { mode: "number" }),
     moreRequestNote: text("more_request_note").notNull().default(""),
@@ -55,6 +58,8 @@ export const usageDays = pgTable("usage_days", {
   photos: integer("photos").notNull().default(0),
   /** Outlines made or changed by Distil that day. */
   outlines: integer("outlines").notNull().default(0),
+  /** Times speech was turned into text that day. */
+  dictations: integer("dictations").notNull().default(0),
 });
 
 /**

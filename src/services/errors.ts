@@ -10,7 +10,8 @@ export class NotFound extends Error {
  * installation's ceiling for today is reached, the workshop is full, or
  * the account already has as many images waiting as it may.
  */
-export type LimitKind = "allowance" | "daily" | "workshopFull" | "stored" | "outlines";
+export type LimitKind =
+  "allowance" | "daily" | "workshopFull" | "stored" | "outlines" | "dictations";
 
 export class LimitReached extends Error {
   constructor(readonly kind: LimitKind) {

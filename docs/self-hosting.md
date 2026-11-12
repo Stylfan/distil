@@ -54,16 +54,18 @@ passkey under **Konto**.
 
 So a public installation cannot run up the bill at Mistral:
 
-| Setting                             | Default | What it does                                                          |
-| ----------------------------------- | ------- | --------------------------------------------------------------------- |
-| `DISTIL_PHOTO_ALLOWANCE`            | 10      | Photos a new account (or demo visit) may have read in all             |
-| `DISTIL_DAILY_PHOTO_LIMIT`          | 300     | Photos the whole installation may have read per day (UTC)             |
-| `DISTIL_DAILY_OUTLINES_PER_ACCOUNT` | 30      | Outlines Distil may make or change for one account per day            |
-| `DISTIL_DAILY_OUTLINE_LIMIT`        | 500     | Outlines for the whole installation per day                           |
-| `DISTIL_APPROVED_ALLOWANCE`         | 100     | Photos an account may have read in all once "Bed om mere" is approved |
-| (in the code)                       | 50      | Photos per workshop                                                   |
-| (in the code)                       | 100     | Images an account may have waiting to be checked at once              |
-| (in the code)                       | 4 MB    | Largest photo the server takes; the browser shrinks to ~0.5 MB        |
+| Setting                               | Default | What it does                                                                 |
+| ------------------------------------- | ------- | ---------------------------------------------------------------------------- |
+| `DISTIL_PHOTO_ALLOWANCE`              | 10      | Photos a new account (or demo visit) may have read in all                    |
+| `DISTIL_DAILY_PHOTO_LIMIT`            | 300     | Photos the whole installation may have read per day (UTC)                    |
+| `DISTIL_DAILY_OUTLINES_PER_ACCOUNT`   | 30      | Outlines Distil may make or change for one account per day                   |
+| `DISTIL_DAILY_OUTLINE_LIMIT`          | 500     | Outlines for the whole installation per day                                  |
+| `DISTIL_DAILY_DICTATIONS_PER_ACCOUNT` | 100     | Times one account may speak instead of type per day (2 minutes each at most) |
+| `DISTIL_DAILY_DICTATION_LIMIT`        | 1000    | Times for the whole installation per day                                     |
+| `DISTIL_APPROVED_ALLOWANCE`           | 100     | Photos an account may have read in all once "Bed om mere" is approved        |
+| (in the code)                         | 50      | Photos per workshop                                                          |
+| (in the code)                         | 100     | Images an account may have waiting to be checked at once                     |
+| (in the code)                         | 4 MB    | Largest photo the server takes; the browser shrinks to ~0.5 MB               |
 
 An account that runs low gets a "Bed om flere billeder" button on its
 front page. The operator sees the requests under **Anmodninger** and

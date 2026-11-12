@@ -760,12 +760,12 @@
     "none": "Kontekst givet",
     "speak": "Du kan tale i stedet for at skrive: tryk på mikrofonen på tastaturet (på telefonen eller i Windows med Win + H). Alt gemmes, når du går videre til næste felt.",
     "ask": {
-      "purpose": "Hvorfor holdt I workshoppen? Hvad var formålet?",
+      "purpose": "Hvorfor holdt I workshoppen?",
       "participants": "Hvem deltog?",
       "audience": "Hvem skal præsentationen bruges til?",
       "need": "Hvad skal præsentationen kunne for dem?",
       "agenda": "Hvad var agendaen?",
-      "other": "Er der andet, Distil bør vide?"
+      "other": "Fx hvad farverne betød, eller hvad der ikke må med"
     },
     "example": {
       "purpose": "Fx: Vi skulle blive enige om teamets retning for næste år og prioritere tre indsatser.",
@@ -801,6 +801,33 @@
       "failed": "Det blev ikke gemt. Prøv igen."
     },
     "short": "Om workshoppen:",
-    "shortLead": "formål, deltagere, hvem den er til, agenda"
+    "shortLead": "formål, deltagere, hvem den er til, agenda",
+    "label": {
+      "purpose": "Formål",
+      "participants": "Deltagere",
+      "audience": "Præsentationen er til",
+      "need": "Den skal kunne",
+      "agenda": "Agenda",
+      "other": "Andet Distil bør vide"
+    },
+    "exampleFor": "Eksempel på {field}",
+    "otherAudience": "Andre …",
+    "agendaNone": "Ikke givet"
+  },
+  "dictate": {
+    "start": "Tal i stedet for at skrive",
+    "stop": "Stop, og skriv det, jeg sagde",
+    "nothing": "Distil hørte ingen ord. Prøv igen tættere på mikrofonen.",
+    "errors": {
+      "denied": "Distil fik ikke lov til at bruge mikrofonen. Giv lov i browseren, og prøv igen.",
+      "dictations": "Du har talt så mange gange i dag, som Distil må. Skriv i stedet, eller prøv i morgen.",
+      "daily": "Distil har lyttet så meget i dag, som den må. Skriv i stedet, eller prøv i morgen.",
+      "notConfigured": "Tale er ikke sat op på denne installation.",
+      "provider": "Distil svarede ikke. Prøv igen om lidt.",
+      "unreadable": "Det, du sagde, kunne ikke skrives ud. Prøv igen.",
+      "invalid": "Optagelsen kunne ikke bruges. Prøv igen, højst to minutter.",
+      "unauthorized": "Du er ikke logget ind længere.",
+      "generic": "Det gik galt. Prøv igen."
+    }
   }
 }
