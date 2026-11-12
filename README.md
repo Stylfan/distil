@@ -11,7 +11,7 @@ The interface is in Danish.
 
 ## Status
 
-Early: two slices. What works today:
+Early: three slices. What works today:
 
 - Accounts with e-mail and password, two-step sign-in (authenticator app
   and recovery codes) and passkeys, as in Prismatic. Each account sees only
@@ -33,14 +33,22 @@ Early: two slices. What works today:
 - Distil's questions (whether the colours meant something, an unclear
   word, whether something was agreed), answered by a tap on the phone or
   on the computer, and used the next time.
+- The presentation (Præsentation): built from the outline and nothing
+  else, neutral and without a brand, in the language the notes are written
+  in (Danish or English). A title, the workshop on one page, a slide per
+  theme with its notes laid out as post-its in their colours, the
+  patterns, the recommendations the facilitator kept, what was agreed
+  (what, who, when) and what is open; every note word for word as an
+  appendix when asked for. Saved as PDF with the browser's own print, one
+  16:9 page per slide.
 - Limits: 10 photos per account, 300 per day for the installation, 50 per
   workshop, checks on every photo; 30 outlines per account and 500 per
   installation a day.
 - Under **Konto**: download everything as JSON, delete the account with
   everything in it. A demo mode where a visit is gone after a day.
 
-Next: the presentation and PDF, built from the outline; then whiteboard
-drawings redrawn as diagrams. See
+Next: whiteboard drawings redrawn as diagrams; then the QR code from
+computer to phone and "Bed om mere". See
 [docs/plan-first-slice.md](docs/plan-first-slice.md).
 
 ## Run it on your own machine

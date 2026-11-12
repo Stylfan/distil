@@ -48,7 +48,8 @@
     "empty": "Tag billeder med telefonen, eller træk dem herind fra computeren. Distil læser hvert billede, og du ser det her ved siden af sedlerne.",
     "steps": "Workshoppens trin",
     "tabTranscript": "Afskrift",
-    "tabOutline": "Disposition"
+    "tabOutline": "Disposition",
+    "tabDeck": "Præsentation"
   },
   "intake": {
     "camera": "Tag billede",
@@ -591,5 +592,18 @@
       "unreadable": "Distils svar kunne ikke bruges. Prøv igen."
     },
     "and": "og"
+  },
+  "deck": {
+    "savePdf": "Gem som PDF",
+    "includeTranscript": "Tag alle sedler med ordret som sidste bilag",
+    "hint": "Vælg »Gem som PDF« som printer i vinduet, der åbner. Kun de anbefalinger, du har beholdt, kommer med. Indholdet retter du under Disposition.",
+    "emptyTitle": "Ingen præsentation endnu",
+    "emptyBody": "Præsentationen bygges af dispositionen. Lav dispositionen først, og ret den til.",
+    "toOutline": "Gå til Disposition",
+    "summary": "{count, plural, one {# slide} other {# slides}} på {language}, det sprog sedlerne er skrevet på.",
+    "language": {
+      "da": "dansk",
+      "en": "engelsk"
+    }
   }
 }

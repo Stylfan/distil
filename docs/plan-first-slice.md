@@ -52,8 +52,13 @@ photo is gone afterwards.
    Tried with the fake outliner only; untested against Mistral. Voice
    answers use the phone keyboard's own microphone: the browser's speech
    recognition would send audio to Google or Apple, outside the rules.
-3. **Presentation:** overview first, themes like the wall, actions,
-   transcript as an optional appendix; PDF through print.
+3. **Presentation (built 12 November 2026):** overview first, themes
+   like the wall, actions, transcript as an optional appendix; PDF
+   through print, one 16:9 page per slide (checked with headless Edge: 8
+   slides, 8 pages of 13.33 × 7.5 in). Built from the outline by a pure
+   function (`src/domain/deck.ts`); only kept recommendations go in; long
+   lists are split over slides, never shrunk. The deck's own words follow
+   the notes' language (`src/domain/deck-words.ts`).
 4. **Drawings:** boxes, arrows, lines and roles from whiteboards and
    flip-overs redrawn as diagrams; flow diagrams, 2×2 matrices, canvas
    models, timelines, dot votes.

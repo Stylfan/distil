@@ -1,0 +1,1 @@
+ALTER TABLE "outlines" ADD COLUMN "include_transcript" boolean DEFAULT false NOT NULL;

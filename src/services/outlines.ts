@@ -132,3 +132,15 @@ export async function undoGenerated(db: Db, userId: string, workshopId: string):
     .set({ content: current.previous, previous: null, version: current.version + 1 })
     .where(eq(outlines.id, current.id));
 }
+
+/** Whether the presentation ends with the transcript; a setting, so it leaves the version alone. */
+export async function setIncludeTranscript(
+  db: Db,
+  userId: string,
+  workshopId: string,
+  include: boolean,
+): Promise<void> {
+  const current = await lockOutline(db, userId, workshopId);
+  if (!current) throw new NotFound();
+  await db.update(outlines).set({ includeTranscript: include }).where(eq(outlines.id, current.id));
+}

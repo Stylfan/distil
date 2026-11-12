@@ -2,21 +2,25 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { cn } from "@/lib/cn";
 
-/** The two steps of a workshop on the computer: check what was read, then shape the outline. */
+/** The steps of a workshop on the computer: check what was read, shape the outline, see the presentation. */
 export async function WorkshopTabs({
   workshopId,
   current,
 }: {
   workshopId: string;
-  current: "transcript" | "outline";
+  current: "transcript" | "outline" | "deck";
 }) {
   const t = await getTranslations("workshop");
   const tabs = [
     { key: "transcript", href: `/workshops/${workshopId}`, label: t("tabTranscript") },
     { key: "outline", href: `/workshops/${workshopId}/disposition`, label: t("tabOutline") },
+    { key: "deck", href: `/workshops/${workshopId}/praesentation`, label: t("tabDeck") },
   ] as const;
   return (
-    <nav aria-label={t("steps")} className="hidden gap-1 border-b border-hairline md:flex">
+    <nav
+      aria-label={t("steps")}
+      className="hidden gap-1 border-b border-hairline md:flex print:hidden"
+    >
       {tabs.map((tab, i) => (
         <Link
           key={tab.key}

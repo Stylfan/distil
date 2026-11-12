@@ -29,6 +29,13 @@
       "when": 1794483575588,
       "tag": "0003_outlines_rls",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1794484374101,
+      "tag": "0004_transcript_appendix",
+      "breakpoints": true
     }
   ]
 }

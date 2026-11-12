@@ -2,7 +2,12 @@
 
 import { z } from "zod";
 import { outlineSchema } from "@/domain/outline";
-import { answerQuestion, saveOutline, undoGenerated } from "@/services/outlines";
+import {
+  answerQuestion,
+  saveOutline,
+  setIncludeTranscript,
+  undoGenerated,
+} from "@/services/outlines";
 import { run, type Result } from "./result";
 
 /** The facilitator's own changes to the outline; Distil's are in /api/workshops/[id]/outline. */
@@ -35,6 +40,17 @@ export async function answerQuestionAction(input: z.infer<typeof answer>): Promi
 export async function undoOutlineAction(workshopId: string): Promise<Result> {
   return run(z.string().min(1), workshopId, async (db, userId, id) => {
     await undoGenerated(db, userId, id);
+    return undefined;
+  });
+}
+
+const transcript = z.object({ workshopId: z.string().min(1), include: z.boolean() });
+
+export async function setIncludeTranscriptAction(
+  input: z.infer<typeof transcript>,
+): Promise<Result> {
+  return run(transcript, input, async (db, userId, d) => {
+    await setIncludeTranscript(db, userId, d.workshopId, d.include);
     return undefined;
   });
 }

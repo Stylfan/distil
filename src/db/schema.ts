@@ -157,6 +157,8 @@ export const outlines = pgTable("outlines", {
   previous: jsonb("previous").$type<Outline>(),
   /** Raised on every save, so two windows cannot overwrite each other unseen. */
   version: integer("version").notNull().default(1),
+  /** Whether the presentation ends with every note word for word, as an appendix. */
+  includeTranscript: boolean("include_transcript").notNull().default(false),
   /** When Distil last made or changed it. */
   generatedAt: bigint("generated_at", { mode: "number" }).notNull(),
   ...timestamps,

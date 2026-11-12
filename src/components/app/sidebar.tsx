@@ -106,7 +106,7 @@ export function Sidebar({
 export function PhoneBar() {
   const t = useTranslations("nav");
   return (
-    <header className="sticky top-0 z-40 flex h-12 items-center justify-between border-b border-hairline bg-paper/95 px-4 backdrop-blur md:hidden">
+    <header className="sticky top-0 z-40 flex h-12 items-center justify-between border-b border-hairline bg-paper/95 px-4 backdrop-blur md:hidden print:hidden">
       <Link href="/" className="flex items-center gap-2 text-ink" aria-label={t("home")}>
         <Mark size={20} />
         <span className="text-[14px] font-semibold tracking-[0.04em]">Distil</span>
