@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages, getTranslations } from "next-intl/server";
@@ -13,8 +13,15 @@ const inter = localFont({
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("app");
-  return { title: { default: "Distil", template: "%s · Distil" }, description: t("tagline") };
+  return {
+    title: { default: "Distil", template: "%s · Distil" },
+    description: t("tagline"),
+    // Opened from the home screen on an iPhone: full screen, with the name under the icon.
+    appleWebApp: { capable: true, title: "Distil", statusBarStyle: "default" },
+  };
 }
+
+export const viewport: Viewport = { themeColor: "#F7F6F3", width: "device-width", initialScale: 1 };
 
 /** The document shell shared by the signed-in pages and the sign-in pages. */
 export default async function RootLayout({ children }: { children: React.ReactNode }) {

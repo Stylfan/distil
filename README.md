@@ -71,7 +71,7 @@ call Mistral.
 
 ## Run it on a server
 
-One server, Docker Compose, Postgres, a Mistral key:
+One server, Docker Compose, Postgres, a Mistral key; with Coolify: [docs/deploy-coolify.md](docs/deploy-coolify.md). In general:
 [docs/self-hosting.md](docs/self-hosting.md).
 
 ## The rules it lives by
