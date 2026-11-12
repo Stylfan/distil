@@ -28,7 +28,7 @@ cp .env.production.example .env.production
 
 Fill in `.env.production`. Make each of the three secrets with
 `node -e "console.log(require('crypto').randomBytes(32).toString('base64url'))"`
-or `openssl rand -base64 32`, set `DISTIL_URL` to the public address and
+or `openssl rand -hex 32`, set `DISTIL_URL` to the public address and
 `MISTRAL_API_KEY` to your key. Then:
 
 ```bash

@@ -31,7 +31,7 @@ server.
 ## 3. Environment
 
 In the resource's **Environment Variables**. Make each secret with
-`openssl rand -base64 32` (or the `node -e` line in `.env.production.example`).
+`openssl rand -hex 32` (or the `node -e` line in `.env.production.example`).
 
 | Variable                  | Value                                                                |
 | ------------------------- | -------------------------------------------------------------------- |
