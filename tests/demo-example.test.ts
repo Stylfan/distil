@@ -118,3 +118,27 @@ describe("the example workshop of a demo visit", () => {
     expect(await db.select().from(workshops).where(eq(workshops.id, id!))).toEqual([]);
   });
 });
+
+describe("the example in demo-workshop/", () => {
+  it("loads, and carries no names, initials or private dreams", async () => {
+    const { loadExample } = await import("@/demo/example");
+    const example = loadExample();
+    expect(example).not.toBeNull();
+    expect(example!.images.size).toBe(example!.workshop.photos.length);
+    const text = JSON.stringify(example!.workshop);
+    for (const word of [
+      "ULRIK",
+      "STEFFEN",
+      "VLY",
+      "RSP",
+      "LPA",
+      "JAS",
+      "drengene",
+      "børnene",
+      "Djøf",
+      "djoef",
+    ]) {
+      expect(text, word).not.toContain(word);
+    }
+  });
+});
