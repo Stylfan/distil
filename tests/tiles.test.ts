@@ -4,7 +4,7 @@ import { mistralReader } from "@/ai/mistral";
 import type { ReadItem } from "@/domain/reading";
 import { TILE_FROM_EDGE, likeness, mergeTiles, tileRects } from "@/domain/tiles";
 import { addPhoto, getImage, startReading } from "@/services/photos";
-import { createWorkshop } from "@/services/workshops";
+import { createWorkshop, getWorkshop } from "@/services/workshops";
 import { freshDb } from "./db";
 import { fakeJpeg, seedUser } from "./helpers";
 
@@ -107,6 +107,21 @@ describe("a photo with parts", () => {
     expect(start.kind).toBe("image");
     if (start.kind === "image")
       expect(start.parts.map((p) => p.rect)).toEqual(tileRects(4032, 3024));
+  });
+
+  it("is still one photo in its workshop, with one time its image goes", async () => {
+    const photoId = await addPhoto(
+      db,
+      alice,
+      workshopId,
+      fakeJpeg(2000, 1500),
+      Date.now(),
+      parts(),
+    );
+    const full = await getWorkshop(db, alice, workshopId);
+    expect(full!.photos).toHaveLength(1);
+    expect(full!.photos[0]).toMatchObject({ id: photoId });
+    expect(full!.photos[0]!.imageExpiresAt).toBeGreaterThan(Date.now());
   });
 
   it("refuses parts that are not JPEGs or lie outside the photo", async () => {

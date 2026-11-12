@@ -76,7 +76,7 @@ export async function getWorkshop(
       unsureCount: sql<number>`(select count(*)::int from notes n where n.photo_id = "photos"."id" and n.unsure)`,
       imageExpiresAt: sql<
         string | null
-      >`(select i.expires_at from photo_images i where i.photo_id = "photos"."id" and i.expires_at > ${now})`,
+      >`(select i.expires_at from photo_images i where i.photo_id = "photos"."id" and i.part = 0 and i.expires_at > ${now})`,
     })
     .from(photos)
     .where(eq(photos.workshopId, id))
