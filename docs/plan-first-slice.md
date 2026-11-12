@@ -59,9 +59,15 @@ photo is gone afterwards.
    function (`src/domain/deck.ts`); only kept recommendations go in; long
    lists are split over slides, never shrunk. The deck's own words follow
    the notes' language (`src/domain/deck-words.ts`).
-4. **Drawings:** boxes, arrows, lines and roles from whiteboards and
-   flip-overs redrawn as diagrams; flow diagrams, 2×2 matrices, canvas
-   models, timelines, dot votes.
+4. **Drawings (built 12 November 2026):** boxes, arrows, lines and roles
+   from whiteboards and flip-overs redrawn as diagrams; flow diagrams, 2×2
+   matrices, canvas models and timelines are all shapes and lines placed
+   as drawn (`src/domain/diagram.ts`). The same reading of the photo
+   returns the notes and the drawing, so no extra call to Mistral. One
+   diagram per photo (`diagrams` table, RLS and audit), corrected on the
+   desk, a slide of its own unless taken out, cropped to what was drawn.
+   Tried with the fake reader only. Dot votes are not counted yet: the
+   model reads them as text, if at all.
 5. **The bridge and the gate:** QR code from computer to phone;
    "Bed om mere" with the operator's approval list in the app.
 6. **Later:** PowerPoint, e-mail.

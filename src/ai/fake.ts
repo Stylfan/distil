@@ -1,3 +1,4 @@
+import type { Diagram } from "@/domain/diagram";
 import type { ReadItem } from "@/domain/reading";
 import type { Reader } from "./reader";
 
@@ -81,6 +82,36 @@ export const FAKE_ITEMS: ReadItem[] = [
   },
 ];
 
+/** A made-up drawing: a small flow with a role, as a whiteboard might hold. */
+export const FAKE_DIAGRAM: Diagram = {
+  title: "Salgsflowet",
+  nodes: [
+    { id: "kunde", label: "Kunde", shape: "person", x: 120, y: 500, w: 120, h: 220 },
+    { id: "saelger", label: "Sælger", shape: "box", x: 380, y: 500, w: 200, h: 140 },
+    { id: "lager", label: "Lager", shape: "box", x: 660, y: 500, w: 200, h: 140 },
+    {
+      id: "levering",
+      label: "Levering til kunden",
+      shape: "round",
+      x: 880,
+      y: 820,
+      w: 200,
+      h: 130,
+    },
+    { id: "note", label: "Flaskehals?", shape: "note", x: 660, y: 180, w: 160, h: 140 },
+  ],
+  edges: [
+    { id: "e1", from: "kunde", to: "saelger", label: "bestiller", arrow: "end", dashed: false },
+    { id: "e2", from: "saelger", to: "lager", label: "", arrow: "end", dashed: false },
+    { id: "e3", from: "lager", to: "levering", label: "pakker", arrow: "end", dashed: false },
+    { id: "e4", from: "note", to: "lager", label: "", arrow: "none", dashed: true },
+  ],
+};
+
 export const fakeReader: Reader = {
-  read: () => Promise.resolve(FAKE_ITEMS.map((i) => ({ ...i, alternatives: [...i.alternatives] }))),
+  read: () =>
+    Promise.resolve({
+      items: FAKE_ITEMS.map((i) => ({ ...i, alternatives: [...i.alternatives] })),
+      diagram: structuredClone(FAKE_DIAGRAM),
+    }),
 };

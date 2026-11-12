@@ -9,6 +9,7 @@ import {
   uniqueIndex,
 } from "drizzle-orm/pg-core";
 import { bytea, id, now, timestamps } from "./columns";
+import type { Diagram } from "@/domain/diagram";
 import type { Outline } from "@/domain/outline";
 import { users } from "./schema-accounts";
 
@@ -164,10 +165,31 @@ export const outlines = pgTable("outlines", {
   ...timestamps,
 });
 
+/**
+ * A drawing on a photo, redrawn as a diagram (src/domain/diagram.ts): at
+ * most one per photo, made when the photo is read, then touched up by the
+ * facilitator. Kept like the notes when the image is deleted.
+ */
+export const diagrams = pgTable("diagrams", {
+  id: id(),
+  workshopId: text("workshop_id")
+    .notNull()
+    .references(() => workshops.id, { onDelete: "cascade" }),
+  photoId: text("photo_id")
+    .notNull()
+    .unique()
+    .references(() => photos.id, { onDelete: "cascade" }),
+  content: jsonb("content").$type<Diagram>().notNull(),
+  /** Whether the diagram has a slide of its own in the presentation. */
+  include: boolean("include").notNull().default(true),
+  ...timestamps,
+});
+
 export type Workshop = typeof workshops.$inferSelect;
 export type Photo = typeof photos.$inferSelect;
 export type Note = typeof notes.$inferSelect;
 export type OutlineRow = typeof outlines.$inferSelect;
+export type DiagramRow = typeof diagrams.$inferSelect;
 
 /**
  * Every change to a workshop's data, written by a database trigger

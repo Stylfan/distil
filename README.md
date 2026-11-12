@@ -11,7 +11,7 @@ The interface is in Danish.
 
 ## Status
 
-Early: three slices. What works today:
+Early: four slices. What works today:
 
 - Accounts with e-mail and password, two-step sign-in (authenticator app
   and recovery codes) and passkeys, as in Prismatic. Each account sees only
@@ -41,14 +41,21 @@ Early: three slices. What works today:
   (what, who, when) and what is open; every note word for word as an
   appendix when asked for. Saved as PDF with the browser's own print, one
   16:9 page per slide.
+- Drawings: a whiteboard or flip-over drawing (boxes, roles as stick
+  figures, circles, notes stuck in it, lines and arrows with their words)
+  is redrawn as a clean diagram when the photo is read, keeping the layout
+  it had on the board. It stands beside the photo to be corrected, and
+  gets a slide of its own in the presentation unless taken out.
+- Phone home screen: an icon and a web app manifest, so Distil opens full
+  screen like an app.
 - Limits: 10 photos per account, 300 per day for the installation, 50 per
   workshop, checks on every photo; 30 outlines per account and 500 per
   installation a day.
 - Under **Konto**: download everything as JSON, delete the account with
   everything in it. A demo mode where a visit is gone after a day.
 
-Next: whiteboard drawings redrawn as diagrams; then the QR code from
-computer to phone and "Bed om mere". See
+Next: the QR code from computer to phone, and "Bed om mere" with an
+approval list for the operator. See
 [docs/plan-first-slice.md](docs/plan-first-slice.md).
 
 ## Run it on your own machine

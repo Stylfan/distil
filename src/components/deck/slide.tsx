@@ -1,5 +1,6 @@
 import type { Slide } from "@/domain/deck";
 import type { DeckWords } from "@/domain/deck-words";
+import { DiagramView } from "@/components/diagram/diagram-view";
 import { NOTE_EDGE, NOTE_FILL } from "@/components/workshop/colours";
 import { Bullets, Frame, Heading, OverviewColumn, PostIt, cq } from "./slide-parts";
 
@@ -120,6 +121,20 @@ export function SlideView({
         </>,
       );
     }
+    case "diagram":
+      return frame(
+        <>
+          <Heading>{slide.title || words.drawing(slide.photo)}</Heading>
+          <div className="flex min-h-0 flex-1 items-center justify-center">
+            <DiagramView
+              diagram={slide.diagram}
+              width={slide.width}
+              height={slide.height}
+              className="h-full max-h-full w-full"
+            />
+          </div>
+        </>,
+      );
     case "list":
       return frame(
         <>

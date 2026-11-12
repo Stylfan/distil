@@ -1,12 +1,12 @@
 import { asc, eq, inArray } from "drizzle-orm";
 import type { Tx } from "@/db/client";
-import { auditLog, notes, photos, users, workshops } from "@/db/schema";
+import { auditLog, diagrams, notes, outlines, photos, users, workshops } from "@/db/schema";
 
 /**
  * Everything an account owns, for the one-click export (Haij's third
  * rule): the account itself, every workshop with its photos (as records;
- * images are not kept long enough to export), the notes and the audit
- * trail. Runs inside withUser(), so row-level security limits it to the
+ * images are not kept long enough to export), the notes, the outlines,
+ * the redrawn drawings and the audit trail. Runs inside withUser(), so row-level security limits it to the
  * account's own workshops even before the owner filter does.
  */
 
@@ -25,6 +25,8 @@ export type AccountExport = {
   workshops: Record<string, unknown>[];
   photos: Record<string, unknown>[];
   notes: Record<string, unknown>[];
+  outlines: Record<string, unknown>[];
+  diagrams: Record<string, unknown>[];
   auditLog: Record<string, unknown>[];
 };
 
@@ -69,6 +71,8 @@ export async function exportAccount(tx: Tx, userId: string): Promise<AccountExpo
           .from(notes)
           .where(inArray(notes.workshopId, ids))
           .orderBy(asc(notes.photoId), asc(notes.seq)),
+    outlines: none ? [] : await tx.select().from(outlines).where(inArray(outlines.workshopId, ids)),
+    diagrams: none ? [] : await tx.select().from(diagrams).where(inArray(diagrams.workshopId, ids)),
     auditLog: none
       ? []
       : await tx

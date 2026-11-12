@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { Monitor } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { requireUser } from "@/auth/session";
+import { DiagramPanel } from "@/components/diagram/diagram-panel";
 import { MakeOutline } from "@/components/outline/outline-run";
 import { QuestionCards } from "@/components/outline/question-cards";
 import { PhotoIntake } from "@/components/workshop/photo-intake";
@@ -39,7 +40,7 @@ export default async function WorkshopPage({ params, searchParams }: Props) {
   const t = await getTranslations("workshop");
   const loaded = await loadDesk(user.id, id, wanted);
   if (!loaded) notFound();
-  const { full, chosen, notes, outline } = loaded;
+  const { full, chosen, notes, outline, diagram } = loaded;
   const { workshop, photos } = full;
   const readCount = photos.filter((p) => p.status === "read" || p.status === "approved").length;
   const toCheck = photos.filter((p) => p.status === "read").length;
@@ -84,20 +85,32 @@ export default async function WorkshopPage({ params, searchParams }: Props) {
           <PhotoList workshopId={workshop.id} photos={photos} selected={chosen?.id} links />
         </aside>
         {chosen ? (
-          <ReviewPanel
-            workshopId={workshop.id}
-            photo={{
-              id: chosen.id,
-              seq: chosen.seq,
-              width: chosen.width,
-              height: chosen.height,
-              status: chosen.status,
-              error: chosen.error,
-              hasImage: chosen.imageExpiresAt !== null,
-              imageExpiresIn: chosen.imageExpiresIn,
-            }}
-            notes={notes}
-          />
+          <div className="flex min-w-0 flex-col gap-6">
+            <ReviewPanel
+              workshopId={workshop.id}
+              photo={{
+                id: chosen.id,
+                seq: chosen.seq,
+                width: chosen.width,
+                height: chosen.height,
+                status: chosen.status,
+                error: chosen.error,
+                hasImage: chosen.imageExpiresAt !== null,
+                imageExpiresIn: chosen.imageExpiresIn,
+              }}
+              notes={notes}
+            />
+            {diagram && (
+              <DiagramPanel
+                key={diagram.updatedAt}
+                photoId={chosen.id}
+                initial={diagram.content}
+                include={diagram.include}
+                width={chosen.width}
+                height={chosen.height}
+              />
+            )}
+          </div>
         ) : (
           <div className="rounded-lg border border-dashed border-hairline p-8 text-[14px] leading-relaxed text-slate">
             {t("empty")}

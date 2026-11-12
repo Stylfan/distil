@@ -36,6 +36,20 @@
       "when": 1794484374101,
       "tag": "0004_transcript_appendix",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1794488234609,
+      "tag": "0005_diagrams",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1794488235448,
+      "tag": "0006_diagrams_rls",
+      "breakpoints": true
     }
   ]
 }

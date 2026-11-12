@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { NOTE_COLOURS, NOTE_KINDS, type NoteColour, type NoteKind } from "@/db/schema";
+import { parseDiagram, type Diagram } from "./diagram";
 
 /**
  * What a reading of one photo is, whoever did the reading: a list of the
@@ -107,4 +108,18 @@ export function parseReading(raw: unknown): ReadItem[] | null {
 export function inReadingOrder(items: ReadItem[]): ReadItem[] {
   const band = (y: number) => Math.floor(y / 125);
   return [...items].sort((a, b) => band(a.y) - band(b.y) || a.x - b.x || a.y - b.y);
+}
+
+/** What one photo gave: the notes, word for word, and its drawing redrawn, if it has one. */
+export type Reading = { items: ReadItem[]; diagram: Diagram | null };
+
+/** A reading from the model's answer, or null when the answer is not one at all. */
+export function parsePhotoAnswer(raw: unknown): Reading | null {
+  const items = parseReading(raw);
+  if (!items) return null;
+  const diagram =
+    typeof raw === "object" && raw !== null
+      ? parseDiagram((raw as { diagram?: unknown }).diagram)
+      : null;
+  return { items, diagram };
 }

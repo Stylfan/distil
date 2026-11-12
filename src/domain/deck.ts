@@ -1,11 +1,12 @@
 import type { NoteColour } from "@/db/schema";
+import type { Diagram } from "./diagram";
 import type { Outline } from "./outline";
 
 /**
  * The presentation, as slides, built from the outline and nothing else: a
  * pure function, so the deck is exactly what the facilitator approved.
  * The overview comes first and can travel alone; the themes follow, laid
- * out like the wall; then what Distil saw across them, what is
+ * out like the wall; the drawings, redrawn; then what Distil saw across them, what is
  * recommended (only what the facilitator kept), what was agreed and what
  * is open; and, when asked for, every note word for word.
  *
@@ -42,7 +43,15 @@ export type Slide =
       continued: boolean;
     }
   | { kind: "actions"; rows: { what: string; who: string; when: string }[]; continued: boolean }
-  | { kind: "transcript"; groups: { photo: number; notes: DeckNote[] }[]; continued: boolean };
+  | { kind: "transcript"; groups: { photo: number; notes: DeckNote[] }[]; continued: boolean }
+  | {
+      kind: "diagram";
+      title: string;
+      photo: number;
+      diagram: Diagram;
+      width: number;
+      height: number;
+    };
 
 export const POINTS_PER_SLIDE = 7;
 export const NOTES_ON_THEME = 12;
@@ -65,6 +74,8 @@ export function buildDeck(input: {
   outline: Outline;
   notes: DeckNote[];
   includeTranscript: boolean;
+  /** The drawings chosen for the presentation, in photo order. */
+  diagrams?: { photo: number; diagram: Diagram; width: number; height: number }[];
 }): Slide[] {
   const { outline } = input;
   const byId = new Map(input.notes.map((n) => [n.id, n]));
@@ -102,6 +113,11 @@ export function buildDeck(input: {
       }),
     );
   });
+
+  // The drawings come after the themes: they are the participants' own pictures of the work.
+  for (const d of input.diagrams ?? []) {
+    slides.push({ kind: "diagram", title: d.diagram.title.trim(), ...d });
+  }
 
   const lists: [Extract<Slide, { kind: "list" }>["heading"], string[]][] = [
     ["patterns", filled(outline.patterns.map((p) => p.text))],

@@ -1,4 +1,4 @@
-import type { ReadItem } from "@/domain/reading";
+import type { Reading } from "@/domain/reading";
 import { ReadError } from "./errors";
 import { fakeReader } from "./fake";
 import { mistralReader } from "./mistral";
@@ -10,7 +10,7 @@ import { mistralFromEnv } from "./mistral-chat";
  * model is a setting (DISTIL_MISTRAL_MODEL), not a code change.
  */
 export type Reader = {
-  read(image: Buffer, mime: string): Promise<ReadItem[]>;
+  read(image: Buffer, mime: string): Promise<Reading>;
 };
 
 /**

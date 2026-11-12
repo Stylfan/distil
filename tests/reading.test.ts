@@ -156,8 +156,9 @@ describe("Mistral", () => {
         return answer(JSON.stringify({ items: [{ text: "Hej", colour: "pink" }] }))(url, init);
       }) as typeof fetch,
     });
-    const items = await reader.read(Buffer.from([1, 2, 3]), "image/jpeg");
+    const { items, diagram } = await reader.read(Buffer.from([1, 2, 3]), "image/jpeg");
     expect(items).toMatchObject([{ text: "Hej", colour: "pink" }]);
+    expect(diagram).toBeNull();
     expect(sent!.url).toBe("https://api.mistral.ai/v1/chat/completions");
     expect((sent!.init.headers as Record<string, string>).Authorization).toBe("Bearer test-key");
     const body = JSON.parse(String(sent!.init.body));
@@ -182,7 +183,8 @@ describe("Mistral", () => {
       "notConfigured",
     );
     expect(
-      (await getReader(env({ DISTIL_READER: "fake" })).read(Buffer.from([1]), "image/jpeg")).length,
+      (await getReader(env({ DISTIL_READER: "fake" })).read(Buffer.from([1]), "image/jpeg")).items
+        .length,
     ).toBeGreaterThan(0);
   });
 });

@@ -21,6 +21,7 @@ export type DeckWords = {
   when: string;
   transcript: string;
   photo: (n: number) => string;
+  drawing: (n: number) => string;
   continued: string;
   more: (n: number) => string;
   notes: (n: number) => string;
@@ -42,6 +43,7 @@ export const DECK_WORDS: Record<DeckLanguage, DeckWords> = {
     when: "Hvornår",
     transcript: "Bilag: alle sedler ordret",
     photo: (n) => `Billede ${n}`,
+    drawing: (n) => `Tegning fra billede ${n}`,
     continued: "fortsat",
     more: (n) => `+ ${n} flere`,
     notes: (n) => (n === 1 ? "1 seddel" : `${n} sedler`),
@@ -61,6 +63,7 @@ export const DECK_WORDS: Record<DeckLanguage, DeckWords> = {
     when: "When",
     transcript: "Appendix: every note, word for word",
     photo: (n) => `Photo ${n}`,
+    drawing: (n) => `Drawing from photo ${n}`,
     continued: "continued",
     more: (n) => `+ ${n} more`,
     notes: (n) => (n === 1 ? "1 note" : `${n} notes`),

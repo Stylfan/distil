@@ -4,7 +4,8 @@ import { buildDeck, type Slide } from "@/domain/deck";
 import { detectLanguage, type DeckLanguage } from "@/domain/deck-words";
 import { formatDay } from "@/lib/dates";
 import { getOutline, notesOfWorkshop } from "@/services/outlines";
-import { findWorkshop } from "@/services/workshops";
+import { listDiagrams } from "@/services/diagrams";
+import { findWorkshop, getWorkshop } from "@/services/workshops";
 
 /**
  * The presentation of a workshop, read as the user: its slides from the
@@ -23,10 +24,13 @@ export async function loadDeck(userId: string, workshopId: string): Promise<Deck
   return withUser(userId, async (tx) => {
     const workshop = await findWorkshop(tx, userId, workshopId);
     if (!workshop) return null;
-    const [outline, notes] = await Promise.all([
+    const [outline, notes, drawings, full] = await Promise.all([
       getOutline(tx, userId, workshopId),
       notesOfWorkshop(tx, userId, workshopId),
+      listDiagrams(tx, userId, workshopId),
+      getWorkshop(tx, userId, workshopId),
     ]);
+    const sizes = new Map(full?.photos.map((ph) => [ph.seq, ph]) ?? []);
     const language = detectLanguage(notes.map((n) => n.text));
     if (!outline) return { workshop, slides: null, language, includeTranscript: false };
     const slides = buildDeck({
@@ -40,6 +44,14 @@ export async function loadDeck(userId: string, workshopId: string): Promise<Deck
         photo: n.photo,
       })),
       includeTranscript: outline.includeTranscript,
+      diagrams: drawings
+        .filter((d) => d.include)
+        .map((d) => ({
+          photo: d.photo,
+          diagram: d.content,
+          width: sizes.get(d.photo)?.width ?? 1600,
+          height: sizes.get(d.photo)?.height ?? 1000,
+        })),
     });
     return { workshop, slides, language, includeTranscript: outline.includeTranscript };
   });

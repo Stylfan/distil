@@ -605,5 +605,29 @@
       "da": "dansk",
       "en": "engelsk"
     }
+  },
+  "diagram": {
+    "title": "Tegningen, genskabt",
+    "hint": "Distil har tegnet det op, der stod på tavlen. Ret ordene, eller fjern det, der ikke var der.",
+    "include": "Med i præsentationen",
+    "titleLabel": "Overskrift på tegningen",
+    "titlePlaceholder": "Overskrift, fx Salgsflowet",
+    "unnamed": "uden navn",
+    "shapes": "{count, plural, one {# figur} other {# figurer}}",
+    "lines": "{count, plural, =0 {Ingen streger} one {# streg} other {# streger}}",
+    "shapeLabel": "Tekst i figur {number}",
+    "removeShape": "Fjern {name}",
+    "lineLabel": "Tekst på stregen",
+    "lineLabelFor": "Tekst på streg {number}",
+    "removeLine": "Fjern streg {number}",
+    "saveFailed": "Det blev ikke gemt. Prøv igen.",
+    "shape": {
+      "box": "Kasse",
+      "round": "Boble",
+      "circle": "Cirkel",
+      "person": "Rolle",
+      "note": "Seddel",
+      "text": "Tekst"
+    }
   }
 }

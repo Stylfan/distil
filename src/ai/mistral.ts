@@ -1,10 +1,10 @@
-import { parseReading } from "@/domain/reading";
+import { parsePhotoAnswer } from "@/domain/reading";
 import { ReadError } from "./errors";
 import { mistralJson, type MistralOptions } from "./mistral-chat";
 import { READ_PHOTO_PROMPT } from "./prompt";
 import type { Reader } from "./reader";
 
-/** Reading a photo with Mistral's vision model: the photo as a data URL, the notes as JSON. */
+/** Reading a photo with Mistral's vision model: the photo as a data URL; the notes and any drawing as JSON. */
 export function mistralReader(options: MistralOptions): Reader {
   return {
     async read(image, mime) {
@@ -18,9 +18,9 @@ export function mistralReader(options: MistralOptions): Reader {
           ],
         },
       ]);
-      const items = parseReading(answer);
-      if (!items) throw new ReadError("unreadable");
-      return items;
+      const reading = parsePhotoAnswer(answer);
+      if (!reading) throw new ReadError("unreadable");
+      return reading;
     },
   };
 }
