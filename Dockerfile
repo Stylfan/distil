@@ -17,7 +17,8 @@ RUN pnpm install --frozen-lockfile
 FROM base AS build
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN pnpm build
+# The example workshop for demo visits is optional; without it a visit starts empty.
+RUN mkdir -p demo-workshop && pnpm build
 
 # The migration script is plain JavaScript on drizzle-orm and pg, both
 # production dependencies, so this image carries no build tooling.
@@ -35,6 +36,7 @@ RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs
 COPY --from=build --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=build --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=build --chown=nextjs:nodejs /app/public ./public
+COPY --from=build --chown=nextjs:nodejs /app/demo-workshop ./demo-workshop
 USER nextjs
 EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \

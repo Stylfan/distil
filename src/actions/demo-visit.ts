@@ -5,13 +5,14 @@ import { redirect } from "next/navigation";
 import { currentUser, endSession, startSession } from "@/auth/session";
 import { allowAttempt } from "@/auth/rate-limit";
 import { getDb, withUser } from "@/db/client";
+import { createExampleWorkshop } from "@/demo/example";
 import { isDemoMode } from "@/lib/demo-mode";
 import { DemoFull, cleanExpiredDemos, startDemoVisit } from "@/services/demo-visits";
 import { deleteAccount } from "@/services/users";
 
 /**
  * The one button on a demo installation's front page: a throwaway account,
- * signed in, and straight to the workshops.
+ * with its own copy of the example workshop, signed in, and straight to the workshops.
  * A few visits per address per quarter of an hour; when the demo is full
  * or the limit is hit, the page says so instead.
  */
@@ -23,6 +24,10 @@ export async function startDemoAction(): Promise<void> {
   await cleanExpiredDemos(db);
   try {
     const visit = await startDemoVisit(db);
+    // The example workshop, so the visitor sees at once what Distil makes of a wall.
+    await withUser(visit.userId, (tx) => createExampleWorkshop(tx, visit.userId), db).catch(() => {
+      console.error("demo: example workshop not created");
+    });
     await startSession(visit.userId);
   } catch (error) {
     if (error instanceof DemoFull) redirect("/login?demo=full");
