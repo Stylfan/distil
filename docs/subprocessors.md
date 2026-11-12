@@ -6,10 +6,10 @@ It changes before any new third party is added.
 
 ## The software itself: Mistral, and nobody else
 
-| Who                     | What they can see                                                                                    | When                                                                                  |
-| ----------------------- | ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| Mistral AI (France, EU) | One photo at a time, shrunk and without EXIF data, and the text it reads off it                      | Each time a photo is read                                                             |
-| Mistral AI (France, EU) | A photo of a workshop's agenda, when the facilitator chooses one, and the text read off it; never stored | Each time an agenda is read from a photo |
+| Who                     | What they can see                                                                                                                                       | When                                                                                  |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| Mistral AI (France, EU) | One photo at a time, shrunk and without EXIF data, and the text it reads off it                                                                         | Each time a photo is read                                                             |
+| Mistral AI (France, EU) | A photo of a workshop's agenda, when the facilitator chooses one, and the text read off it; never stored                                                | Each time an agenda is read from a photo                                              |
 | Mistral AI (France, EU) | The text, colour and kind of a workshop's notes, the outline, the facilitator's context (purpose, participants, audience, agenda), answers and requests | Each time Distil makes or changes an outline, or writes the story of the presentation |
 
 Distil sends a photo to Mistral's API when it is read (and a photo of the agenda when the facilitator asks for it to be read), and the notes' text when an outline is made or changed or the story of the presentation is written, and nothing else: no account details, no workshop names, no note ids (notes go as numbered lines). Mistral processes
