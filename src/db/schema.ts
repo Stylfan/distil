@@ -185,6 +185,30 @@ export const diagrams = pgTable("diagrams", {
   ...timestamps,
 });
 
+/**
+ * A phone let into one workshop from a signed-in computer, by a QR code:
+ * it may add photos to that workshop and answer its questions, nothing
+ * else, until it expires. The id is the SHA-256 of the token in the
+ * link, so a copy of the database opens nothing. Looked up before anyone
+ * is known, like a session, so outside row-level security; it goes with
+ * the workshop or the account.
+ */
+export const phoneLinks = pgTable(
+  "phone_links",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    workshopId: text("workshop_id")
+      .notNull()
+      .references(() => workshops.id, { onDelete: "cascade" }),
+    expiresAt: bigint("expires_at", { mode: "number" }).notNull(),
+    createdAt: bigint("created_at", { mode: "number" }).notNull().$defaultFn(now),
+  },
+  (t) => [index("phone_links_workshop_idx").on(t.workshopId)],
+);
+
 export type Workshop = typeof workshops.$inferSelect;
 export type Photo = typeof photos.$inferSelect;
 export type Note = typeof notes.$inferSelect;

@@ -68,8 +68,10 @@ photo is gone afterwards.
    desk, a slide of its own unless taken out, cropped to what was drawn.
    Tried with the fake reader only. Dot votes are not counted yet: the
    model reads them as text, if at all.
-5. **The bridge and the gate:** QR code from computer to phone;
-   "Bed om mere" with the operator's approval list in the app.
+5. **The bridge and the gate (built 12 November 2026):** QR code from
+   computer to phone, a two-hour link into one workshop; "Bed om mere"
+   with the operator's approval list in the app. The operator is set with
+   a database command ([ADR 0004](adr/0004-a-phone-link-and-an-operator.md)).
 6. **Later:** PowerPoint, e-mail.
 
 ## Choices to confirm

@@ -17,7 +17,11 @@ import { fakeJpeg, seedUser } from "./helpers";
  */
 
 const CHILD_TABLES = ["photos", "photo_images", "notes", "outlines", "diagrams"];
-/** Outside row-level security on purpose: signing in, and counts with no personal data. */
+/**
+ * Outside row-level security on purpose: signing in, phone links (looked
+ * up before anyone is known, like sessions, and only by their hash), and
+ * counts with no personal data.
+ */
 const OPEN_TABLES = [
   "users",
   "sessions",
@@ -25,6 +29,7 @@ const OPEN_TABLES = [
   "recovery_codes",
   "auth_challenges",
   "usage_days",
+  "phone_links",
 ];
 
 let alice: string;

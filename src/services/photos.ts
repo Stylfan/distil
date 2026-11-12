@@ -224,3 +224,8 @@ export async function maybePurgeImages(db: Db, now = Date.now()): Promise<void> 
   lastPurge = now;
   await purgeExpiredImages(db, now);
 }
+
+/** The workshop a photo belongs to, if it is the user's. */
+export async function photoWorkshop(db: Db, userId: string, photoId: string): Promise<string> {
+  return (await ownedPhoto(db, userId, photoId)).workshopId;
+}

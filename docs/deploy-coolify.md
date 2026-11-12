@@ -67,6 +67,20 @@ and starts the app. Then:
 With the GitHub App connected, every `git push` to `main` deploys again;
 otherwise press **Redeploy** after a push.
 
+## 4b. Make yourself the operator
+
+Sign up on the site with your own address first, at once, before you
+share the link. Then, in Coolify, open the **Terminal** of the `db`
+container and run:
+
+```bash
+psql -U postgres -d distil -c "update users set is_admin = true where email = 'din@adresse.dk';"
+```
+
+Reload the site: the sidebar now has **Anmodninger**, where requests for
+more photos arrive. Only a database command makes an operator, never an
+address or a setting, because nobody's address is verified at sign-up.
+
 ## 5. Memory and backups
 
 Distil adds its own Postgres and a Node server, together a few hundred MB,

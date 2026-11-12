@@ -54,19 +54,30 @@ passkey under **Konto**.
 
 So a public installation cannot run up the bill at Mistral:
 
-| Setting                             | Default | What it does                                                   |
-| ----------------------------------- | ------- | -------------------------------------------------------------- |
-| `DISTIL_PHOTO_ALLOWANCE`            | 10      | Photos a new account (or demo visit) may have read in all      |
-| `DISTIL_DAILY_PHOTO_LIMIT`          | 300     | Photos the whole installation may have read per day (UTC)      |
-| `DISTIL_DAILY_OUTLINES_PER_ACCOUNT` | 30      | Outlines Distil may make or change for one account per day     |
-| `DISTIL_DAILY_OUTLINE_LIMIT`        | 500     | Outlines for the whole installation per day                    |
-| (in the code)                       | 50      | Photos per workshop                                            |
-| (in the code)                       | 100     | Images an account may have waiting to be checked at once       |
-| (in the code)                       | 4 MB    | Largest photo the server takes; the browser shrinks to ~0.5 MB |
+| Setting                             | Default | What it does                                                          |
+| ----------------------------------- | ------- | --------------------------------------------------------------------- |
+| `DISTIL_PHOTO_ALLOWANCE`            | 10      | Photos a new account (or demo visit) may have read in all             |
+| `DISTIL_DAILY_PHOTO_LIMIT`          | 300     | Photos the whole installation may have read per day (UTC)             |
+| `DISTIL_DAILY_OUTLINES_PER_ACCOUNT` | 30      | Outlines Distil may make or change for one account per day            |
+| `DISTIL_DAILY_OUTLINE_LIMIT`        | 500     | Outlines for the whole installation per day                           |
+| `DISTIL_APPROVED_ALLOWANCE`         | 100     | Photos an account may have read in all once "Bed om mere" is approved |
+| (in the code)                       | 50      | Photos per workshop                                                   |
+| (in the code)                       | 100     | Images an account may have waiting to be checked at once              |
+| (in the code)                       | 4 MB    | Largest photo the server takes; the browser shrinks to ~0.5 MB        |
 
-Raising one account's allowance is, for now, done in the database:
-`update users set photo_allowance = 100 where email = '…';`. A "Bed om
-mere" button with an approval list for the operator is planned.
+An account that runs low gets a "Bed om flere billeder" button on its
+front page. The operator sees the requests under **Anmodninger** and
+answers yes (the account may then have `DISTIL_APPROVED_ALLOWANCE` read
+in all) or no. There is no e-mail yet; the sidebar shows how many wait.
+
+The operator is an account marked as admin in the database, never by an
+address or a setting, because addresses are not verified and anyone could
+sign up with the operator's. Create your own account first, then:
+
+```bash
+docker compose --env-file .env.production exec db \
+  psql -U postgres -d distil -c "update users set is_admin = true where email = 'you@example.dk';"
+```
 
 ## Hosting it for others
 

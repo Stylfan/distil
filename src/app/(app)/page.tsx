@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { requireUser } from "@/auth/session";
+import { RequestMore } from "@/components/account/request-more";
 import { NewWorkshopForm } from "@/components/workshop/new-workshop-form";
 import { PageHeader } from "@/components/ui/layout";
 import { getDb, withUser } from "@/db/client";
@@ -30,6 +31,10 @@ export default async function HomePage() {
           </h2>
           <NewWorkshopForm autoFocus={workshops.length === 0} />
           <p className="text-[13px] text-slate">{t("photosLeft", { count: left })}</p>
+          {/* Running low: ask the operator for more. A demo visit cannot; it is gone in a day. */}
+          {left <= 3 && user.demoExpiresAt === null && (
+            <RequestMore requestedAt={user.moreRequestedAt} />
+          )}
         </section>
 
         {workshops.length === 0 ? (

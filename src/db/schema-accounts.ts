@@ -1,4 +1,4 @@
-import { bigint, index, integer, pgTable, text, uniqueIndex } from "drizzle-orm/pg-core";
+import { bigint, boolean, index, integer, pgTable, text, uniqueIndex } from "drizzle-orm/pg-core";
 import { id, now, timestamps } from "./columns";
 
 /**
@@ -33,6 +33,11 @@ export const users = pgTable(
     /** The day (UTC) the outline count below is for, and how many outlines Distil made that day. */
     outlineDay: text("outline_day"),
     outlinesOnDay: integer("outlines_on_day").notNull().default(0),
+    /** When the account asked to have more photos read, and why; null when it has not, or was answered. */
+    moreRequestedAt: bigint("more_requested_at", { mode: "number" }),
+    moreRequestNote: text("more_request_note").notNull().default(""),
+    /** Runs this installation: sees and answers the requests for more. Set only in the database. */
+    isAdmin: boolean("is_admin").notNull().default(false),
     ...timestamps,
   },
   (t) => [uniqueIndex("users_email_uq").on(t.email)],

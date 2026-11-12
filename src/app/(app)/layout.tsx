@@ -4,6 +4,7 @@ import { PhoneBar, Sidebar } from "@/components/app/sidebar";
 import { getDb, withUser } from "@/db/client";
 import { maybeCleanDemos } from "@/services/demo-visits";
 import { maybePurgeImages } from "@/services/photos";
+import { countRequests } from "@/services/requests";
 import { listWorkshops } from "@/services/workshops";
 
 export const dynamic = "force-dynamic";
@@ -21,12 +22,14 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   void maybeCleanDemos(getDb()).catch(() => undefined);
   void maybePurgeImages(getDb()).catch(() => undefined);
   const demo = user.demoExpiresAt;
+  const requests = user.isAdmin ? await countRequests(getDb()) : null;
   return (
     <div className="min-h-screen md:grid md:grid-cols-[15rem_minmax(0,1fr)] print:block">
       <aside className="sticky top-0 hidden h-screen md:block print:hidden">
         <Sidebar
           workshops={workshops.map((w) => ({ id: w.id, name: w.name }))}
           user={{ name: user.name, email: demo === null ? user.email : "" }}
+          requests={requests}
         />
       </aside>
       <PhoneBar />

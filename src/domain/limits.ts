@@ -21,6 +21,8 @@ export const IMAGE_HOURS = 24;
 export type Limits = {
   /** Photos a new account (or a demo visit) may have read in all. */
   allowance: number;
+  /** What an account may have read in all once the operator has said yes to more. */
+  approvedAllowance: number;
   /** Photos the whole installation may have read per day. */
   dailyCeiling: number;
   /** Outlines Distil may make or change for one account per day. */
@@ -37,6 +39,7 @@ function positive(value: string | undefined, fallback: number): number {
 export function limits(env: NodeJS.ProcessEnv = process.env): Limits {
   return {
     allowance: positive(env.DISTIL_PHOTO_ALLOWANCE, 10),
+    approvedAllowance: positive(env.DISTIL_APPROVED_ALLOWANCE, 100),
     dailyCeiling: positive(env.DISTIL_DAILY_PHOTO_LIMIT, 300),
     outlinesPerAccount: positive(env.DISTIL_DAILY_OUTLINES_PER_ACCOUNT, 30),
     outlineCeiling: positive(env.DISTIL_DAILY_OUTLINE_LIMIT, 500),

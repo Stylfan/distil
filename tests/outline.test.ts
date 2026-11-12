@@ -248,7 +248,13 @@ describe("the stored outline", () => {
 
   it("may be made a limited number of times per account and day", async () => {
     const day = Date.UTC(2026, 10, 12, 10);
-    const config = { allowance: 10, dailyCeiling: 300, outlinesPerAccount: 2, outlineCeiling: 500 };
+    const config = {
+      allowance: 10,
+      approvedAllowance: 100,
+      dailyCeiling: 300,
+      outlinesPerAccount: 2,
+      outlineCeiling: 500,
+    };
     await reserveOutline(db, alice, day, config);
     await reserveOutline(db, alice, day, config);
     await expect(reserveOutline(db, alice, day, config)).rejects.toThrow("outlines");

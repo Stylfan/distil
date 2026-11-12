@@ -1,7 +1,7 @@
 import type { z } from "zod";
 import { currentUser } from "@/auth/session";
 import { withUser, type Db } from "@/db/client";
-import { Conflict, NotFound } from "@/services/errors";
+import { Conflict, NotAdmin, NotFound } from "@/services/errors";
 
 /** Every action answers with one of these; the page never sees a stack trace. */
 export type Result<T = undefined> =
@@ -33,6 +33,7 @@ export async function run<S extends z.ZodType, T>(
   } catch (error) {
     if (error instanceof NotFound) return { ok: false, error: "notFound" };
     if (error instanceof Conflict) return { ok: false, error: "conflict" };
+    if (error instanceof NotAdmin) return { ok: false, error: "unauthorized" };
     console.error("action failed", error);
     return { ok: false, error: "generic" };
   }

@@ -11,7 +11,7 @@ The interface is in Danish.
 
 ## Status
 
-Early: four slices. What works today:
+Early: five slices. What works today:
 
 - Accounts with e-mail and password, two-step sign-in (authenticator app
   and recovery codes) and passkeys, as in Prismatic. Each account sees only
@@ -48,14 +48,20 @@ Early: four slices. What works today:
   gets a slide of its own in the presentation unless taken out.
 - Phone home screen: an icon and a web app manifest, so Distil opens full
   screen like an app.
+- From computer to phone: "Tilføj fra telefon" shows a QR code; scanned,
+  it opens the workshop's camera and Distil's questions on the phone
+  without signing in there, for two hours, and nothing else
+  ([ADR 0004](docs/adr/0004-a-phone-link-and-an-operator.md)).
+- "Bed om flere billeder": an account running low asks, the operator
+  answers yes or no under **Anmodninger**.
 - Limits: 10 photos per account, 300 per day for the installation, 50 per
   workshop, checks on every photo; 30 outlines per account and 500 per
   installation a day.
 - Under **Konto**: download everything as JSON, delete the account with
   everything in it. A demo mode where a visit is gone after a day.
 
-Next: the QR code from computer to phone, and "Bed om mere" with an
-approval list for the operator. See
+Next: trying it on real walls with Mistral, then what that shows. Later:
+PowerPoint, e-mail. See
 [docs/plan-first-slice.md](docs/plan-first-slice.md).
 
 ## Run it on your own machine

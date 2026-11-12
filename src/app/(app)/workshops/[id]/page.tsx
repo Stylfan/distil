@@ -10,6 +10,7 @@ import { PhotoIntake } from "@/components/workshop/photo-intake";
 import { WorkshopTabs } from "@/components/workshop/workshop-tabs";
 import { PhotoList } from "@/components/workshop/photo-list";
 import { ReviewPanel } from "@/components/workshop/review-panel";
+import { PhoneLink } from "@/components/workshop/phone-link";
 import { WorkshopMenu } from "@/components/workshop/workshop-menu";
 import { PageHeader } from "@/components/ui/layout";
 import { withUser } from "@/db/client";
@@ -52,6 +53,7 @@ export default async function WorkshopPage({ params, searchParams }: Props) {
         title={workshop.name}
         actions={
           <div className="hidden items-center gap-2 md:flex">
+            <PhoneLink workshopId={workshop.id} />
             <WorkshopMenu id={workshop.id} name={workshop.name} heldOn={workshop.heldOn} />
           </div>
         }

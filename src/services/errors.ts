@@ -31,3 +31,10 @@ export class Conflict extends Error {
     super("conflict");
   }
 }
+
+/** Only the operator, marked as admin in the database, may do this. */
+export class NotAdmin extends Error {
+  constructor() {
+    super("notAdmin");
+  }
+}

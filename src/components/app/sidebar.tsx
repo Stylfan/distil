@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { Plus, StickyNote, UserRound } from "lucide-react";
+import { Inbox, Plus, StickyNote, UserRound } from "lucide-react";
 import { LogoutButton } from "@/components/auth/logout-button";
 import { Mark } from "@/components/ui/wordmark";
 import { cn } from "@/lib/cn";
@@ -20,9 +20,12 @@ const item =
 export function Sidebar({
   workshops,
   user,
+  requests,
 }: {
   workshops: { id: string; name: string }[];
   user: { name: string; email: string };
+  /** For the operator: how many ask for more photos; null for everyone else. */
+  requests: number | null;
 }) {
   const t = useTranslations("nav");
   const pathname = usePathname();
@@ -79,6 +82,24 @@ export function Sidebar({
       </div>
 
       <div className="mt-auto flex flex-col gap-1 border-t border-hairline pt-3">
+        {requests !== null && (
+          <Link
+            href="/admin"
+            aria-current={pathname.startsWith("/admin") ? "page" : undefined}
+            className={cn(
+              item,
+              pathname.startsWith("/admin") ? "bg-surface text-ink" : "text-slate",
+            )}
+          >
+            <Inbox className="size-4 shrink-0" aria-hidden />
+            <span className="flex-1">{t("requests")}</span>
+            {requests > 0 && (
+              <span className="rounded-full bg-warning-soft px-1.5 text-[11px] font-semibold text-warning tabular">
+                {requests}
+              </span>
+            )}
+          </Link>
+        )}
         <Link
           href="/account"
           aria-current={pathname.startsWith("/account") ? "page" : undefined}

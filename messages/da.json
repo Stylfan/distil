@@ -24,7 +24,8 @@
     "newWorkshop": "Ny workshop",
     "none": "Ingen workshops endnu.",
     "account": "Konto",
-    "maker": "fra Lenskjold Consulting"
+    "maker": "fra Lenskjold Consulting",
+    "requests": "Anmodninger"
   },
   "workshops": {
     "title": "Workshops",
@@ -70,11 +71,12 @@
       "dimensions": "Billedet er for lille til at kunne læses.",
       "workshopFull": "Workshoppen har allerede 50 billeder. Opret en ny til resten.",
       "stored": "Du har mange billeder, der venter på at blive tjekket. Godkend eller slet nogle, før du sender flere.",
-      "allowance": "Din konto har fået læst alle de billeder, den må. Billedet er gemt, så det kan læses, når du får lov til flere.",
+      "allowance": "Din konto har fået læst alle de billeder, den må. Billedet er gemt. Bed om flere på forsiden, så kan det læses, når det er godkendt.",
       "daily": "Distil har læst så mange billeder i dag, som den må. Prøv igen i morgen.",
       "notConfigured": "Læsning er ikke sat op på denne installation endnu.",
       "provider": "Læsningen svarede ikke. Prøv igen om lidt.",
-      "unreadable": "Svaret fra læsningen kunne ikke bruges. Prøv igen."
+      "unreadable": "Svaret fra læsningen kunne ikke bruges. Prøv igen.",
+      "expired": "Linket fra computeren er udløbet. Scan en ny QR-kode under »Tilføj fra telefon«."
     }
   },
   "photos": {
@@ -589,7 +591,8 @@
       "stored": "Der venter for mange billeder.",
       "notConfigured": "Distil er ikke sat op til at lave dispositioner på denne installation endnu.",
       "provider": "Distil svarede ikke. Prøv igen om lidt.",
-      "unreadable": "Distils svar kunne ikke bruges. Prøv igen."
+      "unreadable": "Distils svar kunne ikke bruges. Prøv igen.",
+      "expired": "Linket fra computeren er udløbet. Scan en ny QR-kode under »Tilføj fra telefon«."
     },
     "and": "og"
   },
@@ -629,5 +632,37 @@
       "note": "Seddel",
       "text": "Tekst"
     }
+  },
+  "phoneLink": {
+    "open": "Tilføj fra telefon",
+    "failed": "Det lykkedes ikke. Prøv igen.",
+    "title": "Scan med telefonens kamera",
+    "body": "Så åbner telefonen kameraet til denne workshop, uden at du skal logge ind på den. Telefonen kan kun tilføje billeder og svare på Distils spørgsmål her.",
+    "until": "Koden virker til kl. {time}.",
+    "close": "Luk forbindelsen nu",
+    "closedNow": "Forbindelsen er lukket. Telefonen kan ikke længere tilføje billeder.",
+    "done": "Færdig",
+    "expiredTitle": "Linket er udløbet",
+    "expiredBody": "Linket virker kun et par timer, eller det er lukket fra computeren. Åbn workshoppen på computeren, og scan en ny QR-kode under »Tilføj fra telefon«.",
+    "phoneHint": "Du ser billederne og retter sedlerne på computeren. Linket virker kun til denne workshop og kun et par timer.",
+    "copy": "Kopiér linket i stedet",
+    "copied": "Linket er kopieret"
+  },
+  "requestMore": {
+    "open": "Bed om flere billeder",
+    "noteLabel": "Hvad skal du bruge dem til?",
+    "notePlaceholder": "Fx Tre workshops hos en kunde i december",
+    "send": "Send anmodning",
+    "cancel": "Fortryd",
+    "failed": "Anmodningen blev ikke sendt. Prøv igen.",
+    "waiting": "Du bad om flere billeder {day}. Du kan læse flere, så snart det er godkendt."
+  },
+  "admin": {
+    "title": "Anmodninger",
+    "lead": "Konti, der har bedt om at få læst flere billeder. Ja giver kontoen lov til det antal i alt; nej lader den være, som den er, og den kan bede igen.",
+    "none": "Ingen anmodninger lige nu.",
+    "usage": "{read} af {allowance} billeder læst",
+    "approve": "Ja, {count} i alt",
+    "decline": "Nej"
   }
 }

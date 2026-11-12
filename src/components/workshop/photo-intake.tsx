@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Camera, ImagePlus, Upload } from "lucide-react";
 import { uploadPhotoAction } from "@/actions/photos";
+import { readByLink, uploadByLink } from "./link-requests";
 import { requestReading } from "./request-reading";
 import { Button } from "@/components/ui/controls";
 import { cn } from "@/lib/cn";
@@ -22,7 +23,14 @@ type Job = { key: number; name: string; step: Step; message?: string; notes?: nu
 
 const PARALLEL_READS = 2;
 
-export function PhotoIntake({ workshopId }: { workshopId: string }) {
+export function PhotoIntake({
+  workshopId,
+  linkToken,
+}: {
+  workshopId: string;
+  /** Set on a phone let in by a link: the photos go through the link's own routes. */
+  linkToken?: string;
+}) {
   const t = useTranslations("intake");
   const router = useRouter();
   const camera = useRef<HTMLInputElement>(null);
@@ -54,7 +62,9 @@ export function PhotoIntake({ workshopId }: { workshopId: string }) {
         const form = new FormData();
         form.set("workshopId", workshopId);
         form.set("photo", small, "photo.jpg");
-        const sent = await uploadPhotoAction(form);
+        const sent = linkToken
+          ? await uploadByLink(linkToken, form)
+          : await uploadPhotoAction(form);
         if (!sent.ok) {
           update(key, { step: "error", message: t(`errors.${sent.error}`) });
           // A full workshop or used-up photos stop the rest too.
@@ -68,7 +78,8 @@ export function PhotoIntake({ workshopId }: { workshopId: string }) {
       }
       update(key, { step: "reading" });
       router.refresh();
-      const job: Promise<void> = requestReading(photoId).then((read) => {
+      const answer = linkToken ? readByLink(linkToken, photoId) : requestReading(photoId);
+      const job: Promise<void> = answer.then((read) => {
         update(
           key,
           read.ok

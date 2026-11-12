@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Check, MessageCircleQuestion } from "lucide-react";
 import { answerQuestionAction } from "@/actions/outlines";
+import { answerByLink } from "@/components/workshop/link-requests";
 import type { Question } from "@/domain/outline";
 import { Button, Input } from "@/components/ui/controls";
 import { cn } from "@/lib/cn";
@@ -18,10 +19,13 @@ export function QuestionCards({
   workshopId,
   questions,
   big = false,
+  linkToken,
 }: {
   workshopId: string;
   questions: Question[];
   big?: boolean;
+  /** Set on a phone let in by a link. */
+  linkToken?: string;
 }) {
   const t = useTranslations("outline");
   if (questions.length === 0) return null;
@@ -35,6 +39,7 @@ export function QuestionCards({
       <ul className="flex flex-col gap-2">
         {questions.map((q) => (
           <QuestionCard
+            linkToken={linkToken}
             key={`${q.id}-${q.answer ?? ""}`}
             workshopId={workshopId}
             question={q}
@@ -50,10 +55,12 @@ function QuestionCard({
   workshopId,
   question,
   big,
+  linkToken,
 }: {
   workshopId: string;
   question: Question;
   big: boolean;
+  linkToken?: string;
 }) {
   const t = useTranslations("outline");
   const router = useRouter();
@@ -64,7 +71,9 @@ function QuestionCard({
 
   const send = (answer: string) =>
     start(async () => {
-      const result = await answerQuestionAction({ workshopId, questionId: question.id, answer });
+      const result = linkToken
+        ? await answerByLink(linkToken, question.id, answer)
+        : await answerQuestionAction({ workshopId, questionId: question.id, answer });
       setFailed(!result.ok);
       if (result.ok) router.refresh();
     });
