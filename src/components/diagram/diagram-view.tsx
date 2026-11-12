@@ -1,4 +1,4 @@
-import { edgeEnds, toBox, type Diagram, type DiagramNode } from "@/domain/diagram";
+import { diagramBounds, edgeEnds, toBox, type Diagram, type DiagramNode } from "@/domain/diagram";
 import { cn } from "@/lib/cn";
 
 /**
@@ -144,27 +144,10 @@ function Shape({ node, ratio, size }: { node: DiagramNode; ratio: number; size: 
   }
 }
 
-/**
- * The part of the board that was drawn on, with a margin: the drawing is
- * shown as large as it can be, not as a small figure in an empty photo.
- */
+/** The part of the board that was drawn on, as an SVG view box (src/domain/diagram.ts). */
 function viewBox(diagram: Diagram, ratio: number): string {
-  if (diagram.nodes.length === 0) return `0 0 1000 ${1000 * ratio}`;
-  let left = Infinity;
-  let top = Infinity;
-  let right = -Infinity;
-  let bottom = -Infinity;
-  for (const n of diagram.nodes) {
-    const b = toBox(n, ratio);
-    // A role's name sits under its figure, so it reaches further down.
-    const below = n.shape === "person" ? 70 : 0;
-    left = Math.min(left, b.x - Math.max(b.w, n.shape === "person" ? 140 : 0) / 2);
-    right = Math.max(right, b.x + Math.max(b.w, n.shape === "person" ? 140 : 0) / 2);
-    top = Math.min(top, b.y - b.h / 2);
-    bottom = Math.max(bottom, b.y + b.h / 2 + below);
-  }
-  const pad = 40;
-  return `${left - pad} ${top - pad} ${right - left + pad * 2} ${bottom - top + pad * 2}`;
+  const b = diagramBounds(diagram, ratio);
+  return `${b.x} ${b.y} ${b.w} ${b.h}`;
 }
 
 export function DiagramView({

@@ -16,6 +16,7 @@ export const FAKE_ITEMS: ReadItem[] = [
     y: 80,
     unsure: false,
     alternatives: [],
+    votes: 0,
   },
   {
     kind: "heading",
@@ -25,6 +26,7 @@ export const FAKE_ITEMS: ReadItem[] = [
     y: 80,
     unsure: false,
     alternatives: [],
+    votes: 0,
   },
   {
     kind: "note",
@@ -34,6 +36,7 @@ export const FAKE_ITEMS: ReadItem[] = [
     y: 250,
     unsure: false,
     alternatives: [],
+    votes: 0,
   },
   {
     kind: "note",
@@ -43,6 +46,7 @@ export const FAKE_ITEMS: ReadItem[] = [
     y: 260,
     unsure: false,
     alternatives: [],
+    votes: 0,
   },
   {
     kind: "note",
@@ -52,6 +56,7 @@ export const FAKE_ITEMS: ReadItem[] = [
     y: 420,
     unsure: true,
     alternatives: ["Hvem spørger jeg om kalender?"],
+    votes: 2,
   },
   {
     kind: "note",
@@ -61,6 +66,7 @@ export const FAKE_ITEMS: ReadItem[] = [
     y: 240,
     unsure: false,
     alternatives: [],
+    votes: 0,
   },
   {
     kind: "note",
@@ -70,6 +76,7 @@ export const FAKE_ITEMS: ReadItem[] = [
     y: 260,
     unsure: false,
     alternatives: [],
+    votes: 0,
   },
   {
     kind: "drawing",
@@ -79,6 +86,7 @@ export const FAKE_ITEMS: ReadItem[] = [
     y: 760,
     unsure: false,
     alternatives: [],
+    votes: 0,
   },
 ];
 

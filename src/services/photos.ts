@@ -161,6 +161,7 @@ export async function finishReading(
         y: item.y,
         unsure: item.unsure,
         alternatives: item.alternatives,
+        votes: item.votes,
       })),
     );
   }

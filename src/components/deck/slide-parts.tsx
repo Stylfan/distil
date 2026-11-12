@@ -51,7 +51,7 @@ export function Heading({ children, sub }: { children: React.ReactNode; sub?: st
   );
 }
 
-export function Bullets({ items, size = 1.85 }: { items: string[]; size?: number }) {
+export function Bullets({ items, size = 1.85 }: { items: React.ReactNode[]; size?: number }) {
   return (
     <ul className="flex flex-col" style={{ gap: cq(1.1), fontSize: cq(size) }}>
       {items.map((item, i) => (
@@ -71,7 +71,7 @@ export function PostIt({ note, size }: { note: DeckNote; size: number }) {
   const plain = note.colour === "none" || note.colour === "white";
   return (
     <li
-      className="flex items-center justify-center overflow-hidden text-center leading-tight text-ink"
+      className="relative flex items-center justify-center overflow-hidden text-center leading-tight text-ink"
       style={{
         aspectRatio: "1",
         padding: cq(0.8),
@@ -82,6 +82,22 @@ export function PostIt({ note, size }: { note: DeckNote; size: number }) {
       }}
     >
       <span className="line-clamp-5">{note.text}</span>
+      {(note.votes ?? 0) > 0 && (
+        // The dots the participants put on it, as they did on the wall.
+        <span
+          className="absolute flex flex-wrap justify-end text-bronze-deep"
+          style={{
+            right: cq(0.4),
+            top: cq(0.3),
+            fontSize: cq(0.95),
+            maxWidth: "70%",
+            gap: cq(0.1),
+          }}
+          aria-label={String(note.votes)}
+        >
+          {(note.votes ?? 0) <= 5 ? "●".repeat(note.votes ?? 0) : `● ${note.votes}`}
+        </span>
+      )}
     </li>
   );
 }

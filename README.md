@@ -40,7 +40,14 @@ Early: five slices. What works today:
   patterns, the recommendations the facilitator kept, what was agreed
   (what, who, when) and what is open; every note word for word as an
   appendix when asked for. Saved as PDF with the browser's own print, one
-  16:9 page per slide.
+  16:9 page per slide, or downloaded as a PowerPoint file with real text
+  boxes, tables and shapes to keep working in (pptxgenjs, MIT). The words
+  can be changed on the slides themselves; a change goes back to the
+  outline.
+- Dot votes: the dots, stickers or ticks on each note are counted when the
+  photo is read, can be corrected on the desk, weigh in Distil's outline,
+  show on the post-its in the deck, and give a slide of what the room
+  voted for most.
 - Drawings: a whiteboard or flip-over drawing (boxes, roles as stick
   figures, circles, notes stuck in it, lines and arrows with their words)
   is redrawn as a clean diagram when the photo is read, keeping the layout

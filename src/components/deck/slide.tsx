@@ -2,6 +2,7 @@ import type { Slide } from "@/domain/deck";
 import type { DeckWords } from "@/domain/deck-words";
 import { DiagramView } from "@/components/diagram/diagram-view";
 import { NOTE_EDGE, NOTE_FILL } from "@/components/workshop/colours";
+import { Editable, EditableOr } from "./editable";
 import { Bullets, Frame, Heading, OverviewColumn, PostIt, cq } from "./slide-parts";
 
 /**
@@ -40,7 +41,7 @@ export function SlideView({
             className="leading-[1.05] font-semibold tracking-[-0.02em]"
             style={{ fontSize: cq(5.4) }}
           >
-            {slide.title}
+            <Editable value={slide.title} at={{ kind: "workshopTitle" }} />
           </h1>
           <p className="text-slate" style={{ fontSize: cq(2) }}>
             {slide.date}
@@ -57,7 +58,7 @@ export function SlideView({
               className="leading-relaxed"
               style={{ fontSize: cq(1.9), marginBottom: cq(3), maxWidth: "88%" }}
             >
-              {slide.summary}
+              <Editable value={slide.summary} at={{ kind: "summary" }} multiline />
             </p>
           )}
           <div
@@ -86,7 +87,7 @@ export function SlideView({
         <>
           <Heading sub={sub(slide.continued)}>
             <span className="text-slate tabular">{slide.number} </span>
-            {slide.title}
+            <Editable value={slide.title} at={{ kind: "themeTitle", themeId: slide.themeId }} />
           </Heading>
           <div
             className="grid flex-1 grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]"
@@ -95,10 +96,22 @@ export function SlideView({
             <div className="flex min-w-0 flex-col" style={{ gap: cq(2) }}>
               {slide.summary && (
                 <p className="leading-relaxed text-slate" style={{ fontSize: cq(1.7) }}>
-                  {slide.summary}
+                  <Editable
+                    value={slide.summary}
+                    at={{ kind: "themeSummary", themeId: slide.themeId }}
+                    multiline
+                  />
                 </p>
               )}
-              <Bullets items={slide.points} />
+              <Bullets
+                items={slide.points.map((p) => (
+                  <Editable
+                    key={p.index}
+                    value={p.text}
+                    at={{ kind: "point", themeId: slide.themeId, index: p.index }}
+                  />
+                ))}
+              />
             </div>
             {slide.notes.length > 0 && (
               <div className="flex min-w-0 flex-col" style={{ gap: cq(1) }}>
@@ -145,7 +158,25 @@ export function SlideView({
                 ? words.recommendations
                 : words.open}
           </Heading>
-          <Bullets items={slide.items} size={2.05} />
+          <Bullets
+            size={2.05}
+            items={slide.items.map((item) => (
+              <Editable
+                key={item.id}
+                value={item.text}
+                at={{
+                  kind: "item",
+                  list:
+                    slide.heading === "open"
+                      ? "openPoints"
+                      : slide.heading === "patterns"
+                        ? "patterns"
+                        : "recommendations",
+                  id: item.id,
+                }}
+              />
+            ))}
+          />
         </>,
       );
     case "actions":
@@ -176,14 +207,16 @@ export function SlideView({
               </tr>
             </thead>
             <tbody>
-              {slide.rows.map((r, i) => (
-                <tr key={i} className="border-t border-hairline align-top">
-                  <td style={{ padding: `${cq(1)} ${cq(2)} ${cq(1)} 0` }}>{r.what}</td>
+              {slide.rows.map((r) => (
+                <tr key={r.id} className="border-t border-hairline align-top">
+                  <td style={{ padding: `${cq(1)} ${cq(2)} ${cq(1)} 0` }}>
+                    <Editable value={r.what} at={{ kind: "action", id: r.id, field: "what" }} />
+                  </td>
                   <td className="text-slate" style={{ padding: `${cq(1)} ${cq(1)} ${cq(1)} 0` }}>
-                    {r.who || "–"}
+                    <EditableOr value={r.who} at={{ kind: "action", id: r.id, field: "who" }} />
                   </td>
                   <td className="text-slate" style={{ padding: `${cq(1)} 0` }}>
-                    {r.when || "–"}
+                    <EditableOr value={r.when} at={{ kind: "action", id: r.id, field: "when" }} />
                   </td>
                 </tr>
               ))}
@@ -191,6 +224,42 @@ export function SlideView({
           </table>
         </>,
       );
+    case "votes": {
+      const most = Math.max(...slide.notes.map((n) => n.votes ?? 0), 1);
+      return frame(
+        <>
+          <Heading sub={words.votesTotal(slide.total)}>{words.votes}</Heading>
+          <ol className="flex flex-col" style={{ gap: cq(1.1) }}>
+            {slide.notes.map((n) => (
+              <li
+                key={n.id}
+                className="grid items-center"
+                style={{
+                  gridTemplateColumns: "minmax(0, 1fr) 38% 3.5em",
+                  gap: cq(1.6),
+                  fontSize: cq(1.6),
+                }}
+              >
+                <span className="truncate">{n.text}</span>
+                <span className="block" style={{ height: cq(1.1), background: "#EFEAE4" }}>
+                  <span
+                    className="block h-full"
+                    style={{
+                      width: `${((n.votes ?? 0) / most) * 100}%`,
+                      background:
+                        n.colour === "none" || n.colour === "white"
+                          ? "#A88E6E"
+                          : NOTE_EDGE[n.colour],
+                    }}
+                  />
+                </span>
+                <span className="text-right font-semibold tabular">{n.votes}</span>
+              </li>
+            ))}
+          </ol>
+        </>,
+      );
+    }
     case "transcript":
       return frame(
         <>

@@ -3,14 +3,14 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { Printer } from "lucide-react";
+import { Download, Printer } from "lucide-react";
 import { setIncludeTranscriptAction } from "@/actions/outlines";
-import { Button } from "@/components/ui/controls";
+import { Button, buttonClass } from "@/components/ui/controls";
 
 /**
  * What to do with the presentation: save it as PDF through the browser's
- * own print (no library), and whether every note goes in as the last
- * appendix.
+ * own print, or as a PowerPoint file to keep working in; and whether
+ * every note goes in as the last appendix.
  */
 export function DeckToolbar({
   workshopId,
@@ -45,6 +45,15 @@ export function DeckToolbar({
         {t("includeTranscript")}
       </label>
       <span className="flex-1" />
+      {/* A plain link: the browser downloads the file, built on request. */}
+      <a
+        href={`/workshops/${workshopId}/praesentation/pptx`}
+        className={buttonClass("secondary")}
+        download
+      >
+        <Download className="size-4" aria-hidden />
+        {t("savePptx")}
+      </a>
       <Button variant="primary" onClick={() => window.print()}>
         <Printer className="size-4" aria-hidden />
         {t("savePdf")}

@@ -23,7 +23,7 @@ export async function updateNote(
   db: Db,
   userId: string,
   noteId: string,
-  input: { text?: string; colour?: NoteColour; kind?: NoteKind },
+  input: { text?: string; colour?: NoteColour; kind?: NoteKind; votes?: number },
 ): Promise<void> {
   await ownedNote(db, userId, noteId);
   await db
@@ -32,7 +32,9 @@ export async function updateNote(
       ...(input.text !== undefined && { text: input.text.trim() }),
       ...(input.colour !== undefined && { colour: input.colour }),
       ...(input.kind !== undefined && { kind: input.kind }),
-      unsure: false,
+      ...(input.votes !== undefined && { votes: input.votes }),
+      // Changing the words or the colour settles a doubt about them; a count of dots does not.
+      ...((input.text !== undefined || input.colour !== undefined) && { unsure: false }),
       edited: true,
     })
     .where(eq(notes.id, noteId));

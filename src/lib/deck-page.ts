@@ -2,6 +2,7 @@ import { withUser } from "@/db/client";
 import type { NoteColour, Workshop } from "@/db/schema";
 import { buildDeck, type Slide } from "@/domain/deck";
 import { detectLanguage, type DeckLanguage } from "@/domain/deck-words";
+import type { Outline } from "@/domain/outline";
 import { formatDay } from "@/lib/dates";
 import { getOutline, notesOfWorkshop } from "@/services/outlines";
 import { listDiagrams } from "@/services/diagrams";
@@ -18,6 +19,8 @@ export type DeckPage = {
   slides: Slide[] | null;
   language: DeckLanguage;
   includeTranscript: boolean;
+  /** The outline the slides were built from, for editing them where they stand. */
+  outline: { content: Outline; version: number } | null;
 };
 
 export async function loadDeck(userId: string, workshopId: string): Promise<DeckPage | null> {
@@ -32,7 +35,9 @@ export async function loadDeck(userId: string, workshopId: string): Promise<Deck
     ]);
     const sizes = new Map(full?.photos.map((ph) => [ph.seq, ph]) ?? []);
     const language = detectLanguage(notes.map((n) => n.text));
-    if (!outline) return { workshop, slides: null, language, includeTranscript: false };
+    if (!outline) {
+      return { workshop, slides: null, language, includeTranscript: false, outline: null };
+    }
     const slides = buildDeck({
       title: workshop.name,
       date: formatDay(workshop.heldOn, language),
@@ -42,6 +47,7 @@ export async function loadDeck(userId: string, workshopId: string): Promise<Deck
         text: n.text,
         colour: n.colour as NoteColour,
         photo: n.photo,
+        votes: n.votes,
       })),
       includeTranscript: outline.includeTranscript,
       diagrams: drawings
@@ -53,6 +59,12 @@ export async function loadDeck(userId: string, workshopId: string): Promise<Deck
           height: sizes.get(d.photo)?.height ?? 1000,
         })),
     });
-    return { workshop, slides, language, includeTranscript: outline.includeTranscript };
+    return {
+      workshop,
+      slides,
+      language,
+      includeTranscript: outline.includeTranscript,
+      outline: { content: outline.content, version: outline.version },
+    };
   });
 }

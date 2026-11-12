@@ -135,6 +135,8 @@ export const notes = pgTable(
     unsure: boolean("unsure").notNull().default(false),
     /** Other readings Distil considered, best first. */
     alternatives: jsonb("alternatives").$type<string[]>().notNull().default([]),
+    /** Dots or ticks the participants put on it when voting. */
+    votes: integer("votes").notNull().default(0),
     /** Changed or added by the facilitator, not as Distil read it. */
     edited: boolean("edited").notNull().default(false),
     ...timestamps,

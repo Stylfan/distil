@@ -88,23 +88,26 @@ describe("the presentation", () => {
     expect(themes[0]!.notes.map((n) => n.id)).toEqual(["n0", "n1"]);
     expect(themes[1]!.notes).toHaveLength(NOTES_ON_THEME);
     expect(themes[1]!.moreNotes).toBe(3);
-    expect(themes[2]!.points).toEqual(["p7", "p8"]);
+    expect(themes[2]!.points).toEqual([
+      { index: 7, text: "p7" },
+      { index: 8, text: "p8" },
+    ]);
     expect(themes[2]!.notes).toEqual([]);
   });
 
   it("carries only the recommendations the facilitator kept", () => {
     const lists = deck().filter((s) => s.kind === "list");
     const recommendations = lists.find((s) => s.heading === "recommendations");
-    expect(recommendations!.items).toEqual(["Beholdt"]);
+    expect(recommendations!.items).toEqual([{ id: "r1", text: "Beholdt" }]);
     expect(JSON.stringify(deck())).not.toContain("Kun et forslag");
   });
 
   it("splits the agreements, and leaves out empty lines", () => {
     const actions = deck().filter((s) => s.kind === "actions");
     expect(actions.map((s) => s.rows.length)).toEqual([ACTIONS_PER_SLIDE, 1]);
-    expect(actions[0]!.rows[0]).toEqual({ what: "Gør 0", who: "Anna", when: "" });
+    expect(actions[0]!.rows[0]).toEqual({ id: "a0", what: "Gør 0", who: "Anna", when: "" });
     const open = deck().find((s) => s.kind === "list" && s.heading === "open");
-    expect(open).toMatchObject({ items: ["Hvem ejer det?"] });
+    expect(open).toMatchObject({ items: [{ id: "o1", text: "Hvem ejer det?" }] });
   });
 
   it("ends with every note word for word only when asked, grouped by photo", () => {

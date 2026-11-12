@@ -117,7 +117,9 @@
     "deletePhoto": "Slet billede",
     "deletePhotoQuestion": "Slet billedet og dets sedler?",
     "deletePhotoDetail": "Billedet og alle sedler fra det slettes med det samme.",
-    "deletePhotoConfirm": "Slet"
+    "deletePhotoConfirm": "Slet",
+    "votes": "Prikker fra afstemningen",
+    "votesFor": "Prikker på seddel {number}"
   },
   "colours": {
     "yellow": "Gul",
@@ -599,7 +601,7 @@
   "deck": {
     "savePdf": "Gem som PDF",
     "includeTranscript": "Tag alle sedler med ordret som sidste bilag",
-    "hint": "Vælg »Gem som PDF« som printer i vinduet, der åbner. Kun de anbefalinger, du har beholdt, kommer med. Indholdet retter du under Disposition.",
+    "hint": "»Gem som PDF«: vælg »Gem som PDF« som printer i vinduet, der åbner. PowerPoint-filen har rigtige tekstfelter og figurer, så du kan arbejde videre i den. Kun de anbefalinger, du har beholdt, kommer med.",
     "emptyTitle": "Ingen præsentation endnu",
     "emptyBody": "Præsentationen bygges af dispositionen. Lav dispositionen først, og ret den til.",
     "toOutline": "Gå til Disposition",
@@ -607,7 +609,17 @@
     "language": {
       "da": "dansk",
       "en": "engelsk"
-    }
+    },
+    "edit": "Ret i præsentationen",
+    "doneEditing": "Færdig med at rette",
+    "editHint": "Klik på en tekst for at rette den. Tøm et punkt for at fjerne det. Rettelserne gemmes i dispositionen.",
+    "save": {
+      "saving": "Gemmer …",
+      "saved": "Gemt.",
+      "conflict": "Dispositionen er ændret et andet sted. Rettelsen er ikke gemt; siden er hentet igen.",
+      "failed": "Det blev ikke gemt. Prøv igen."
+    },
+    "savePptx": "Hent som PowerPoint"
   },
   "diagram": {
     "title": "Tegningen, genskabt",

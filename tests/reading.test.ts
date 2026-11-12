@@ -52,6 +52,7 @@ describe("a model's answer", () => {
         y: 500,
         unsure: false,
         alternatives: [],
+        votes: 0,
       },
       {
         kind: "heading",
@@ -61,6 +62,7 @@ describe("a model's answer", () => {
         y: 30,
         unsure: false,
         alternatives: [],
+        votes: 0,
       },
       {
         kind: "note",
@@ -70,6 +72,7 @@ describe("a model's answer", () => {
         y: 500,
         unsure: false,
         alternatives: [],
+        votes: 0,
       },
     ]);
   });
@@ -93,6 +96,7 @@ describe("a model's answer", () => {
         y: 1000,
         unsure: false,
         alternatives: [],
+        votes: 0,
       },
       {
         kind: "note",
@@ -102,6 +106,7 @@ describe("a model's answer", () => {
         y: 500,
         unsure: true,
         alternatives: ["Mæske", "a", "b"],
+        votes: 0,
       },
     ]);
     expect(parseReading({ notes: [] })).toBeNull();
@@ -132,6 +137,7 @@ describe("a model's answer", () => {
       y,
       unsure: false,
       alternatives: [],
+      votes: 0,
     });
     expect(
       inReadingOrder([at(800, 100), at(100, 110), at(500, 600), at(100, 590)]).map((i) => i.text),

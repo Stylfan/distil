@@ -72,7 +72,13 @@ photo is gone afterwards.
    computer to phone, a two-hour link into one workshop; "Bed om mere"
    with the operator's approval list in the app. The operator is set with
    a database command ([ADR 0004](adr/0004-a-phone-link-and-an-operator.md)).
-6. **Later:** PowerPoint, e-mail.
+6. **After the plan (built 12 November 2026):** dot votes counted per
+   note and a votes slide; editing the words on the slides, written back
+   to the outline (`src/domain/deck-edit.ts`); PowerPoint download with
+   `pptxgenjs` 4.0.1 (MIT, approved by the product owner), its
+   `image-size` pinned to a patched version in `pnpm-workspace.yaml`.
+7. **Later:** e-mail to the operator, through an existing mailbox rather
+   than a paid service.
 
 ## Choices to confirm
 

@@ -9,3 +9,6 @@ next-env.d.ts
 coverage/
 .DS_Store
 .claude/
+
+# Test photos from real walls: never in the repository.
+testbilleder/

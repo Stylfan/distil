@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 import { NOTE_COLOURS, NOTE_KINDS } from "@/db/schema";
-import { MAX_TEXT_LENGTH } from "@/domain/reading";
+import { MAX_TEXT_LENGTH, MAX_VOTES } from "@/domain/reading";
 import { addNote, deleteNote, updateNote } from "@/services/notes";
 import { run, type Result } from "./result";
 
@@ -13,6 +13,7 @@ const update = z.object({
   text: text.optional(),
   colour: z.enum(NOTE_COLOURS).optional(),
   kind: z.enum(NOTE_KINDS).optional(),
+  votes: z.number().int().min(0).max(MAX_VOTES).optional(),
 });
 
 export async function updateNoteAction(input: z.infer<typeof update>): Promise<Result> {

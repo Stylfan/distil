@@ -14,6 +14,8 @@ export type NoteForOutline = {
   colour: string;
   kind: string;
   photo: number;
+  /** Dots the participants put on it; 0 when they did not vote. */
+  votes?: number;
 };
 
 export type NoteRefs = { lines: string; toId: Map<string, string> };
@@ -24,6 +26,7 @@ export function notesForModel(notes: NoteForOutline[]): NoteRefs {
     const ref = `n${i + 1}`;
     toId.set(ref, n.id);
     const tags = [
+      n.votes ? `${n.votes} votes` : null,
       n.kind !== "note" ? n.kind : null,
       n.colour !== "none" ? n.colour : null,
       `photo ${n.photo}`,

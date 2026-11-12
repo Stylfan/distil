@@ -23,6 +23,8 @@ export type ReadItem = {
   y: number;
   unsure: boolean;
   alternatives: string[];
+  /** Dots, stickers or ticks put on the note when the participants voted. */
+  votes: number;
 };
 
 const loose = z.object({
@@ -34,6 +36,7 @@ const loose = z.object({
   y: z.number().optional(),
   unsure: z.boolean().optional(),
   alternatives: z.array(z.string()).optional(),
+  votes: z.number().optional(),
 });
 
 const answer = z.object({ items: z.array(z.unknown()) });
@@ -75,6 +78,13 @@ function toPermille(value: number | undefined): number {
   return Math.round(Math.min(1000, Math.max(0, scaled)));
 }
 
+/** A count of dots: a whole number from 0, and not more than anyone puts on one note. */
+export const MAX_VOTES = 99;
+function toVotes(value: number | undefined): number {
+  if (value === undefined || !Number.isFinite(value)) return 0;
+  return Math.min(MAX_VOTES, Math.max(0, Math.round(value)));
+}
+
 const clean = (s: string) => s.replace(/\s+/g, " ").trim().slice(0, MAX_TEXT_LENGTH);
 
 /** The items of a model's answer, or null when the answer is not one at all. */
@@ -98,6 +108,7 @@ export function parseReading(raw: unknown): ReadItem[] | null {
         .map(clean)
         .filter((a) => a && a !== text)
         .slice(0, MAX_ALTERNATIVES),
+      votes: toVotes(item.data.votes),
     });
     if (items.length === MAX_ITEMS_PER_PHOTO) break;
   }

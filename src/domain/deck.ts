@@ -14,7 +14,14 @@ import type { Outline } from "./outline";
  * slide stays readable from the back of a room.
  */
 
-export type DeckNote = { id: string; text: string; colour: NoteColour; photo: number };
+export type DeckNote = {
+  id: string;
+  text: string;
+  colour: NoteColour;
+  photo: number;
+  /** Dots from the participants' vote; 0 when they did not vote on it. */
+  votes?: number;
+};
 
 export type Slide =
   | { kind: "title"; title: string; date: string }
@@ -28,10 +35,13 @@ export type Slide =
     }
   | {
       kind: "theme";
+      /** The theme in the outline, so a word changed on the slide goes back to it. */
+      themeId: string;
       number: number;
       title: string;
       summary: string;
-      points: string[];
+      /** Each point with its place among the theme's points in the outline. */
+      points: { index: number; text: string }[];
       notes: DeckNote[];
       moreNotes: number;
       continued: boolean;
@@ -39,10 +49,15 @@ export type Slide =
   | {
       kind: "list";
       heading: "patterns" | "recommendations" | "open";
-      items: string[];
+      items: { id: string; text: string }[];
       continued: boolean;
     }
-  | { kind: "actions"; rows: { what: string; who: string; when: string }[]; continued: boolean }
+  | {
+      kind: "actions";
+      rows: { id: string; what: string; who: string; when: string }[];
+      continued: boolean;
+    }
+  | { kind: "votes"; notes: DeckNote[]; total: number }
   | { kind: "transcript"; groups: { photo: number; notes: DeckNote[] }[]; continued: boolean }
   | {
       kind: "diagram";
@@ -58,6 +73,7 @@ export const NOTES_ON_THEME = 12;
 export const ITEMS_PER_SLIDE = 7;
 export const ACTIONS_PER_SLIDE = 8;
 export const NOTES_PER_TRANSCRIPT = 36;
+export const VOTED_ON_SLIDE = 8;
 const OVERVIEW_ITEMS = 5;
 
 function chunks<T>(items: T[], size: number): T[][] {
@@ -66,7 +82,8 @@ function chunks<T>(items: T[], size: number): T[][] {
   return out;
 }
 
-const filled = (items: string[]) => items.map((s) => s.trim()).filter(Boolean);
+const filledItems = (items: { id: string; text: string }[]) =>
+  items.map((i) => ({ id: i.id, text: i.text.trim() })).filter((i) => i.text);
 
 export function buildDeck(input: {
   title: string;
@@ -79,11 +96,11 @@ export function buildDeck(input: {
 }): Slide[] {
   const { outline } = input;
   const byId = new Map(input.notes.map((n) => [n.id, n]));
-  const kept = filled(outline.recommendations.filter((r) => r.kept).map((r) => r.text));
+  const kept = filledItems(outline.recommendations.filter((r) => r.kept));
   const actions = outline.actions
-    .map((a) => ({ what: a.what.trim(), who: a.who.trim(), when: a.when.trim() }))
+    .map((a) => ({ id: a.id, what: a.what.trim(), who: a.who.trim(), when: a.when.trim() }))
     .filter((a) => a.what);
-  const open = filled(outline.openPoints.map((o) => o.text));
+  const open = filledItems(outline.openPoints);
   const themes = outline.themes.filter((t) => t.title.trim());
 
   const slides: Slide[] = [{ kind: "title", title: input.title, date: input.date }];
@@ -92,17 +109,35 @@ export function buildDeck(input: {
     kind: "overview",
     summary: outline.summary.trim(),
     found: themes.map((t) => t.title.trim()).slice(0, OVERVIEW_ITEMS),
-    recommend: kept.slice(0, OVERVIEW_ITEMS),
+    recommend: kept.map((r) => r.text).slice(0, OVERVIEW_ITEMS),
     agreed: actions.map((a) => a.what).slice(0, OVERVIEW_ITEMS),
-    open: open.slice(0, Math.max(0, OVERVIEW_ITEMS - Math.min(actions.length, OVERVIEW_ITEMS))),
+    open: open
+      .map((o) => o.text)
+      .slice(0, Math.max(0, OVERVIEW_ITEMS - Math.min(actions.length, OVERVIEW_ITEMS))),
   });
+
+  // What the room voted for, most dots first, right after the overview: it is their priority.
+  const voted = input.notes
+    .filter((n) => (n.votes ?? 0) > 0)
+    .sort((a, b) => (b.votes ?? 0) - (a.votes ?? 0));
+  if (voted.length > 0) {
+    slides.push({
+      kind: "votes",
+      notes: voted.slice(0, VOTED_ON_SLIDE),
+      total: voted.reduce((sum, n) => sum + (n.votes ?? 0), 0),
+    });
+  }
 
   themes.forEach((theme, i) => {
     const notes = theme.noteIds.map((id) => byId.get(id)).filter((n): n is DeckNote => !!n);
-    const parts = chunks(filled(theme.points), POINTS_PER_SLIDE);
+    const points = theme.points
+      .map((text, index) => ({ index, text: text.trim() }))
+      .filter((p) => p.text);
+    const parts = chunks(points, POINTS_PER_SLIDE);
     (parts.length ? parts : [[]]).forEach((points, part) =>
       slides.push({
         kind: "theme",
+        themeId: theme.id,
         number: i + 1,
         title: theme.title.trim(),
         summary: part === 0 ? theme.summary.trim() : "",
@@ -119,8 +154,8 @@ export function buildDeck(input: {
     slides.push({ kind: "diagram", title: d.diagram.title.trim(), ...d });
   }
 
-  const lists: [Extract<Slide, { kind: "list" }>["heading"], string[]][] = [
-    ["patterns", filled(outline.patterns.map((p) => p.text))],
+  const lists: [Extract<Slide, { kind: "list" }>["heading"], { id: string; text: string }[]][] = [
+    ["patterns", filledItems(outline.patterns)],
     ["recommendations", kept],
   ];
   for (const [heading, items] of lists) {

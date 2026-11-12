@@ -48,6 +48,7 @@ export async function notesOfWorkshop(
       colour: notes.colour,
       kind: notes.kind,
       photo: photos.seq,
+      votes: notes.votes,
     })
     .from(notes)
     .innerJoin(photos, eq(photos.id, notes.photoId))

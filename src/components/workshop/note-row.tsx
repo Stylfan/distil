@@ -32,7 +32,8 @@ export function NoteRow({
   const [failed, setFailed] = useState(false);
   const [pending, start] = useTransition();
 
-  const save = (change: { text?: string; colour?: NoteColour }) =>
+  const [votes, setVotes] = useState(String(note.votes));
+  const save = (change: { text?: string; colour?: NoteColour; votes?: number }) =>
     start(async () => {
       const result = await updateNoteAction({ id: note.id, ...change });
       setFailed(!result.ok);
@@ -113,6 +114,31 @@ export function NoteRow({
         )}
         {failed && <span className="px-1.5 text-[12px] text-danger">{t("saveFailed")}</span>}
       </div>
+      {/* Dots the participants put on the note: read by Distil, set here when it miscounted. */}
+      <label
+        className={cn(
+          "mt-1 flex shrink-0 items-center gap-0.5 rounded px-1 text-[12px] tabular",
+          note.votes > 0 ? "text-bronze-deep" : "text-slate/50",
+        )}
+        title={t("votes")}
+      >
+        <span aria-hidden>●</span>
+        <span className="sr-only">{t("votesFor", { number })}</span>
+        <input
+          type="number"
+          inputMode="numeric"
+          min={0}
+          max={99}
+          value={votes}
+          onChange={(e) => setVotes(e.target.value)}
+          onBlur={() => {
+            const next = Math.max(0, Math.min(99, Math.round(Number(votes) || 0)));
+            setVotes(String(next));
+            if (next !== note.votes) save({ votes: next });
+          }}
+          className="w-7 [appearance:textfield] bg-transparent text-center focus:outline-none [&::-webkit-inner-spin-button]:appearance-none"
+        />
+      </label>
       <button
         type="button"
         disabled={pending}

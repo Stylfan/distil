@@ -172,3 +172,28 @@ export function edgeEnds(a: Box, b: Box): { x1: number; y1: number; x2: number; 
   const q = exit(b, a);
   return { x1: p.x, y1: p.y, x2: q.x, y2: q.y };
 }
+
+/**
+ * The part of the board that was drawn on, with a margin, in drawing
+ * units: the drawing is shown as large as it can be, not as a small
+ * figure in an empty photo. A role's name sits under its figure, so it
+ * reaches further down and may be wider than the figure.
+ */
+export function diagramBounds(diagram: Diagram, heightRatio: number): Box {
+  if (diagram.nodes.length === 0) return { x: 0, y: 0, w: 1000, h: 1000 * heightRatio };
+  let left = Infinity;
+  let top = Infinity;
+  let right = -Infinity;
+  let bottom = -Infinity;
+  for (const n of diagram.nodes) {
+    const b = toBox(n, heightRatio);
+    const person = n.shape === "person";
+    const half = Math.max(b.w, person ? 140 : 0) / 2;
+    left = Math.min(left, b.x - half);
+    right = Math.max(right, b.x + half);
+    top = Math.min(top, b.y - b.h / 2);
+    bottom = Math.max(bottom, b.y + b.h / 2 + (person ? 70 : 0));
+  }
+  const pad = 40;
+  return { x: left - pad, y: top - pad, w: right - left + pad * 2, h: bottom - top + pad * 2 };
+}

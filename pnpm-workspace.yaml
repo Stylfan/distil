@@ -1,3 +1,8 @@
 ignoredBuiltDependencies:
   - sharp
   - unrs-resolver
+
+# pptxgenjs pins an image-size with known denial-of-service bugs (GHSA-5p2g-fcmc-qvqq,
+# GHSA-w3rx-r6r6-pgpr). Distil never hands it an image, but the patched version is used anyway.
+overrides:
+  image-size: 2.0.3
