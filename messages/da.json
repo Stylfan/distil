@@ -48,7 +48,7 @@
     "summary": "{photos, plural, =0 {Ingen billeder} one {# billede} other {# billeder}}{toCheck, plural, =0 {} other {, # at tjekke}}",
     "empty": "Tag billeder med telefonen, eller træk dem herind fra computeren. Distil læser hvert billede, og du ser det her ved siden af sedlerne.",
     "steps": "Workshoppens trin",
-    "tabTranscript": "Afskrift",
+    "tabTranscript": "Materiale",
     "tabOutline": "Disposition",
     "tabDeck": "Præsentation"
   },
@@ -526,7 +526,7 @@
     "working": "Distil arbejder. Det tager typisk 10-40 sekunder …",
     "emptyTitle": "Ingen disposition endnu",
     "emptyBody": "{count, plural, one {Distil har # seddel at arbejde med.} other {Distil har # sedler at arbejde med.}} Distil samler dem i temaer, finder mønstre og foreslår anbefalinger, og trækker det aftalte og det udestående frem. Du retter det hele bagefter.",
-    "emptyNoNotes": "Der er ingen læste sedler endnu. Tag billeder, og lad Distil læse dem under Afskrift først.",
+    "emptyNoNotes": "Der er ingen læste sedler endnu. Tag billeder, og lad Distil læse dem under Materiale først.",
     "summary": "Sammenfatning",
     "themes": "Temaer",
     "patterns": "Mønstre",
@@ -628,7 +628,7 @@
     "savePptx": "Hent som PowerPoint",
     "story": {
       "untoldTitle": "Lad Distil skrive historien",
-      "untoldBody": "Distil skriver en skarp overskrift til hver slide, tre hovedbudskaber, et »Så hvad?«, fra–til og vælger ikoner og et citat fra væggen. Det sker ud fra dispositionen, og du kan rette hvert ord bagefter. Tæller som én disposition i dag.",
+      "untoldBody": "Distil skriver en skarp overskrift til hver slide, tre hovedbudskaber, et »Så hvad?«, fra–til og vælger ikoner og et citat fra væggen. Det sker ud fra dispositionen og det, du har fortalt under Materiale, og du kan rette hvert ord bagefter. Tæller som én disposition i dag.",
       "toldTitle": "Historien er skrevet af Distil",
       "toldBody": "Overskrifterne og budskaberne er Distils forslag ud fra dispositionen. Ret dem direkte på slides. Ændrer du dispositionen med Distil, skal historien skrives igen.",
       "tell": "Skriv historien",
@@ -640,7 +640,24 @@
         "aubergine": "Aubergine og lime",
         "petrol": "Petrol og sol",
         "skov": "Skov og rav",
-        "sand": "Sand og blæk"
+        "sand": "Sand og blæk",
+        "papir": "Papir og bronze",
+        "dis": "Dis og skifer",
+        "ler": "Ler og sand",
+        "grafit": "Sort og hvid",
+        "mos": "Mos og birk",
+        "lenskjold": "Lenskjold Consulting (med logo)"
+      },
+      "askTitle": "Bed Distil rette præsentationen",
+      "askPlaceholder": "Fx: Gør den klar til direktionen, med beslutningen først. Eller: Fjern tema 7 og 8.",
+      "askHint": "Skriv eller tal (mikrofonen på tastaturet). Distil retter overskrifter, budskaber, »Så hvad?«, fra–til, citat og hvilke temaer der er med. Skal temaerne selv slås sammen eller deles, gøres det under Disposition. Hver rettelse tæller som én disposition i dag.",
+      "send": "Send",
+      "changed": "Præsentationen er rettet.",
+      "suggestions": {
+        "board": "Gør den klar til direktionen, med beslutningen først",
+        "sharper": "Gør overskrifterne skarpere og mere konkrete",
+        "shorter": "Gør den kortere: kun de vigtigste temaer",
+        "participants": "Skriv den til deltagerne, så de kan genkende deres egne ord"
       }
     }
   },
@@ -699,5 +716,52 @@
     "usage": "{read} af {allowance} billeder læst",
     "approve": "Ja, {count} i alt",
     "decline": "Nej"
+  },
+  "context": {
+    "title": "Fortæl Distil om workshoppen",
+    "lead": "Formål, deltagere, hvem præsentationen er til, og agendaen. Så står billederne ikke alene, og Distil skal ikke gætte.",
+    "none": "Kontekst givet",
+    "speak": "Du kan tale i stedet for at skrive: tryk på mikrofonen på tastaturet (på telefonen eller i Windows med Win + H). Alt gemmes, når du går videre til næste felt.",
+    "ask": {
+      "purpose": "Hvorfor holdt I workshoppen? Hvad var formålet?",
+      "participants": "Hvem deltog?",
+      "audience": "Hvem skal præsentationen bruges til?",
+      "need": "Hvad skal præsentationen kunne for dem?",
+      "agenda": "Hvad var agendaen?",
+      "other": "Er der andet, Distil bør vide?"
+    },
+    "example": {
+      "purpose": "Fx: Vi skulle blive enige om teamets retning for næste år og prioritere tre indsatser.",
+      "participants": "Fx: Ledergruppen i Kundeservice, 12 personer, og to fra IT.",
+      "audience": "Fx: Direktionen",
+      "need": "Fx: Give direktionen grundlag for at beslutte, hvilke tre indsatser vi starter med.",
+      "agenda": "Fx:\n09.00 Velkomst og formål\n09.30 Hvad virker i dag?\n10.30 Prioritering med prikker\n11.30 Aftaler og næste skridt",
+      "other": "Fx: Gul var udfordringer, grøn var idéer. Navne skal ikke med i præsentationen."
+    },
+    "audiences": {
+      "board": "Direktionen",
+      "participants": "Deltagerne",
+      "steering": "Styregruppen",
+      "members": "Medlemmerne",
+      "client": "Kunden",
+      "team": "Teamet selv"
+    },
+    "agendaHint": "Skriv den ind, hent den fra en Word- eller PowerPoint-fil, eller tag et billede af en håndskrevet agenda. Filen bliver på din computer; kun teksten gemmes.",
+    "fromFile": "Hent fra fil",
+    "fromPhoto": "Fra billede",
+    "added": "Agendaen er hentet fra filen. Ret den gerne til.",
+    "addedPhoto": "Distil har læst agendaen fra billedet. Tjek teksten; billedet er ikke gemt.",
+    "readingPhoto": "Distil læser billedet …",
+    "photoError": "Billedet kunne ikke læses. Prøv et skarpere billede, eller skriv agendaen ind.",
+    "fileError": {
+      "type": "Den slags fil kan ikke læses. Brug Word (.docx), PowerPoint (.pptx) eller tekst.",
+      "unreadable": "Filen kunne ikke læses."
+    },
+    "autosave": "Gemmes automatisk.",
+    "save": {
+      "saving": "Gemmer …",
+      "saved": "Gemt.",
+      "failed": "Det blev ikke gemt. Prøv igen."
+    }
   }
 }

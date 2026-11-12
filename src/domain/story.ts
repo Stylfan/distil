@@ -58,8 +58,24 @@ export const ICONS = [
 ] as const;
 export type Icon = (typeof ICONS)[number];
 
-/** The colour themes a presentation can wear. Neutral: no brand, only colour and shape. */
-export const LOOKS = ["kobolt", "aubergine", "petrol", "skov", "sand"] as const;
+/**
+ * The colour themes a presentation can wear. All neutral (only colour and
+ * shape) except "lenskjold", which carries the Lenskjold Consulting logo and
+ * is only ever chosen by the facilitator.
+ */
+export const LOOKS = [
+  "kobolt",
+  "aubergine",
+  "petrol",
+  "skov",
+  "sand",
+  "papir",
+  "dis",
+  "ler",
+  "grafit",
+  "mos",
+  "lenskjold",
+] as const;
 export type Look = (typeof LOOKS)[number];
 export const DEFAULT_LOOK: Look = "kobolt";
 
@@ -82,6 +98,8 @@ export const storySchema = z.object({
   /** One note that says it best, quoted as written; null when none stands out. */
   quoteNoteId: z.string().min(1).max(64).nullable(),
   closing: line,
+  /** Themes of the outline left out of the presentation (still in the outline). */
+  hidden: z.array(z.string().min(1).max(40)).max(20).optional(),
 });
 
 export type Story = z.infer<typeof storySchema>;

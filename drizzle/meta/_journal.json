@@ -71,6 +71,13 @@
       "when": 1794493533646,
       "tag": "0009_photo_parts",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1794499200617,
+      "tag": "0010_workshop_context",
+      "breakpoints": true
     }
   ]
 }

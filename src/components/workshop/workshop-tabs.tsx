@@ -2,7 +2,7 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { cn } from "@/lib/cn";
 
-/** The steps of a workshop on the computer: check what was read, shape the outline, see the presentation. */
+/** The steps of a workshop on the computer: the material (context, agenda, photos), the outline, the presentation. */
 export async function WorkshopTabs({
   workshopId,
   current,

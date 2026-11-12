@@ -43,6 +43,13 @@ export function outlineForStory(outline: Outline): string {
   return parts.join("\n");
 }
 
+/** The story as the model sees it when asked to change it: the quote by its line's reference. */
+export function storyForModel(story: Story, toId: Map<string, string>): unknown {
+  const toRef = new Map([...toId].map(([ref, id]) => [id, ref]));
+  const { quoteNoteId, ...rest } = story;
+  return { ...rest, quote: (quoteNoteId && toRef.get(quoteNoteId)) || "" };
+}
+
 export function parseStory(
   raw: unknown,
   outline: Outline,
@@ -90,6 +97,7 @@ export function parseStory(
       .map((s) => ({ from: text(s.from), to: text(s.to) })),
     quoteNoteId: toId.get(text(o.quote, 20)) ?? null,
     closing: text(o.closing),
+    hidden: [...new Set(items(o.hidden).map((h) => text(h, 40)))].filter((h) => themes.has(h)),
   };
   if (!story.headline) return null;
   const checked = storySchema.safeParse(story);

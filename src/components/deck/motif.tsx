@@ -126,4 +126,147 @@ const SHAPES: Record<Look, (place: MotifPlace) => React.ReactNode> = {
       ))}
     </g>
   ),
+  papir: (place) => {
+    const [x, y] = place === "closing" ? [0, 720] : place === "quote" ? [1280, 720] : [1280, 0];
+    return (
+      <g fill="none" stroke={c("accent")} strokeWidth="1.6">
+        {[0, 1, 2, 3, 4].map((i) => (
+          <circle
+            key={i}
+            cx={x}
+            cy={y}
+            r={(place === "quote" ? 90 : 220) + i * 46}
+            opacity={0.9 - i * 0.15}
+          />
+        ))}
+        {place !== "quote" && (
+          <circle
+            cx={place === "closing" ? 330 : 950}
+            cy={place === "closing" ? 470 : 250}
+            r="14"
+            fill={c("accent")}
+            stroke="none"
+          />
+        )}
+      </g>
+    );
+  },
+  dis: (place) => {
+    const left = place === "closing";
+    const x = left ? 160 : place === "quote" ? 1200 : 1060;
+    const y = place === "quote" ? 640 : 380;
+    const r = place === "quote" ? 110 : 230;
+    return (
+      <g>
+        <circle cx={x} cy={y - r * 0.35} r={r} fill={c("accent")} opacity=".28" />
+        <circle
+          cx={x + (left ? 1 : -1) * r * 0.55}
+          cy={y + r * 0.25}
+          r={r * 0.8}
+          fill={c("brand")}
+          opacity=".14"
+        />
+        <circle
+          cx={x + (left ? -1 : 1) * r * 0.2}
+          cy={y + r * 0.45}
+          r={r * 0.55}
+          fill={c("accent")}
+          opacity=".4"
+        />
+      </g>
+    );
+  },
+  ler: (place) => {
+    const flip = place === "closing" ? -1 : 1;
+    const base = place === "quote" ? 720 : 720;
+    const h = place === "quote" ? 0.45 : 1;
+    const hill = (lift: number, spread: number) =>
+      `M${640 - flip * 640} ${base} Q ${640 + flip * spread} ${base - lift * h} ${640 + flip * 640} ${base - lift * h * 0.6} L ${640 + flip * 640} ${base} Z`;
+    return (
+      <g transform={flip < 0 ? "" : ""}>
+        <path d={hill(420, 260)} fill={c("soft")} />
+        <path d={hill(300, 360)} fill={c("accent")} opacity=".55" />
+        <path d={hill(180, 460)} fill={c("brand")} opacity=".8" />
+      </g>
+    );
+  },
+  grafit: (place) =>
+    place === "quote" ? (
+      <rect x="1180" y="0" width="100" height="720" fill={c("ink")} />
+    ) : (
+      <g>
+        <rect x={place === "closing" ? 0 : 860} y="0" width="420" height="720" fill={c("deep")} />
+        <g stroke={c("accent")} strokeWidth="2" opacity=".6">
+          {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => (
+            <line
+              key={i}
+              x1={(place === "closing" ? 0 : 860) + 40 + i * 48}
+              y1="0"
+              x2={(place === "closing" ? 0 : 860) + 40 + i * 48}
+              y2="720"
+            />
+          ))}
+        </g>
+      </g>
+    ),
+  mos: (place) => {
+    const [x, y, s] =
+      place === "quote" ? [1180, 640, 0.45] : place === "closing" ? [180, 420, 1] : [1040, 360, 1];
+    return (
+      <g transform={`translate(${x} ${y}) scale(${s})`}>
+        <ellipse rx="230" ry="110" transform="rotate(-35)" fill={c("accent")} opacity=".7" />
+        <ellipse
+          rx="190"
+          ry="85"
+          transform="rotate(25) translate(60 120)"
+          fill={c("soft")}
+          opacity=".55"
+        />
+        <ellipse
+          rx="120"
+          ry="52"
+          transform="rotate(-70) translate(-150 40)"
+          fill={c("accent")}
+          opacity=".4"
+        />
+        <path
+          d="M-200 140 C -60 40, 60 -40, 200 -160"
+          fill="none"
+          stroke={c("paper")}
+          strokeWidth="3"
+          opacity=".6"
+        />
+      </g>
+    );
+  },
+  lenskjold: (place) => {
+    const [x, y, r] =
+      place === "quote"
+        ? [1200, 640, 110]
+        : place === "closing"
+          ? [90, 420, 230]
+          : [1040, 360, 260];
+    return (
+      <g fill="none" stroke={c("accent")} strokeLinecap="round">
+        <circle
+          cx={x}
+          cy={y}
+          r={r}
+          strokeWidth="9"
+          strokeDasharray={`${r * 5.4} ${r * 0.9}`}
+          transform={`rotate(-20 ${x} ${y})`}
+          opacity=".85"
+        />
+        <circle
+          cx={x + 6}
+          cy={y - 4}
+          r={r - 14}
+          strokeWidth="2.5"
+          strokeDasharray={`${r * 4.6} ${r * 1.6}`}
+          transform={`rotate(140 ${x} ${y})`}
+          opacity=".5"
+        />
+      </g>
+    );
+  },
 };

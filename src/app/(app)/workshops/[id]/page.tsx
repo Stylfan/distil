@@ -6,6 +6,7 @@ import { requireUser } from "@/auth/session";
 import { DiagramPanel } from "@/components/diagram/diagram-panel";
 import { MakeOutline } from "@/components/outline/outline-run";
 import { QuestionCards } from "@/components/outline/question-cards";
+import { ContextPanel } from "@/components/workshop/context-panel";
 import { PhotoIntake } from "@/components/workshop/photo-intake";
 import { WorkshopTabs } from "@/components/workshop/workshop-tabs";
 import { PhotoList } from "@/components/workshop/photo-list";
@@ -60,6 +61,8 @@ export default async function WorkshopPage({ params, searchParams }: Props) {
       />
 
       <WorkshopTabs workshopId={workshop.id} current="transcript" />
+
+      <ContextPanel workshopId={workshop.id} context={workshop.context} />
 
       <PhotoIntake workshopId={workshop.id} />
 

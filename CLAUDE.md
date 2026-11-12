@@ -25,8 +25,10 @@ Read this file at the start of every session.
   as such, and nothing reaches a presentation before the facilitator has
   seen the outline. When unsure, Distil asks ("Betyder gul og grøn
   noget?", "Står der kalender eller kollega?") rather than guessing.
-- **The output is neutral.** Presentations carry no brand. The app itself
-  may show a discreet Lenskjold Consulting logo.
+- **The output is neutral.** Presentations carry no brand, except when the
+  facilitator picks the "Lenskjold Consulting" theme, which adds that logo.
+  It is never the default. The app itself may show a discreet Lenskjold
+  Consulting logo.
 - **The output speaks the language of the notes**, typically Danish or
   English. The UI is Danish.
 - **Plain words.** The UI says "sedler", "temaer", "aftalt", "udestår".
@@ -119,7 +121,7 @@ the phone. One filled button per view.
 - **Phone:** few screens: choose or start a workshop, the camera (many
   photos in one go, or from the gallery), Distil's questions as cards with
   tap answers or voice, and the status of the reading.
-- **Computer:** the workshop desk. Steps Afskrift, Disposition,
+- **Computer:** the workshop desk. Steps Materiale (context, agenda, photos and what was read), Disposition,
   Præsentation. Each photo beside what Distil made of it; the outline as
   the thing you edit; a conversation field ("slå 2 og 3 sammen") on every
   step.

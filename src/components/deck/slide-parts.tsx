@@ -3,7 +3,7 @@ import type { DeckWords } from "@/domain/deck-words";
 import type { Icon, Look } from "@/domain/story";
 import { NOTE_EDGE, NOTE_FILL } from "@/components/workshop/colours";
 import { DeckIcon } from "./icons";
-import { c } from "./look";
+import { BRANDED, LOGO_SRC, PALETTES, c } from "./look";
 import { Motif, type MotifPlace } from "./motif";
 
 /**
@@ -14,7 +14,31 @@ import { Motif, type MotifPlace } from "./motif";
 
 export const px = (n: number) => `${(n / 12.8).toFixed(3)}cqw`;
 
-export type Tone = "paper" | "brand" | "deep";
+export type Tone = "paper" | "soft" | "brand" | "deep";
+
+/** The tone of the cover, the breakers and the closing slide: dark, or light in the calm themes. */
+export function strongTone(look: Look, dark: "brand" | "deep"): Tone {
+  return PALETTES[look].light ? "soft" : dark;
+}
+
+/** Text that is quieter than the main text, on a dark or a light slide. */
+export const quiet = (dark: boolean) => (dark ? "rgba(255,255,255,.75)" : c("muted"));
+
+/** The Lenskjold Consulting logo, only in the theme that carries it; white on a dark slide. */
+export function Logo({ size, dark }: { size: number; dark: boolean }) {
+  return (
+    // eslint-disable-next-line @next/next/no-img-element -- a small local file, printed as is
+    <img
+      src={LOGO_SRC}
+      alt="Lenskjold Consulting"
+      style={{
+        width: px(size),
+        height: px(size),
+        filter: dark ? "brightness(0) invert(1)" : undefined,
+      }}
+    />
+  );
+}
 
 export function Frame({
   children,
@@ -35,12 +59,20 @@ export function Frame({
   look: Look;
   motif?: MotifPlace;
 }) {
-  const dark = tone !== "paper";
+  const dark = tone === "brand" || tone === "deep";
+  const branded = look === BRANDED;
   return (
     <section
       className="deck-slide @container relative aspect-video w-full overflow-hidden rounded-md shadow-[0_2px_10px_rgba(20,30,40,0.12)] print:rounded-none print:shadow-none"
       style={{
-        background: tone === "brand" ? c("brand") : tone === "deep" ? c("deep") : c("paper"),
+        background:
+          tone === "brand"
+            ? c("brand")
+            : tone === "deep"
+              ? c("deep")
+              : tone === "soft"
+                ? c("soft")
+                : c("paper"),
         color: dark ? "#fff" : c("ink"),
         fontFeatureSettings: '"ss01", "cv11"',
       }}
@@ -64,7 +96,18 @@ export function Frame({
         }}
       >
         <span className="truncate">{footer}</span>
-        <span>{words.page(number, total)}</span>
+        <span className="flex items-center" style={{ gap: px(10) }}>
+          {branded && (
+            <>
+              <Logo size={18} dark={dark} />
+              <span className="uppercase" style={{ letterSpacing: ".18em" }}>
+                Lenskjold Consulting
+              </span>
+              <span aria-hidden>·</span>
+            </>
+          )}
+          {words.page(number, total)}
+        </span>
       </div>
     </section>
   );

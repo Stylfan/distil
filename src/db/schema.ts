@@ -10,6 +10,7 @@ import {
   uniqueIndex,
 } from "drizzle-orm/pg-core";
 import { bytea, id, now, timestamps } from "./columns";
+import type { WorkshopContext } from "@/domain/context";
 import type { Diagram } from "@/domain/diagram";
 import type { Outline } from "@/domain/outline";
 import { users } from "./schema-accounts";
@@ -36,6 +37,8 @@ export const workshops = pgTable(
     name: text("name").notNull(),
     /** The day it was held, yyyy-mm-dd. */
     heldOn: text("held_on").notNull(),
+    /** What the facilitator told Distil about the workshop (domain/context); null until then. */
+    context: jsonb("context").$type<WorkshopContext>(),
     ...timestamps,
   },
   (t) => [index("workshops_owner_idx").on(t.ownerId)],

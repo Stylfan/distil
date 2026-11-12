@@ -1,6 +1,9 @@
 import PptxGenJS from "pptxgenjs";
 import type { Slide } from "@/domain/deck";
 import type { DeckWords } from "@/domain/deck-words";
+import fs from "node:fs";
+import path from "node:path";
+import { BRANDED, LOGO_SRC, PALETTES } from "@/components/deck/look";
 import { DEFAULT_LOOK, type Look } from "@/domain/story";
 import { addDiagram } from "./diagram";
 import { CONTENT_W, coloursOf, kicker, motif, title, type Ctx } from "./parts";
@@ -23,6 +26,16 @@ import { FONT, H, MARGIN, W } from "./style";
  * images go in: the photos are gone by then, and the drawings are
  * redrawn as shapes.
  */
+
+/** The Lenskjold Consulting logo for the theme that carries it, from the app's own files. */
+function logoData(): string | null {
+  try {
+    const file = path.join(process.cwd(), "public", LOGO_SRC);
+    return `image/png;base64,${fs.readFileSync(file).toString("base64")}`;
+  } catch {
+    return null;
+  }
+}
 
 function footer(
   { slide, k }: Ctx,
@@ -92,20 +105,43 @@ export async function buildPptx(input: {
   pptx.title = input.title;
   pptx.company = "";
   const { words, slides } = input;
-  const k = coloursOf(input.look ?? DEFAULT_LOOK);
+  const look = input.look ?? DEFAULT_LOOK;
+  const k = coloursOf(look);
+  const light = !!PALETTES[look].light;
+  const logo = look === BRANDED ? logoData() : null;
 
   slides.forEach((s, i) => {
     const slide = pptx.addSlide();
     const ctx: Ctx = { pptx, slide, k };
     let dark = false;
     slide.background = { color: k.paper };
+    // The calm themes have light covers and breakers; the others dark ones.
+    const strong = (deep: string) => (light ? k.soft : deep);
+    const head = light ? k.ink : "FFFFFF";
+    const sub = light ? k.muted : "E8ECF5";
+    const shape = light ? k.paper : undefined;
     switch (s.kind) {
       case "cover":
-        dark = true;
-        slide.background = { color: k.brand };
-        motif(ctx, "right", k.deep);
-        kicker({ ...ctx }, words.coverKicker, true);
-        big(ctx, s.title, 3.4, 44, "FFFFFF");
+        dark = !light;
+        slide.background = { color: strong(k.brand) };
+        motif(ctx, "right", shape ?? k.deep);
+        if (logo) {
+          slide.addImage({ data: logo, x: MARGIN, y: 0.5, w: 0.75, h: 0.75 });
+          slide.addText("LENSKJOLD CONSULTING", {
+            x: MARGIN + 0.95,
+            y: 0.6,
+            w: 5,
+            h: 0.5,
+            fontFace: FONT,
+            fontSize: 12,
+            bold: true,
+            charSpacing: 4,
+            color: head,
+            margin: 0,
+          });
+        }
+        kicker({ ...ctx }, words.coverKicker, !light);
+        big(ctx, s.title, 3.4, 44, head);
         if (s.tagline) {
           slide.addText(s.tagline, {
             x: MARGIN,
@@ -114,17 +150,17 @@ export async function buildPptx(input: {
             h: 0.8,
             fontFace: FONT,
             fontSize: 18,
-            color: "E8ECF5",
+            color: sub,
             margin: 0,
           });
         }
         break;
       case "section":
-        dark = true;
-        slide.background = { color: k.deep };
-        motif(ctx, "right", k.brand);
-        big(ctx, String(s.number).padStart(2, "0"), 1.9, 80, k.accent);
-        big(ctx, words.chapters[s.chapter], 3.5, 44, "FFFFFF");
+        dark = !light;
+        slide.background = { color: strong(k.deep) };
+        motif(ctx, "right", shape ?? k.brand);
+        big(ctx, String(s.number).padStart(2, "0"), 1.9, 80, light ? k.brand : k.accent);
+        big(ctx, words.chapters[s.chapter], 3.5, 44, head);
         slide.addText(words.facts(s.facts, s.chapter), {
           x: MARGIN,
           y: 4.6,
@@ -132,7 +168,7 @@ export async function buildPptx(input: {
           h: 0.5,
           fontFace: FONT,
           fontSize: 16,
-          color: "C9D2DE",
+          color: sub,
           margin: 0,
         });
         break;
@@ -164,10 +200,10 @@ export async function buildPptx(input: {
         });
         break;
       case "closing":
-        dark = true;
-        slide.background = { color: k.brand };
-        motif(ctx, "left", k.deep);
-        big(ctx, s.line || words.closing, 2.8, 40, "FFFFFF", "right");
+        dark = !light;
+        slide.background = { color: strong(k.brand) };
+        motif(ctx, "left", shape ?? k.deep);
+        big(ctx, s.line || words.closing, 2.8, 40, head, "right");
         slide.addText(s.title, {
           x: MARGIN,
           y: 4.4,
@@ -175,7 +211,7 @@ export async function buildPptx(input: {
           h: 0.5,
           fontFace: FONT,
           fontSize: 16,
-          color: "E8ECF5",
+          color: sub,
           align: "right",
           margin: 0,
         });
@@ -236,7 +272,14 @@ export async function buildPptx(input: {
         break;
       }
     }
-    footer(ctx, words, input.footer ?? input.title, i + 1, slides.length, dark);
+    footer(
+      ctx,
+      words,
+      `${input.footer ?? input.title}${logo ? "  ·  Lenskjold Consulting" : ""}`,
+      i + 1,
+      slides.length,
+      dark,
+    );
   });
 
   const data = await pptx.write({ outputType: "nodebuffer" });

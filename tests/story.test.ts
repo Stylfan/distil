@@ -117,7 +117,7 @@ describe("the story from the model", () => {
         );
       }) as typeof fetch,
     });
-    const story = await teller.tell(
+    const { story } = await teller.tell(
       outline,
       notes.map((n) => ({ ...n, kind: "note" })),
     );

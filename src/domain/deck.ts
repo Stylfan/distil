@@ -135,7 +135,8 @@ export function makeDeck(input: Parameters<typeof buildDeck>[0]): Deck {
   const shifts = story.shifts
     .map((s, index) => ({ index, from: s.from.trim(), to: s.to.trim() }))
     .filter((s) => s.from && s.to);
-  const themes = outline.themes.filter((t) => t.title.trim());
+  const hidden = new Set(story.hidden ?? []);
+  const themes = outline.themes.filter((t) => t.title.trim() && !hidden.has(t.id));
   const photos = new Set(input.notes.map((n) => n.photo)).size;
 
   const slides: Slide[] = [

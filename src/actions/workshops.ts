@@ -2,7 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { createWorkshop, deleteWorkshop, renameWorkshop } from "@/services/workshops";
+import { contextSchema } from "@/domain/context";
+import { createWorkshop, deleteWorkshop, renameWorkshop, setContext } from "@/services/workshops";
 import { run, type Result } from "./result";
 
 const fields = z.object({
@@ -38,4 +39,14 @@ export async function deleteWorkshopAction(id: string): Promise<Result> {
   });
   if (result.ok) revalidatePath("/", "layout");
   return result;
+}
+
+const context = z.object({ id: z.string().min(1), context: contextSchema });
+
+/** The context the facilitator gives Distil about the workshop. */
+export async function setContextAction(input: z.infer<typeof context>): Promise<Result> {
+  return run(context, input, async (db, userId, d) => {
+    await setContext(db, userId, d.id, d.context);
+    return undefined;
+  });
 }

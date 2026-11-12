@@ -12,11 +12,13 @@ import { FONT, H, MARGIN, NOTE_EDGE, NOTE_FILL, W } from "./style";
 
 export const CONTENT_W = W - MARGIN * 2;
 
-export type Colours = Record<keyof (typeof PALETTES)["kobolt"], string>;
+export type Colours = Record<Exclude<keyof (typeof PALETTES)["kobolt"], "light">, string>;
 
 export function coloursOf(look: Look): Colours {
   return Object.fromEntries(
-    Object.entries(PALETTES[look]).map(([k, v]) => [k, v.replace("#", "")]),
+    Object.entries(PALETTES[look])
+      .filter((e): e is [string, string] => typeof e[1] === "string")
+      .map(([k, v]) => [k, v.replace("#", "")]),
   ) as Colours;
 }
 

@@ -15,9 +15,21 @@ import { MAKE_OUTLINE_PROMPT, REVISE_OUTLINE_PROMPT } from "./outline-prompt";
  * as numbered lines; never a photo, a name of an account or a workshop.
  */
 export type Outliner = {
-  make(notes: NoteForOutline[], answers: { question: string; answer: string }[]): Promise<Outline>;
-  revise(outline: Outline, request: string, notes: NoteForOutline[]): Promise<Outline>;
+  /** `context` is the facilitator's context for the workshop, as the model reads it (domain/context). */
+  make(
+    notes: NoteForOutline[],
+    answers: { question: string; answer: string }[],
+    context?: string,
+  ): Promise<Outline>;
+  revise(
+    outline: Outline,
+    request: string,
+    notes: NoteForOutline[],
+    context?: string,
+  ): Promise<Outline>;
 };
+
+const withContext = (context: string, text: string) => (context ? `${context}\n\n${text}` : text);
 
 function answersText(answers: { question: string; answer: string }[]): string {
   if (answers.length === 0) return "";
@@ -28,17 +40,20 @@ function answersText(answers: { question: string; answer: string }[]): string {
 
 export function mistralOutliner(options: MistralOptions): Outliner {
   return {
-    async make(notes, answers) {
+    async make(notes, answers, context = "") {
       const { lines, toId } = notesForModel(notes);
       const answer = await mistralJson(options, [
         { role: "system", content: MAKE_OUTLINE_PROMPT },
-        { role: "user", content: `The notes:\n${lines}${answersText(answers)}` },
+        {
+          role: "user",
+          content: withContext(context, `The notes:\n${lines}${answersText(answers)}`),
+        },
       ]);
       const outline = parseOutline(answer, toId);
       if (!outline) throw new ReadError("unreadable");
       return outline;
     },
-    async revise(current, request, notes) {
+    async revise(current, request, notes, context = "") {
       const { lines, toId } = notesForModel(notes);
       const answers = current.questions
         .filter((q) => q.answer)
@@ -47,9 +62,12 @@ export function mistralOutliner(options: MistralOptions): Outliner {
         { role: "system", content: REVISE_OUTLINE_PROMPT },
         {
           role: "user",
-          content: `The notes:\n${lines}${answersText(answers)}\n\nThe outline now:\n${JSON.stringify(
-            outlineForModel(current, toId),
-          )}\n\nThe facilitator's request:\n${request}`,
+          content: withContext(
+            context,
+            `The notes:\n${lines}${answersText(answers)}\n\nThe outline now:\n${JSON.stringify(
+              outlineForModel(current, toId),
+            )}\n\nThe facilitator's request:\n${request}`,
+          ),
         },
       ]);
       const outline = parseOutline(answer, toId, current);

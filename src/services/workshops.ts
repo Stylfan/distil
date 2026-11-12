@@ -1,3 +1,4 @@
+import { contextSchema, type WorkshopContext } from "@/domain/context";
 import { and, asc, count, desc, eq, sql } from "drizzle-orm";
 import type { Db } from "@/db/client";
 import { notes, photos, workshops, type Note, type Photo, type Workshop } from "@/db/schema";
@@ -128,4 +129,18 @@ export async function countPhotos(db: Db, workshopId: string): Promise<number> {
     .from(photos)
     .where(eq(photos.workshopId, workshopId));
   return row?.n ?? 0;
+}
+
+/** What the facilitator told Distil about the workshop; checked, and stored as one value. */
+export async function setContext(
+  db: Db,
+  userId: string,
+  id: string,
+  context: WorkshopContext,
+): Promise<void> {
+  await requireWorkshop(db, userId, id);
+  await db
+    .update(workshops)
+    .set({ context: contextSchema.parse(context) })
+    .where(eq(workshops.id, id));
 }
