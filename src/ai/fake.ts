@@ -122,4 +122,6 @@ export const fakeReader: Reader = {
       items: FAKE_ITEMS.map((i) => ({ ...i, alternatives: [...i.alternatives] })),
       diagram: structuredClone(FAKE_DIAGRAM),
     }),
+  // The made-up wall comes whole; its parts add nothing.
+  readPart: () => Promise.resolve([]),
 };

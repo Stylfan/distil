@@ -9,7 +9,7 @@ import { readByLink, uploadByLink } from "./link-requests";
 import { requestReading } from "./request-reading";
 import { Button } from "@/components/ui/controls";
 import { cn } from "@/lib/cn";
-import { shrinkPhoto } from "./shrink";
+import { preparePhoto } from "./shrink";
 
 /**
  * Photos in: the camera and the gallery on a phone, a drop zone on a
@@ -22,6 +22,11 @@ type Step = "shrinking" | "sending" | "reading" | "done" | "error";
 type Job = { key: number; name: string; step: Step; message?: string; notes?: number };
 
 const PARALLEL_READS = 2;
+/** What the pickers offer: every image, and iPhone photos by name, which some systems do not count as images. */
+const ACCEPT = "image/*,.heic,.heif,.HEIC,.HEIF";
+
+const isPhoto = (f: File) =>
+  f.type.startsWith("image/") || f.type === "" || /\.(heic|heif)$/i.test(f.name);
 
 export function PhotoIntake({
   workshopId,
@@ -43,7 +48,7 @@ export function PhotoIntake({
     setJobs((all) => all.map((j) => (j.key === key ? { ...j, ...change } : j)));
 
   async function take(files: FileList | File[]) {
-    const list = Array.from(files).filter((f) => f.type.startsWith("image/") || f.type === "");
+    const list = Array.from(files).filter(isPhoto);
     if (list.length === 0) return;
     const fresh = list.map((f) => ({
       key: ++counter.current,
@@ -57,11 +62,13 @@ export function PhotoIntake({
       const { key } = fresh[i]!;
       let photoId: string;
       try {
-        const small = await shrinkPhoto(file);
+        const prepared = await preparePhoto(file);
         update(key, { step: "sending" });
         const form = new FormData();
         form.set("workshopId", workshopId);
-        form.set("photo", small, "photo.jpg");
+        form.set("photo", prepared.whole, "photo.jpg");
+        form.set("parts", JSON.stringify(prepared.parts.map((p) => p.rect)));
+        prepared.parts.forEach((p, n) => form.set(`part${n + 1}`, p.blob, `part${n + 1}.jpg`));
         const sent = linkToken
           ? await uploadByLink(linkToken, form)
           : await uploadPhotoAction(form);
@@ -143,7 +150,7 @@ export function PhotoIntake({
       <input
         ref={camera}
         type="file"
-        accept="image/*"
+        accept={ACCEPT}
         capture="environment"
         className="sr-only"
         tabIndex={-1}
@@ -153,7 +160,7 @@ export function PhotoIntake({
       <input
         ref={gallery}
         type="file"
-        accept="image/*"
+        accept={ACCEPT}
         multiple
         className="sr-only"
         tabIndex={-1}

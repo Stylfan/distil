@@ -1,5 +1,6 @@
 import { withUser } from "@/db/client";
 import { withLink } from "@/lib/link-route";
+import { readPhotoForm } from "@/lib/photo-form";
 import { BadPhoto, LimitReached } from "@/services/errors";
 import { addPhoto } from "@/services/photos";
 
@@ -11,11 +12,12 @@ export async function POST(request: Request, { params }: { params: Promise<{ tok
   const { token } = await params;
   return withLink(request, token, async ({ userId, workshopId }) => {
     const form = await request.formData().catch(() => null);
-    const file = form?.get("photo");
-    if (!(file instanceof File)) return Response.json({ ok: false, error: "invalid" });
+    const upload = form ? await readPhotoForm(form) : null;
+    if (!upload) return Response.json({ ok: false, error: "invalid" });
     try {
-      const bytes = Buffer.from(await file.arrayBuffer());
-      const photoId = await withUser(userId, (tx) => addPhoto(tx, userId, workshopId, bytes));
+      const photoId = await withUser(userId, (tx) =>
+        addPhoto(tx, userId, workshopId, upload.bytes, Date.now(), upload.parts),
+      );
       return Response.json({ ok: true, photoId });
     } catch (error) {
       if (error instanceof BadPhoto) return Response.json({ ok: false, error: error.reason });

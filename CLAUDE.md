@@ -50,8 +50,11 @@ Read this file at the start of every session.
   then it is deleted. The text and the presentation stay in the account
   until the user deletes them.
 - Photos are shrunk in the browser before upload (which also drops EXIF
-  and GPS data); the server checks type and size again and refuses the
-  rest.
+  and GPS data); a large one is also cut into four overlapping parts, kept
+  and deleted with it (ADR 0005). The server checks type and size again
+  and refuses the rest.
+- The reading prompt forbids guessing: on a real wall, the model otherwise
+  invented notes. Any change to the prompts is tried on real photos first.
 - Nothing about a photo is logged: no file names, no image content, no
   model output in logs.
 - The demo keeps nothing beyond 24 hours and says so on every page.

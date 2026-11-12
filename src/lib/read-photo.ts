@@ -1,4 +1,6 @@
 import { ReadError, getReader } from "@/ai/reader";
+import type { ReadItem } from "@/domain/reading";
+import { mergeTiles } from "@/domain/tiles";
 import { withUser } from "@/db/client";
 import { NotFound, type LimitKind } from "@/services/errors";
 import { storeDiagram } from "@/services/diagrams";
@@ -21,7 +23,19 @@ export async function readPhoto(userId: string, photoId: string): Promise<ReadOu
     if (start.kind === "limit") return { ok: false, error: start.limit };
     if (start.kind === "nothing") return { ok: true, notes: 0 };
     try {
-      const { items, diagram } = await getReader().read(start.data, start.mime);
+      const reader = getReader();
+      // The whole photo for its drawing and layout; its parts, when it came cut up, for the words.
+      const [whole, ...parts] = await Promise.all([
+        reader.read(start.data, start.mime),
+        ...start.parts.map((p) => reader.readPart(p.data, start.mime)),
+      ]);
+      const diagram = whole!.diagram;
+      const merged =
+        start.parts.length > 0
+          ? mergeTiles(start.parts.map((p, i) => ({ rect: p.rect, items: parts[i] as ReadItem[] })))
+          : [];
+      // The parts read nothing (a blank board, or a reader that only reads whole photos): the whole one counts.
+      const items = merged.length > 0 ? merged : whole!.items;
       await withUser(userId, async (tx) => {
         await finishReading(tx, userId, photoId, items);
         await storeDiagram(tx, userId, photoId, diagram);

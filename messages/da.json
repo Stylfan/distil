@@ -55,7 +55,7 @@
   "intake": {
     "camera": "Tag billede",
     "gallery": "Fra galleri",
-    "drop": "Træk billeder herind, eller vælg dem. Op til 50 pr. workshop.",
+    "drop": "Træk billeder herind, eller vælg dem. JPEG, PNG og iPhone-billeder (HEIC). Op til 50 pr. workshop.",
     "choose": "Vælg billeder",
     "shrinking": "Gør billedet klar …",
     "sending": "Sender …",
@@ -66,7 +66,7 @@
       "invalid": "Billedet kom ikke med. Prøv igen.",
       "notFound": "Det findes ikke længere.",
       "generic": "Det gik galt. Prøv igen.",
-      "type": "Billedet kunne ikke læses som et foto. Prøv et andet, eller tag det igen.",
+      "type": "Billedet kunne ikke læses. Distil læser JPEG, PNG, WebP og iPhone-billeder (HEIC). Prøv et andet, eller tag det igen.",
       "size": "Billedet er for stort.",
       "dimensions": "Billedet er for lille til at kunne læses.",
       "workshopFull": "Workshoppen har allerede 50 billeder. Opret en ny til resten.",

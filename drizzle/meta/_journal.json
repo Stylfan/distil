@@ -64,6 +64,13 @@
       "when": 1794491275623,
       "tag": "0008_note_votes",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1794493533646,
+      "tag": "0009_photo_parts",
+      "breakpoints": true
     }
   ]
 }

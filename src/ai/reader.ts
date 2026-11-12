@@ -1,4 +1,4 @@
-import type { Reading } from "@/domain/reading";
+import type { ReadItem, Reading } from "@/domain/reading";
 import { ReadError } from "./errors";
 import { fakeReader } from "./fake";
 import { mistralReader } from "./mistral";
@@ -10,7 +10,10 @@ import { mistralFromEnv } from "./mistral-chat";
  * model is a setting (DISTIL_MISTRAL_MODEL), not a code change.
  */
 export type Reader = {
+  /** The whole photo: its notes and its drawing. */
   read(image: Buffer, mime: string): Promise<Reading>;
+  /** One part of a large photo, cut out at full resolution: its notes only. */
+  readPart(image: Buffer, mime: string): Promise<ReadItem[]>;
 };
 
 /**
@@ -21,7 +24,10 @@ export type Reader = {
 export function getReader(env: NodeJS.ProcessEnv = process.env): Reader {
   if (env.DISTIL_READER === "fake") return fakeReader;
   const options = mistralFromEnv(env);
-  if (!options) return { read: () => Promise.reject(new ReadError("notConfigured")) };
+  if (!options) {
+    const refuse = () => Promise.reject(new ReadError("notConfigured"));
+    return { read: refuse, readPart: refuse };
+  }
   return mistralReader(options);
 }
 

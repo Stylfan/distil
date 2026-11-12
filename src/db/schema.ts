@@ -5,6 +5,7 @@ import {
   integer,
   jsonb,
   pgTable,
+  primaryKey,
   text,
   uniqueIndex,
 } from "drizzle-orm/pg-core";
@@ -82,8 +83,15 @@ export const photoImages = pgTable(
   "photo_images",
   {
     photoId: text("photo_id")
-      .primaryKey()
+      .notNull()
       .references(() => photos.id, { onDelete: "cascade" }),
+    /** 0 is the whole photo, as the desk shows it; 1 and up are parts cut out at full resolution for reading. */
+    part: integer("part").notNull().default(0),
+    /** Where the part lies on the whole photo, in thousandths of its width and height. */
+    left: integer("left").notNull().default(0),
+    top: integer("top").notNull().default(0),
+    width: integer("width").notNull().default(1000),
+    height: integer("height").notNull().default(1000),
     workshopId: text("workshop_id")
       .notNull()
       .references(() => workshops.id, { onDelete: "cascade" }),
@@ -92,7 +100,10 @@ export const photoImages = pgTable(
     expiresAt: bigint("expires_at", { mode: "number" }).notNull(),
     createdAt: bigint("created_at", { mode: "number" }).notNull().$defaultFn(now),
   },
-  (t) => [index("photo_images_expires_idx").on(t.expiresAt)],
+  (t) => [
+    primaryKey({ columns: [t.photoId, t.part] }),
+    index("photo_images_expires_idx").on(t.expiresAt),
+  ],
 );
 
 /** What is on a note, or a heading, a loose line of text, or a drawing Distil describes. */

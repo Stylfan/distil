@@ -24,6 +24,7 @@
     "@simplewebauthn/server": "14.1.0",
     "clsx": "^2.1.1",
     "drizzle-orm": "^0.45.2",
+    "heic-to": "1.6.6",
     "lucide-react": "^1.47.0",
     "next": "16.4.3",
     "next-intl": "^4.14.5",

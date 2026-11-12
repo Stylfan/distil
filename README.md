@@ -19,6 +19,10 @@ Early: five slices. What works today:
 - Workshops with a name and a day.
 - On a phone: the camera (or the gallery), photos shrunk in the browser
   and sent one after another, read two at a time, with the status of each.
+  JPEG, PNG, WebP and iPhone photos (HEIC, decoded in the browser). A
+  large photo is also cut into four overlapping parts at full resolution,
+  so small handwriting is read rather than guessed
+  ([ADR 0005](docs/adr/0005-large-photos-are-read-in-parts.md)).
 - On a computer: drag photos in; each photo beside its notes, with a
   numbered marker where each note was read, the notes Distil is unsure of
   in amber with the other readings it considered; correct the text and

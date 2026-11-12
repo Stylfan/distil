@@ -1,9 +1,10 @@
-import { and, count, eq, gt, max, sql } from "drizzle-orm";
+import { and, asc, count, eq, gt, max, sql } from "drizzle-orm";
 import type { Db } from "@/db/client";
 import { notes, photoImages, photos, workshops, type Photo } from "@/db/schema";
 import { checkImage } from "@/domain/image";
 import { IMAGE_HOURS, MAX_IMAGES_WAITING, PHOTOS_PER_WORKSHOP } from "@/domain/limits";
 import { inReadingOrder, type ReadItem } from "@/domain/reading";
+import { TILE_GRID, type Rect } from "@/domain/tiles";
 import { BadPhoto, LimitReached, NotFound, type LimitKind } from "./errors";
 import { releasePhoto, reservePhoto } from "./limits";
 import { countPhotos, requireWorkshop } from "./workshops";
@@ -27,28 +28,52 @@ async function ownedPhoto(db: Db, userId: string, photoId: string): Promise<Phot
   return row.photo;
 }
 
-/** Keeps an uploaded photo for reading. Returns its id. */
+/** A part of a large photo, cut out by the browser at full resolution, and where it lies. */
+export type PhotoPart = { bytes: Buffer; rect: Rect };
+
+/** At most this many parts per photo (src/domain/tiles.ts makes four). */
+export const MAX_PARTS = TILE_GRID * TILE_GRID;
+
+function validRect(r: Rect): boolean {
+  return (
+    [r.x, r.y, r.w, r.h].every((v) => Number.isInteger(v) && v >= 0 && v <= 1000) &&
+    r.w > 0 &&
+    r.h > 0 &&
+    r.x + r.w <= 1000 &&
+    r.y + r.h <= 1000
+  );
+}
+
+/** Keeps an uploaded photo for reading, with its parts when it came cut up. Returns its id. */
 export async function addPhoto(
   db: Db,
   userId: string,
   workshopId: string,
   bytes: Buffer,
   now = Date.now(),
+  parts: PhotoPart[] = [],
 ): Promise<string> {
   await requireWorkshop(db, userId, workshopId);
   const check = checkImage(bytes);
   if (!check.ok) throw new BadPhoto(check.reason);
+  if (parts.length > MAX_PARTS) throw new BadPhoto("size");
+  const partChecks = parts.map((part) => {
+    const c = checkImage(part.bytes);
+    if (!c.ok) throw new BadPhoto(c.reason);
+    if (!validRect(part.rect)) throw new BadPhoto("dimensions");
+    return c;
+  });
   // Serialises uploads to one workshop, so the count and the next number hold.
   await db.execute(sql`select id from workshops where id = ${workshopId} for update`);
   if ((await countPhotos(db, workshopId)) >= PHOTOS_PER_WORKSHOP) {
     throw new LimitReached("workshopFull");
   }
-  // Images of the account's own workshops only: the join keeps to the owner.
+  // Photos of the account's own workshops only (the join keeps to the owner), each counted once.
   const [waiting] = await db
     .select({ n: count() })
     .from(photoImages)
     .innerJoin(workshops, eq(workshops.id, photoImages.workshopId))
-    .where(eq(workshops.ownerId, userId));
+    .where(and(eq(workshops.ownerId, userId), eq(photoImages.part, 0)));
   if ((waiting?.n ?? 0) >= MAX_IMAGES_WAITING) throw new LimitReached("stored");
   const [last] = await db
     .select({ seq: max(photos.seq) })
@@ -63,13 +88,22 @@ export async function addPhoto(
       height: check.height,
     })
     .returning({ id: photos.id });
-  await db.insert(photoImages).values({
-    photoId: photo!.id,
-    workshopId,
-    mime: check.mime,
-    data: bytes,
-    expiresAt: now + IMAGE_HOURS * 3_600_000,
-  });
+  const expiresAt = now + IMAGE_HOURS * 3_600_000;
+  await db.insert(photoImages).values([
+    { photoId: photo!.id, part: 0, workshopId, mime: check.mime, data: bytes, expiresAt },
+    ...parts.map((part, i) => ({
+      photoId: photo!.id,
+      part: i + 1,
+      left: part.rect.x,
+      top: part.rect.y,
+      width: part.rect.w,
+      height: part.rect.h,
+      workshopId,
+      mime: partChecks[i]!.mime,
+      data: part.bytes,
+      expiresAt,
+    })),
+  ]);
   return photo!.id;
 }
 
@@ -85,15 +119,47 @@ export async function getImage(
   const [row] = await db
     .select({ mime: photoImages.mime, data: photoImages.data })
     .from(photoImages)
-    .where(and(eq(photoImages.photoId, photoId), gt(photoImages.expiresAt, now)));
+    .where(
+      and(
+        eq(photoImages.photoId, photoId),
+        eq(photoImages.part, 0),
+        gt(photoImages.expiresAt, now),
+      ),
+    );
   return row ?? null;
+}
+
+/** The parts of a photo cut out for reading, in order, while they are kept. */
+async function getParts(
+  db: Db,
+  photoId: string,
+  now: number,
+): Promise<{ data: Buffer; rect: Rect }[]> {
+  const rows = await db
+    .select({
+      data: photoImages.data,
+      x: photoImages.left,
+      y: photoImages.top,
+      w: photoImages.width,
+      h: photoImages.height,
+    })
+    .from(photoImages)
+    .where(
+      and(
+        eq(photoImages.photoId, photoId),
+        gt(photoImages.part, 0),
+        gt(photoImages.expiresAt, now),
+      ),
+    )
+    .orderBy(asc(photoImages.part));
+  return rows.map((r) => ({ data: r.data, rect: { x: r.x, y: r.y, w: r.w, h: r.h } }));
 }
 
 /** A reading still "reading" after this long is taken to have died. */
 const STUCK_AFTER_MS = 5 * 60 * 1000;
 
 export type ReadStart =
-  | { kind: "image"; mime: string; data: Buffer }
+  | { kind: "image"; mime: string; data: Buffer; parts: { data: Buffer; rect: Rect }[] }
   | { kind: "nothing" }
   | { kind: "limit"; limit: LimitKind };
 
@@ -123,7 +189,8 @@ export async function startReading(
     .where(and(eq(photos.id, photoId), eq(photos.status, photo.status)))
     .returning({ id: photos.id });
   if (claimed.length === 0) return { kind: "nothing" };
-  if (stuck) return { kind: "image", ...image };
+  const parts = await getParts(db, photoId, now);
+  if (stuck) return { kind: "image", ...image, parts };
   try {
     await reservePhoto(db, userId, now);
   } catch (error) {
@@ -134,7 +201,7 @@ export async function startReading(
       .where(eq(photos.id, photoId));
     return { kind: "limit", limit: error.kind };
   }
-  return { kind: "image", ...image };
+  return { kind: "image", ...image, parts };
 }
 
 /** Stores what was read, in reading order, in place of anything read before. */

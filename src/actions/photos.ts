@@ -5,6 +5,7 @@ import { currentUser } from "@/auth/session";
 import { withUser } from "@/db/client";
 import { BadPhoto, LimitReached, NotFound, type LimitKind } from "@/services/errors";
 import { addPhoto, approvePhoto, deletePhoto } from "@/services/photos";
+import { readPhotoForm } from "@/lib/photo-form";
 import { run, type Result } from "./result";
 
 /**
@@ -33,13 +34,12 @@ export async function uploadPhotoAction(form: FormData): Promise<UploadResult> {
   const user = await currentUser();
   if (!user) return { ok: false, error: "unauthorized" };
   const workshopId = form.get("workshopId");
-  const file = form.get("photo");
-  if (typeof workshopId !== "string" || !(file instanceof File)) {
-    return { ok: false, error: "invalid" };
-  }
+  const upload = await readPhotoForm(form);
+  if (typeof workshopId !== "string" || !upload) return { ok: false, error: "invalid" };
   try {
-    const bytes = Buffer.from(await file.arrayBuffer());
-    const photoId = await withUser(user.id, (tx) => addPhoto(tx, user.id, workshopId, bytes));
+    const photoId = await withUser(user.id, (tx) =>
+      addPhoto(tx, user.id, workshopId, upload.bytes, Date.now(), upload.parts),
+    );
     return { ok: true, photoId };
   } catch (error) {
     if (error instanceof BadPhoto) return { ok: false, error: error.reason };
